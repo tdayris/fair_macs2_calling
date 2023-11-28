@@ -7,7 +7,7 @@ rule homer_annotate_peaks:
         peak="tmp/xsv_select/{species}.{build}.{release}.dna/{macs2_preak_type}/{sample}_peaks.{macs2_preak_type}.bed",
     output:
         annotations=protected(
-            "results/PeakCalling/{species}.{build}.{release}.dna/{sample}.{macs2_preak_type}.bed"
+            "results/{species}.{build}.{release}.dna/PeakCalling/{sample}.{macs2_preak_type}.bed"
         ),
     log:
         "logs/homer/annotatepeaks/{species}.{build}.{release}.dna/{sample}.{macs2_preak_type}.log",

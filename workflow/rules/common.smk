@@ -156,6 +156,81 @@ def get_macs2_callpeak_params(wildcards: snakemake.io.Wildcards, samples: pandas
     return results
 
 
+def get_deeptools_plotcoverage_input(wildcards: snakemake.io.Wildcards, samples: pandas.DataFrame = samples) -> Dict[str, List[str]]:
+    """
+    Return expected input files for deeptools plotCoverage, 
+    according to user-input, and snakemake-wrapper requirements
+
+    Parameters:
+    wildcards (snakemake.io.Wildcards): Required for snakemake unpacking function
+    samples   (pandas.DataFrame)      : Describe sample names and related paths/genome
+
+    Return (Dict[str, List[str]]):
+    Input files dict, as required by deeptools plotCoverage's snakemake-wrapper
+    """
+    results: Dict[str, List[str]] = {"bam": [], "bai": []}
+    species: str = str(wildcards.species)
+    build: str = str(wildcards.build)
+    release: str = str(wildcards.release)
+    results["blacklist"] = f"reference/blacklist/{species}.{build}.{release}.merged.bed"
+
+    genome_restricted_samples: pandas.DataFrame = samples[
+        samples.species == species & samples.build == build & samples.release == release
+    ]
+
+    datatype: str = "dna"
+    sample_iterator = zip(
+        genome_restricted_samples.sample_id,
+        genome_restricted_samples.species,
+        genome_restricted_samples.build,
+        genome_restricted_samples.release,
+    )
+
+    for sample, species, build, release in sample_iterator:
+        results["bam"].append(f"results/{species}.{build}.{release}.{datatype}/Mapping/{sample}.bam")
+        results["bai"].append(f"results/{species}.{build}.{release}.{datatype}/Mapping/{sample}.bam.bai")
+
+    return results
+
+
+
+def get_deeptools_plotfingerprint_input(wildcards: snakemake.io.Wildcards, samples: pandas.DataFrame = samples) -> Dict[str, List[str]]:
+    """
+    Return expected input files for deeptools plotfingerprint, 
+    according to user-input, and snakemake-wrapper requirements
+
+    Parameters:
+    wildcards (snakemake.io.Wildcards): Required for snakemake unpacking function
+    samples   (pandas.DataFrame)      : Describe sample names and related paths/genome
+
+    Return (Dict[str, List[str]]):
+    Input files dict, as required by deeptools plotfingerprint's snakemake-wrapper
+    """
+    results: Dict[str, List[str]] = {"bam_files": [], "bam_idx": []}
+    species: str = str(wildcards.species)
+    build: str = str(wildcards.build)
+    release: str = str(wildcards.release)
+
+    genome_restricted_samples: pandas.DataFrame = samples[
+        samples.species == species & samples.build == build & samples.release == release
+    ]
+
+    datatype: str = "dna"
+    sample_iterator = zip(
+        genome_restricted_samples.sample_id,
+        genome_restricted_samples.species,
+        genome_restricted_samples.build,
+        genome_restricted_samples.release,
+    )
+
+    for sample, species, build, release in sample_iterator:
+        results["bam_files"].append(f"results/{species}.{build}.{release}.{datatype}/Mapping/{sample}.bam")
+        results["bam_idx"].append(f"results/{species}.{build}.{release}.{datatype}/Mapping/{sample}.bam.bai")
+
+    return results
+
+
+
 def get_multiqc_report_peak_input(wildcards: snakemake.io.Wildcards, sample: pandas.DataFrame = samples) -> Dict[str, Union[str, List[str]]]:
     """
     Return expected input files for Multiqc peak calling report, 
@@ -169,7 +244,7 @@ def get_multiqc_report_peak_input(wildcards: snakemake.io.Wildcards, sample: pan
     Input files dict, as required by MultiQC's snakemake-wrapper
     """
     results: Dict[str, Union[str, List[str]]] = {
-        "picard_qc": [], "fasp": [], "macs2": [], "deeptools_coverage": []
+        "picard_qc": [], "fasp": [], "macs2": [], "deeptools_coverage": [], "deeptools_fingerprint": []
     }
 
     datatype: str = "dna"
@@ -202,10 +277,18 @@ def get_multiqc_report_peak_input(wildcards: snakemake.io.Wildcards, sample: pan
         )
         
         results["deeptools_coverage"].append(
-            f"tmp/deeptools/plotcoverage/{species}.{build}.{release}.{datatype}/{sample}_coverage.raw"
+            f"tmp/deeptools/plotcoverage/{species}.{build}.{release}.{datatype}/Coverage.raw"
         )
         results["deeptools_coverage"].append(
-            f"tmp/deeptools/plotcoverage/{species}.{build}.{release}.{datatype}/{sample}_coverage.metrics"
+            f"tmp/deeptools/plotcoverage/{species}.{build}.{release}.{datatype}/Coverage.metrics"
+        )
+
+        results["deeptools_fingerprint"].append(
+            f"tmp/deeptools/plot_fingerprint/{species}.{build}.{release}.{datatype}/raw_counts.tab"
+        )
+
+        results["deeptools_fingerprint"].append(
+            f"tmp/deeptools/plot_fingerprint/{species}.{build}.{release}.{datatype}/qc_metrics.txt"
         )
 
         downstream_file: Optional[str] = (
@@ -219,5 +302,57 @@ def get_multiqc_report_peak_input(wildcards: snakemake.io.Wildcards, sample: pan
         else:
             results["fastp"].append(f"tmp/fastp/report_se/{sample}.json")
             results["fastp"].append(f"results/QC/report_se/{sample}.html")
+
+    return results
+
+
+def get_targets(wildcards: snakemake.io.Wildcards, samples: pandas.DataFrame = samples, config: Dict[str, Any] = config) -> Dict[str, List[str]]:
+    """
+    Return expected output files for this pipeline, 
+    according to user-input, and snakemake requirements
+
+    Parameters:
+    wildcards (snakemake.io.Wildcards): Required for snakemake unpacking function
+    samples   (pandas.DataFrame)      : Describe sample names and related paths/genome
+    config    (Dict[str, Any])        : User defined configuration file content
+
+    Return (Dict[str, List[str]]):
+    Output files dict
+    """
+    results: Dict[str, List[str]] = {
+        "multiqc": [
+            "results/QC/MultiQC.html",
+            "results/QC/MultiQC_data.zip",
+        ],
+        "bams": [],
+        "bais": [],
+        "coverage": [],
+    }
+    sample_iterator = zip(
+        samples.sample_id,
+        samples.species,
+        samples.build,
+        samples.release,
+    )
+    for sample, species, build, release in sample_iterator:
+        results["bams"].append(
+            f"results/{species}.{build}.{release}.dna/Mapping/{sample}.bam"
+        )
+
+        results["bais"].append(
+            f"results/{species}.{build}.{release}.dna/Mapping/{sample}.bam.bai"
+        )
+
+        results["coverage"].append(
+            f"results/{species}.{build}.{release}.{datatype}/Coverage/{sample}.bw"
+        )
+
+        results["homer"].append(
+            f"results/{species}.{build}.{release}.dna/PeakCalling/{sample}.narroPeak.bed"
+        )
+
+        results["homer"].append(
+            f"results/{species}.{build}.{release}.dna/PeakCalling/{sample}.broadPeak.bed"
+        )
 
     return results

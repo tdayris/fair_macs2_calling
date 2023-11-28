@@ -1,0 +1,71 @@
+$schema: "http://json-schema.org/draft-04/schema#"
+
+description: snakemake configuration file
+
+type: object
+
+
+genomes:
+  type: string
+  description: Path to the CSV file defining genome properties
+
+
+samples:
+  type: string
+  description: Path to the CSV file defining samples and their corresponding fastq paths
+
+params:
+  type: object
+  bowtie2:
+    type: object
+    description: Optional parameters for bowtie2
+    build:
+      type: string
+      description: Optional parameters for bowtie2-build
+    align:
+      type: string
+      description: Optional parameters for bowtie2-align
+
+
+  sambamba:
+    type: object
+    description: Optional parameters for sambamba
+    view:
+      type: string
+      description: Optional parameters for sambamba view filters
+    markdup:
+      type: string
+      description: Optional parameters for sambamba markdup
+
+
+  macs2:
+    type: object
+    description: Optional parameters for Macs2
+    callpeak:
+      type: string
+      description: Optional parameters for Macs2 Callpeak
+
+
+  homer:
+    type: object
+    description: Optional parameters for Homer
+    annotatepeaks:
+      type: string
+      description: Optional parameters for Homer AnnotatePeaks
+
+
+  deeptools:
+    type: object
+    description: Optional parameters for DeepTools
+    bamcoverage:
+      type: string
+      description: Optional parameters for DeepTools bamCoverage
+    plot_coverage:
+      type: string
+      description: Optional parameters for DeepTools plotCoverage
+    plot_fingerprint:
+      type: string
+      description: Optional parameters for DeepTools plotFingerprint
+
+required:
+  - samples

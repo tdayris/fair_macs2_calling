@@ -1,0 +1,9 @@
+include: "rules/common.smk"
+include: "rules/fair_bowtie2_mapping.smk"
+include: "rules/deeptools.smk"
+include: "rules/macs2.smk"
+include: "rules/homer.smk"
+
+use rule target from fair_bowtie2_mapping with:
+    input:
+        unpack(get_targets)
