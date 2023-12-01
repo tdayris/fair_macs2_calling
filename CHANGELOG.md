@@ -6,4 +6,6 @@
 * macs2 calls peaks in both narrow and broad modes
 * homer annotates peaks
 * deeptools plotcoverage and plotfingerprint
+* integration of fair_bowtie2_mapping
+* integration of fair_genome_indexer
 * Snakemake workflow complete

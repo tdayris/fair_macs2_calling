@@ -1,9 +1,25 @@
 include: "rules/common.smk"
-include: "rules/fair_bowtie2_mapping.smk"
+
+
+if config.get("load_fair_genome_indexer", True):
+
+    include: "rules/fair_genome_indexer.smk"
+
+
+if config.get("load_fair_bowtie2_mapping", True):
+
+    include: "rules/fair_bowtie2_mapping.smk"
+
+
 include: "rules/deeptools.smk"
 include: "rules/macs2.smk"
 include: "rules/homer.smk"
 
-use rule target from fair_bowtie2_mapping with:
+
+rule macs2_calling_pipeline_targets:
     input:
-        unpack(get_targets)
+        unpack(get_macs2_calling_pipeline_targets),
+    log:
+        "logs/macs2_calling_pipeline_targets.log",
+    benchmark:
+        "benchmark/macs2_calling_pipeline_targets.tsv"

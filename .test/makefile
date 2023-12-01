@@ -1,17 +1,19 @@
 SHELL=/usr/bin/bash
 .ONESHELL:
 .SHELLFLAGS := -euic
-.DELETE_ON_ERROR: linter_info.txt format.txt pipeline.txt
+.DELETE_ON_ERROR: linter_info.txt format.txt pipeline.txt report.txt
 
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
 # List of snakefiles to lint
 snakefiles := \
-	"../workflow/rules/deeptools.smk \
+	"../workflow/rules/deeptools.smk" \
 	"../workflow/rules/homer.smk" \
 	"../workflow/rules/macs2.smk" \
+	"../workflow/rules/fair_genome_indexer.smk" \
 	"../workflow/rules/fair_bowtie2_mapping.smk" \
+	"../workflow/rules/common.smk" \
 	"../workflow/Snakefile"
 
 
@@ -19,7 +21,7 @@ snakefiles := \
 all: report.txt
 
 
-dag.png:
+dag.png: format.txt linter.txt
 	mamba activate test-snakemake-wrappers && \
 	snakemake -s ../workflow/Snakefile \
 		--rulegraph --forceall | dot -Tpng > dag.png && \
@@ -56,11 +58,11 @@ linter.txt:
 clean:
 	rm -rv linter.txt \
 		   format.txt \
-		   pipeline_pair_ended.txt \
-		   pipeline_single_ended.txt \
-		   pipeline_complex.txt \
 		   reference \
 		   results \
 		   tmp \
 		   logs \
-		   benchmark
+		   benchmark \
+		   report.html \
+		   report.txt \
+		   pipeline.txt

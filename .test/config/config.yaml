@@ -1,0 +1,41 @@
+samples: config/samples.csv
+
+# Optional parameters
+params:
+  bowtie2:
+    # Optional parameters for bowtie2-build
+    build: ""
+    # Optional parameters for bowtie2-align
+    align: ""
+  sambamba:
+    # Optional parameters for sambamba view
+    view: "--format 'bam' --filter 'mapping_quality >= 30 and not (unmapped or mate_is_unmapped)' "
+    # Optional parameters for sambamba markdup
+    markdup: "--remove-duplicates"
+  picard:
+    # Mapping QC optional parameters
+    metrics: ""
+  macs2:
+    # Optional parameters for Macs2 Callpeaks
+    callpeak: ""
+  homer:
+    # Optional parameters for Homer AnnotatePeaks
+    annotatepeaks: ""
+  deeptools:
+    # Optional parameters for DeepTools bamCoverage
+    bamcoverage: ""
+    # Optional parameters for DeepTools plotCoverage
+    plot_coverage: ""
+    # Optional parameters for DeepTools plotFingerprint
+    plot_fingerprint: ""
+  
+# Optional path to a `genome.csv` file
+genomes: config/genomes.csv
+
+# Internal use only, not described in documentation.
+# `false` deactivate import of fair_genome_indexer pipeline.
+# Requires the file `genome.csv` to be filled.
+# load_fair_genome_indexer: true
+# `false` deactivate import of fair_bowtie2_mapping pipeline.
+# Requires the file `samples.csv` to be filled with bam.
+# load_fair_bowtie2_mapping: true

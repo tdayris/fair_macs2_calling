@@ -32,6 +32,7 @@ samples: pandas.DataFrame = pandas.read_csv(
     comment="#",
     dtype=str,
 )
+samples = samples.where(samples.notnull(), None)
 snakemake.utils.validate(samples, "../schemas/samples.schema.yaml")
 
 # This is here for compatibility with
@@ -49,6 +50,7 @@ if genome_table_path:
         comment="#",
         dtype=str,
     )
+    genomes = genomes.where(genomes.notnull(), None)
 else:
     genomes: pandas.DataFrame = samples[
         ["species", "build", "release"]
@@ -58,13 +60,16 @@ else:
 
 snakemake.utils.validate(genomes, "../schemas/genomes.schema.yaml")
 
-snakemake_wrappers_version: str = "v2.13.0"
+snakemake_wrappers_version: str = "v3.0.0"
 
-report: "../report/workflows.rst"
+
+report: "../report/workflow.rst"
+
 
 release_list: List[str] = list(set(genomes.release.tolist()))
 build_list: List[str] = list(set(genomes.build.tolist()))
 species_list: List[str] = list(set(genomes.species.tolist()))
+
 
 wildcard_constraints:
     sample=r"|".join(samples.sample_id),
@@ -73,16 +78,93 @@ wildcard_constraints:
     species=r"|".join(species_list),
 
 
-def get_sample_data_as_dict(sample: str, samples: pandas.DataFrame = samples) -> Dict[str, Any]:
+def get_sample_information(
+    wildcards: snakemake.io.Wildcards, samples: pandas.DataFrame
+) -> Dict[str, Optional[str]]:
     """
-    Return single-sample information as a dictionary
+    Return sample information for a given {sample} wildcards
+
+    Parameters:
+    wildcards (snakemake.io.Wildcards): Required for snakemake unpacking function
+    samples   (pandas.DataFrame)      : Describe samples and their input files
+
+    Return (Dict[str, Optional[str]]):
+    Sample information
     """
-    return samples[
-        samples.sample_id == sample
-    ].to_dict(orient="index")[0]
+    result: Optional[str] = samples.loc[(samples["sample_id"] == str(wildcards.sample))]
+    if len(result) > 0:
+        return next(iter(result.to_dict(orient="index").values()))
+    return defaultdict(lambda: None)
 
 
-def get_macs2_callpeak_input(wildcards: snakemake.io.Wildcards, samples: pandas.DataFrame = samples) -> Dict[str, str]:
+def get_effective_genome_size(wildcards: snakemake.io.Wildcards, genomes: pandas.DataFrame = genomes) -> Optional[str]:
+    """
+    Return effective genome size if available in genomes table
+
+    Parameters:
+    wildcards (snakemake.io.Wildcards): Required for snakemake unpacking function
+    genomes   (pandas.DataFrame)      : Genome description and reference file paths
+
+    Return    (Optional[str])
+    effective genome size if available else None
+    """
+    genome_data: Dict[str, Optional[str]] = genomes.loc[
+        (genomes.species == str(wildcards.species)) &
+        (genomes.build == str(wildcards.build)) &
+        (genomes.release == str(wildcards.release))
+    ]
+    if len(genome_data) > 0:
+        return next(iter(genome_data.to_dict(orient="index").values())).get("effective_genome_size")
+    return None
+
+
+
+def get_deeptools_bamcoverage_input(
+    wildcards: snakemake.io.Wildcards, genome: pandas.DataFrame = genomes
+) -> Dict[str, str]:
+    """
+    Return expected input files for DeepTools bamCoverage, according to user-input,
+    and snakemake-wrapper requirements
+
+    Parameters:
+    wildcards (snakemake.io.Wildcards): Required for snakemake unpacking function
+    genomes   (pandas.DataFrame)      : Genome description and reference file paths
+
+    Return (Dict[str, str]):
+    Dictionnary of all input files as required by DeepTools bamCoverage's snakemake-wrapper
+    """
+    species: str = str(wildcards.species)
+    build: str = str(wildcards.build)
+    release: str = str(wildcards.release)
+    sample_id: str = str(wildcards.sample)
+    datatype: str = "dna"
+
+    results: Dict[str, str] = {
+        "bam": f"results/{species}.{build}.{release}.{datatype}/Mapping/{sample_id}.bam",
+        "bai": f"results/{species}.{build}.{release}.{datatype}/Mapping/{sample_id}.bam.bai",
+    }
+
+    genome_data: Dict[str, Optional[str]] = genomes.loc[
+        (genomes["species"] == str(wildcards.species))
+        & (genomes["build"] == str(wildcards.build))
+        & (genomes["release"] == str(wildcards.release))
+    ]
+    if len(genome_data) > 0:
+        blacklist = next(iter(genome_data.to_dict(orient="index").values())).get("blacklist")
+
+    if blacklist:
+        results["blacklist"] = blacklist
+    elif build in ["GRCh38", "GRCh37", "GRCm38", "NCBIM37"]:
+        results[
+            "blacklist"
+        ] = f"reference/blacklist/{species}.{build}.{release}.merged.bed"
+
+    return results
+
+
+def get_macs2_callpeak_input(
+    wildcards: snakemake.io.Wildcards, samples: pandas.DataFrame = samples
+) -> Dict[str, str]:
     """
     Return expected input files for Macs2 peak calling, according to user-input,
     and snakemake-wrapper requirements
@@ -94,7 +176,7 @@ def get_macs2_callpeak_input(wildcards: snakemake.io.Wildcards, samples: pandas.
     Return (Dict[str, str]):
     Dictionnary of all input files as required by Macs2's snakemake-wrapper
     """
-    sample_data = get_sample_data_as_dict(sample=str(wildcards.sample), samples=samples)
+    sample_data = get_sample_information(wildcards, samples=samples)
     species: str = str(wildcards.species)
     build: str = str(wildcards.build)
     release: str = str(wildcards.release)
@@ -103,24 +185,27 @@ def get_macs2_callpeak_input(wildcards: snakemake.io.Wildcards, samples: pandas.
 
     input_sample = sample_data.get("input")
     if input_sample:
-        input_data = get_sample_data_as_dict(sample=input_sample, samples=samples)
+        input_data = get_sample_information(wildcards, samples=samples)
         input_id: str = str(input_data["sample_id"])
 
         return {
-            treatment: f"results/Mapping/{species}.{build}.{release}.{datatype}/{sample_id}.bam",
-            treatment_index: f"results/Mapping/{species}.{build}.{release}.{datatype}/{sample_id}.bam.bai",
-            control: f"results/Mapping/{species}.{build}.{release}.{datatype}/{input_id}.bam",
-            control_index: f"results/Mapping/{species}.{build}.{release}.{datatype}/{input_id}.bam.bai",
+            "treatment": f"results/{species}.{build}.{release}.{datatype}/Mapping/{sample_id}.bam",
+            "treatment_index": f"results/{species}.{build}.{release}.{datatype}/Mapping/{sample_id}.bam.bai",
+            "control": f"results/{species}.{build}.{release}.{datatype}/Mapping/{input_id}.bam",
+            "control_index": f"results/{species}.{build}.{release}.{datatype}/Mapping/{input_id}.bam.bai",
         }
-    
+
     return {
-        treatment: f"results/Mapping/{species}.{build}.{release}.{datatype}/{sample_id}.bam",
-        treatment_index: f"results/Mapping/{species}.{build}.{release}.{datatype}/{sample_id}.bam.bai",
+        "treatment": f"results/{species}.{build}.{release}.{datatype}/Mapping/{sample_id}.bam",
+        "treatment_index": f"results/{species}.{build}.{release}.{datatype}/Mapping/{sample_id}.bam.bai",
     }
 
 
-
-def get_macs2_callpeak_params(wildcards: snakemake.io.Wildcards, samples: pandas.DataFrame = samples, config: Dict[str, Any] = config) -> str:
+def get_macs2_callpeak_params(
+    wildcards: snakemake.io.Wildcards,
+    samples: pandas.DataFrame = samples,
+    config: Dict[str, Any] = config,
+) -> str:
     """
     Return expected parameters for Macs2 peak calling, according to user-input,
     and snakemake-wrapper requirements
@@ -132,16 +217,15 @@ def get_macs2_callpeak_params(wildcards: snakemake.io.Wildcards, samples: pandas
     Return (str):
     Parameters as string, as required by Macs2's snakemake-wrapper
     """
-    results: str = config.get("params" ,{}).get("macs2", {}).get("callpeak", "")
+    results: str = config.get("params", {}).get("macs2", {}).get("callpeak", "")
 
-    sample_data = get_sample_data_as_dict(sample=str(wildcards.sample), samples=samples)
+    sample_data = get_sample_information(wildcards, samples=samples)
     if sample_data.get("downstream_file", False):
         if " BAMPE " not in results:
             results += " --format BAMPE "
 
         if "--nomodel" not in results:
             results += " --nomodel "
-
 
     species: str = str(sample_data["species"])
     if species.lower() == "homo_sapiens" and " hs " not in results:
@@ -156,9 +240,11 @@ def get_macs2_callpeak_params(wildcards: snakemake.io.Wildcards, samples: pandas
     return results
 
 
-def get_deeptools_plotcoverage_input(wildcards: snakemake.io.Wildcards, samples: pandas.DataFrame = samples) -> Dict[str, List[str]]:
+def get_deeptools_plotcoverage_input(
+    wildcards: snakemake.io.Wildcards, samples: pandas.DataFrame = samples
+) -> Dict[str, List[str]]:
     """
-    Return expected input files for deeptools plotCoverage, 
+    Return expected input files for deeptools plotCoverage,
     according to user-input, and snakemake-wrapper requirements
 
     Parameters:
@@ -172,10 +258,23 @@ def get_deeptools_plotcoverage_input(wildcards: snakemake.io.Wildcards, samples:
     species: str = str(wildcards.species)
     build: str = str(wildcards.build)
     release: str = str(wildcards.release)
-    results["blacklist"] = f"reference/blacklist/{species}.{build}.{release}.merged.bed"
+    genome_data: Dict[str, Optional[str]] = genomes.loc[
+        (genomes["species"] == str(wildcards.species))
+        & (genomes["build"] == str(wildcards.build))
+        & (genomes["release"] == str(wildcards.release))
+    ]
+    if len(genome_data) > 0:
+        blacklist = next(iter(genome_data.to_dict(orient="index").values())).get("blacklist")
 
-    genome_restricted_samples: pandas.DataFrame = samples[
-        samples.species == species & samples.build == build & samples.release == release
+    if blacklist:
+        results["blacklist"] = blacklist
+    elif build in ["GRCh38", "GRCh37", "GRCm38", "NCBIM37"]:
+        results[
+            "blacklist"
+        ] = f"reference/blacklist/{species}.{build}.{release}.merged.bed"
+
+    genome_restricted_samples: pandas.DataFrame = samples.loc[
+        (samples.species == species) & (samples.build == build) & (samples.release == release)
     ]
 
     datatype: str = "dna"
@@ -187,16 +286,21 @@ def get_deeptools_plotcoverage_input(wildcards: snakemake.io.Wildcards, samples:
     )
 
     for sample, species, build, release in sample_iterator:
-        results["bam"].append(f"results/{species}.{build}.{release}.{datatype}/Mapping/{sample}.bam")
-        results["bai"].append(f"results/{species}.{build}.{release}.{datatype}/Mapping/{sample}.bam.bai")
+        results["bam"].append(
+            f"results/{species}.{build}.{release}.{datatype}/Mapping/{sample}.bam"
+        )
+        results["bai"].append(
+            f"results/{species}.{build}.{release}.{datatype}/Mapping/{sample}.bam.bai"
+        )
 
     return results
 
 
-
-def get_deeptools_plotfingerprint_input(wildcards: snakemake.io.Wildcards, samples: pandas.DataFrame = samples) -> Dict[str, List[str]]:
+def get_deeptools_fingerprint_input(
+    wildcards: snakemake.io.Wildcards, samples: pandas.DataFrame = samples
+) -> Dict[str, List[str]]:
     """
-    Return expected input files for deeptools plotfingerprint, 
+    Return expected input files for deeptools plotfingerprint,
     according to user-input, and snakemake-wrapper requirements
 
     Parameters:
@@ -211,8 +315,8 @@ def get_deeptools_plotfingerprint_input(wildcards: snakemake.io.Wildcards, sampl
     build: str = str(wildcards.build)
     release: str = str(wildcards.release)
 
-    genome_restricted_samples: pandas.DataFrame = samples[
-        samples.species == species & samples.build == build & samples.release == release
+    genome_restricted_samples: pandas.DataFrame = samples.loc[
+        (samples.species == species) & (samples.build == build) & (samples.release == release)
     ]
 
     datatype: str = "dna"
@@ -224,16 +328,21 @@ def get_deeptools_plotfingerprint_input(wildcards: snakemake.io.Wildcards, sampl
     )
 
     for sample, species, build, release in sample_iterator:
-        results["bam_files"].append(f"results/{species}.{build}.{release}.{datatype}/Mapping/{sample}.bam")
-        results["bam_idx"].append(f"results/{species}.{build}.{release}.{datatype}/Mapping/{sample}.bam.bai")
+        results["bam_files"].append(
+            f"results/{species}.{build}.{release}.{datatype}/Mapping/{sample}.bam"
+        )
+        results["bam_idx"].append(
+            f"results/{species}.{build}.{release}.{datatype}/Mapping/{sample}.bam.bai"
+        )
 
     return results
 
 
-
-def get_multiqc_report_peak_input(wildcards: snakemake.io.Wildcards, sample: pandas.DataFrame = samples) -> Dict[str, Union[str, List[str]]]:
+def get_multiqc_macs2_peakcalling_report_input(
+    wildcards: snakemake.io.Wildcards, sample: pandas.DataFrame = samples
+) -> Dict[str, Union[str, List[str]]]:
     """
-    Return expected input files for Multiqc peak calling report, 
+    Return expected input files for Multiqc peak calling report,
     according to user-input, and snakemake-wrapper requirements
 
     Parameters:
@@ -244,7 +353,12 @@ def get_multiqc_report_peak_input(wildcards: snakemake.io.Wildcards, sample: pan
     Input files dict, as required by MultiQC's snakemake-wrapper
     """
     results: Dict[str, Union[str, List[str]]] = {
-        "picard_qc": [], "fasp": [], "macs2": [], "deeptools_coverage": [], "deeptools_fingerprint": []
+        "picard_qc": [],
+        "fasp": [],
+        "macs2": [],
+        "deeptools_coverage": [],
+        "deeptools_fingerprint": [],
+        "bowtie2": [],
     }
 
     datatype: str = "dna"
@@ -275,7 +389,7 @@ def get_multiqc_report_peak_input(wildcards: snakemake.io.Wildcards, sample: pan
         results["macs2"].append(
             f"tmp/macs2/{species}.{build}.{release}.dna/broadPeak/{sample}_peaks.xls"
         )
-        
+
         results["deeptools_coverage"].append(
             f"tmp/deeptools/plotcoverage/{species}.{build}.{release}.{datatype}/Coverage.raw"
         )
@@ -291,11 +405,13 @@ def get_multiqc_report_peak_input(wildcards: snakemake.io.Wildcards, sample: pan
             f"tmp/deeptools/plot_fingerprint/{species}.{build}.{release}.{datatype}/qc_metrics.txt"
         )
 
-        downstream_file: Optional[str] = (
-            samples[samples.sample_id == sample]
-            .to_dict(orient="index")[0]
-            .get("downstream_file")
-        )
+        results[
+            "bowtie2"
+        ] = f"logs/bowtie2/align/{species}.{build}.{release}.{datatype}/{sample}.log"
+
+        sample_data: Dict[str, Optional[str]] = get_sample_information(snakemake.io.Wildcards(fromdict={"sample": sample}), samples)
+        downstream_file: Optional[str] = sample_data.get("downstream_file")
+
         if downstream_file:
             results["fastp"].append(f"tmp/fastp/report_pe/{sample}.json")
             results["fastp"].append(f"results/QC/report_pe/{sample}.html")
@@ -306,9 +422,13 @@ def get_multiqc_report_peak_input(wildcards: snakemake.io.Wildcards, sample: pan
     return results
 
 
-def get_targets(wildcards: snakemake.io.Wildcards, samples: pandas.DataFrame = samples, config: Dict[str, Any] = config) -> Dict[str, List[str]]:
+def get_macs2_calling_pipeline_targets(
+    wildcards: snakemake.io.Wildcards,
+    samples: pandas.DataFrame = samples,
+    config: Dict[str, Any] = config,
+) -> Dict[str, List[str]]:
     """
-    Return expected output files for this pipeline, 
+    Return expected output files for this pipeline,
     according to user-input, and snakemake requirements
 
     Parameters:
@@ -320,13 +440,9 @@ def get_targets(wildcards: snakemake.io.Wildcards, samples: pandas.DataFrame = s
     Output files dict
     """
     results: Dict[str, List[str]] = {
-        "multiqc": [
-            "results/QC/MultiQC.html",
-            "results/QC/MultiQC_data.zip",
-        ],
-        "bams": [],
-        "bais": [],
         "coverage": [],
+        "homer": [],
+        "bedtools": [],
     }
     sample_iterator = zip(
         samples.sample_id,
@@ -335,24 +451,24 @@ def get_targets(wildcards: snakemake.io.Wildcards, samples: pandas.DataFrame = s
         samples.release,
     )
     for sample, species, build, release in sample_iterator:
-        results["bams"].append(
-            f"results/{species}.{build}.{release}.dna/Mapping/{sample}.bam"
-        )
-
-        results["bais"].append(
-            f"results/{species}.{build}.{release}.dna/Mapping/{sample}.bam.bai"
-        )
-
         results["coverage"].append(
-            f"results/{species}.{build}.{release}.{datatype}/Coverage/{sample}.bw"
+            f"results/{species}.{build}.{release}.dna/Coverage/{sample}.bw"
         )
 
         results["homer"].append(
-            f"results/{species}.{build}.{release}.dna/PeakCalling/{sample}.narroPeak.bed"
+            f"results/{species}.{build}.{release}.dna/PeakCalling/{sample}.narrowPeak.bed"
         )
 
         results["homer"].append(
             f"results/{species}.{build}.{release}.dna/PeakCalling/{sample}.broadPeak.bed"
+        )
+
+        results["bedtools"].append(
+            f"results/{species}.{build}.{release}.dna/PlotCoverage.png"
+        )
+
+        results["bedtools"].append(
+            f"results/{species}.{build}.{release}.dna/PlotFingerprint.png"
         )
 
     return results

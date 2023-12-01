@@ -1,3 +1,4 @@
+# git submodule add --force --name ".test/data" https://github.com/snakemake-workflows/ngs-test-data.git .test/data
 [submodule ".test/data"]
 	path = .test/data
 	url = https://github.com/snakemake-workflows/ngs-test-data.git
