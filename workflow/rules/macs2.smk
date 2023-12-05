@@ -2,7 +2,9 @@ rule macs2_callpeak_narrow:
     input:
         unpack(get_macs2_callpeak_input),
     output:
-        temp("tmp/macs2/{species}.{build}.{release}.{datatype}/narrowPeak/{sample}_peaks.xls"),
+        temp(
+            "tmp/macs2/{species}.{build}.{release}.{datatype}/narrowPeak/{sample}_peaks.xls"
+        ),
         temp(
             ensure(
                 "tmp/macs2/{species}.{build}.{release}.{datatype}/narrowPeak/{sample}_peaks.narrowPeak",
@@ -24,7 +26,9 @@ rule macs2_callpeak_narrow:
 
 use rule macs2_callpeak_narrow as macs2_callpeak_broad with:
     output:
-        temp("tmp/macs2/{species}.{build}.{release}.{datatype}/broadPeak/{sample}_peaks.xls"),
+        temp(
+            "tmp/macs2/{species}.{build}.{release}.{datatype}/broadPeak/{sample}_peaks.xls"
+        ),
         temp(
             ensure(
                 "tmp/macs2/{species}.{build}.{release}.{datatype}/broadPeak/{sample}_peaks.broadPeak",

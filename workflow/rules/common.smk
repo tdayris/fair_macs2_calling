@@ -97,7 +97,9 @@ def get_sample_information(
     return defaultdict(lambda: None)
 
 
-def get_effective_genome_size(wildcards: snakemake.io.Wildcards, genomes: pandas.DataFrame = genomes) -> Optional[str]:
+def get_effective_genome_size(
+    wildcards: snakemake.io.Wildcards, genomes: pandas.DataFrame = genomes
+) -> Optional[str]:
     """
     Return effective genome size if available in genomes table
 
@@ -109,14 +111,15 @@ def get_effective_genome_size(wildcards: snakemake.io.Wildcards, genomes: pandas
     effective genome size if available else None
     """
     genome_data: Dict[str, Optional[str]] = genomes.loc[
-        (genomes.species == str(wildcards.species)) &
-        (genomes.build == str(wildcards.build)) &
-        (genomes.release == str(wildcards.release))
+        (genomes.species == str(wildcards.species))
+        & (genomes.build == str(wildcards.build))
+        & (genomes.release == str(wildcards.release))
     ]
     if len(genome_data) > 0:
-        return next(iter(genome_data.to_dict(orient="index").values())).get("effective_genome_size")
+        return next(iter(genome_data.to_dict(orient="index").values())).get(
+            "effective_genome_size"
+        )
     return None
-
 
 
 def get_deeptools_bamcoverage_input(
@@ -150,7 +153,9 @@ def get_deeptools_bamcoverage_input(
         & (genomes["release"] == str(wildcards.release))
     ]
     if len(genome_data) > 0:
-        blacklist = next(iter(genome_data.to_dict(orient="index").values())).get("blacklist")
+        blacklist = next(iter(genome_data.to_dict(orient="index").values())).get(
+            "blacklist"
+        )
 
     if blacklist:
         results["blacklist"] = blacklist
@@ -264,7 +269,9 @@ def get_deeptools_plotcoverage_input(
         & (genomes["release"] == str(wildcards.release))
     ]
     if len(genome_data) > 0:
-        blacklist = next(iter(genome_data.to_dict(orient="index").values())).get("blacklist")
+        blacklist = next(iter(genome_data.to_dict(orient="index").values())).get(
+            "blacklist"
+        )
 
     if blacklist:
         results["blacklist"] = blacklist
@@ -274,7 +281,9 @@ def get_deeptools_plotcoverage_input(
         ] = f"reference/blacklist/{species}.{build}.{release}.merged.bed"
 
     genome_restricted_samples: pandas.DataFrame = samples.loc[
-        (samples.species == species) & (samples.build == build) & (samples.release == release)
+        (samples.species == species)
+        & (samples.build == build)
+        & (samples.release == release)
     ]
 
     datatype: str = "dna"
@@ -316,7 +325,9 @@ def get_deeptools_fingerprint_input(
     release: str = str(wildcards.release)
 
     genome_restricted_samples: pandas.DataFrame = samples.loc[
-        (samples.species == species) & (samples.build == build) & (samples.release == release)
+        (samples.species == species)
+        & (samples.build == build)
+        & (samples.release == release)
     ]
 
     datatype: str = "dna"
@@ -409,7 +420,9 @@ def get_multiqc_macs2_peakcalling_report_input(
             "bowtie2"
         ] = f"logs/bowtie2/align/{species}.{build}.{release}.{datatype}/{sample}.log"
 
-        sample_data: Dict[str, Optional[str]] = get_sample_information(snakemake.io.Wildcards(fromdict={"sample": sample}), samples)
+        sample_data: Dict[str, Optional[str]] = get_sample_information(
+            snakemake.io.Wildcards(fromdict={"sample": sample}), samples
+        )
         downstream_file: Optional[str] = sample_data.get("downstream_file")
 
         if downstream_file:

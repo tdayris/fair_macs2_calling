@@ -1,6 +1,6 @@
 module fair_bowtie2_mapping:
     snakefile:
-        github("tdayris/fair_bowtie2_mapping", path="workflow/Snakefile", tag="2.2.4")
+        github("tdayris/fair_bowtie2_mapping", path="workflow/Snakefile", tag="2.2.5")
     config:
         {
             "samples": config["samples"],

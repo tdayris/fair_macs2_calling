@@ -11,7 +11,9 @@ rule deeptools_bamcoverage:
         "benchmark/deeptools/bamcoverage/{species}.{build}.{release}.{datatype}/{sample}.tsv"
     params:
         genome="{build}",
-        effective_genome_size=lambda wildcards: get_effective_genome_size(wildcards, genomes),
+        effective_genome_size=lambda wildcards: get_effective_genome_size(
+            wildcards, genomes
+        ),
         extra=config.get("params", {}).get("deeptools", {}).get("bamcoverage", ""),
     wrapper:
         f"{snakemake_wrappers_version}/bio/deeptools/bamcoverage"

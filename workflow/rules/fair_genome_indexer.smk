@@ -1,6 +1,6 @@
 module fair_genome_indexer:
     snakefile:
-        github("tdayris/fair_genome_indexer", path="workflow/Snakefile", tag="2.2.0")
+        github("tdayris/fair_genome_indexer", path="workflow/Snakefile", tag="2.3.0")
     config:
         {"genomes": config["genomes"]}
 
