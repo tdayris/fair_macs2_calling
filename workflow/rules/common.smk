@@ -426,10 +426,10 @@ def get_multiqc_macs2_peakcalling_report_input(
         downstream_file: Optional[str] = sample_data.get("downstream_file")
 
         if downstream_file:
-            results["fastp"].append(f"tmp/fastp/report_pe/{sample}.json")
+            results["fastp"].append(f"tmp/fastp/report_pe/{sample}.fastp.json")
             results["fastp"].append(f"results/QC/report_pe/{sample}.html")
         else:
-            results["fastp"].append(f"tmp/fastp/report_se/{sample}.json")
+            results["fastp"].append(f"tmp/fastp/report_se/{sample}.fastp.json")
             results["fastp"].append(f"results/QC/report_se/{sample}.html")
 
     return results
@@ -456,6 +456,10 @@ def get_macs2_calling_pipeline_targets(
         "coverage": [],
         "homer": [],
         "bedtools": [],
+        "multiqc": [
+            "results/QC/MultiQC.html",
+            "results/QC/MultiQC_data.zip",
+        ],
     }
     sample_iterator = zip(
         samples.sample_id,
