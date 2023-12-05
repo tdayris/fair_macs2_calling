@@ -259,7 +259,7 @@ def get_deeptools_plotcoverage_input(
     Return (Dict[str, List[str]]):
     Input files dict, as required by deeptools plotCoverage's snakemake-wrapper
     """
-    results: Dict[str, List[str]] = {"bam": [], "bai": []}
+    results: Dict[str, List[str]] = {"bams": [], "bais": []}
     species: str = str(wildcards.species)
     build: str = str(wildcards.build)
     release: str = str(wildcards.release)
@@ -295,10 +295,10 @@ def get_deeptools_plotcoverage_input(
     )
 
     for sample, species, build, release in sample_iterator:
-        results["bam"].append(
+        results["bams"].append(
             f"results/{species}.{build}.{release}.{datatype}/Mapping/{sample}.bam"
         )
-        results["bai"].append(
+        results["bais"].append(
             f"results/{species}.{build}.{release}.{datatype}/Mapping/{sample}.bam.bai"
         )
 

@@ -25,7 +25,7 @@ params:
     # Optional parameters for DeepTools bamCoverage
     bamcoverage: ""
     # Optional parameters for DeepTools plotCoverage
-    plot_coverage: ""
+    plot_coverage: "--coverageThresholds 1"
     # Optional parameters for DeepTools plotFingerprint
     plot_fingerprint: ""
   

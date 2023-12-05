@@ -9,6 +9,10 @@ set-threads:
   sambamba_sort: 6
   sambamba_view: 6
   sambamba_markdup: 6
+  deeptools_fingerprint: 6
+  deeptools_plotcoverage: 6
+  deeptools_bamcoverage: 6
+
 
 set-resources:
   bedtools_merge_blacklist:
@@ -43,3 +47,12 @@ set-resources:
   picard_create_multiple_metrics:
     mem_mb: 6144
     runtime: 45
+  deeptools_bamcoverage:
+    mem_mb: 10240
+    runtime: 60
+  deeptools_plotcoverage:
+    mem_mb: 10240
+    runtime: 60
+  deeptools_fingerprint:
+    mem_mb: 10240
+    runtime: 60

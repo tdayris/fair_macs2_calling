@@ -4,7 +4,7 @@ rule homer_annotate_peaks:
         genome_index="reference/{species}.{build}.{release}.{datatype}.fasta.fai",
         gtf="reference/{species}.{build}.{release}.gtf",
         wig="results/{species}.{build}.{release}.{datatype}/Coverage/{sample}.bw",
-        peak="tmp/xsv_select/{species}.{build}.{release}.{datatype}/{macs2_preak_type}/{sample}_peaks.{macs2_preak_type}.bed",
+        peaks="tmp/xsv_select/{species}.{build}.{release}.{datatype}/{macs2_preak_type}/{sample}_peaks.{macs2_preak_type}.bed",
     output:
         annotations=protected(
             "results/{species}.{build}.{release}.{datatype}/PeakCalling/{sample}.{macs2_preak_type}.bed"

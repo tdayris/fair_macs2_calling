@@ -46,7 +46,7 @@ use rule macs2_callpeak_narrow as macs2_callpeak_broad with:
 
 rule macs2_preaks_to_bed:
     input:
-        "tmp/macs2/{species}.{build}.{release}.{datatype}/{macs2_preak_type}/{sample}_peaks.{macs2_preak_type}",
+        table="tmp/macs2/{species}.{build}.{release}.{datatype}/{macs2_preak_type}/{sample}_peaks.{macs2_preak_type}",
     output:
         temp(
             "tmp/xsv_select/{species}.{build}.{release}.{datatype}/{macs2_preak_type}/{sample}_peaks.{macs2_preak_type}.bed"
@@ -57,6 +57,6 @@ rule macs2_preaks_to_bed:
         "benchmark/xsv/select/{species}.{build}.{release}.{datatype}/{sample}.{macs2_preak_type}.tsv"
     params:
         subcommand="select",
-        extra="1-6",
+        extra="1-6 --delimiter $'\t'",
     wrapper:
         f"{snakemake_wrappers_version}/utils/xsv"

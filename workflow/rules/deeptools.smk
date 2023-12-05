@@ -53,7 +53,7 @@ rule deeptools_fingerprint:
     input:
         unpack(get_deeptools_fingerprint_input),
     output:
-        plot=report(
+        fingerprint=report(
             "results/{species}.{build}.{release}.{datatype}/PlotFingerprint.png",
             caption="../report/deeptools_plotfingerprint.rst",
             category="Coverage analysis",
@@ -63,10 +63,10 @@ rule deeptools_fingerprint:
                 "species": "{species}.{build}.{release}",
             },
         ),
-        raw_counts=temp(
+        counts=temp(
             "tmp/deeptools/plot_fingerprint/{species}.{build}.{release}.{datatype}/raw_counts.tab"
         ),
-        metrics=temp(
+        qc_metrics=temp(
             "tmp/deeptools/plot_fingerprint/{species}.{build}.{release}.{datatype}/qc_metrics.txt"
         ),
     log:

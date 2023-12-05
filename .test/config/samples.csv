@@ -1,3 +1,2 @@
 sample_id,upstream_file,downstream_file,species,build,release,input
-sac_a,data/reads/a.scerevisiae.1.fq,data/reads/a.scerevisiae.2.fq,saccharomyces_cerevisiae,R64-1-1,110,sac_input
-sac_input,data/reads/b.scerevisiae.1.fq,,saccharomyces_cerevisiae,R64-1-1,110,
+sac_a,yeast_500k_SRR1822137.1.fq.gz,yeast_500k_SRR1822137.2.fq.gz,saccharomyces_cerevisiae,R64-1-1,110,
