@@ -13,10 +13,6 @@ rule homer_annotate_peaks:
     benchmark:
         "benchmark/homer/annotatepeaks/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.tsv"
     params:
-        mode="tss hg38",
-        #lambda wildcards: get_homer_annotate_peaks_params(
-        #    wildcards, samples, genomes, config
-        #)["mode"],
         extra=lambda wildcards: get_homer_annotate_peaks_params(
             wildcards, samples, genomes, config
         )["extra"],
@@ -26,10 +22,8 @@ rule homer_annotate_peaks:
         "annotatePeaks.pl "
         "{input.peaks} "
         "{input.genome} "
-
         "-wig {input.wig} "
         "-cpu {threads} "
         "{params.extra} "
         "> {output.annotations} "
         "2> {log} "
-        # "{params.mode} "

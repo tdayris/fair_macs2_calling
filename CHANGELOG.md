@@ -9,3 +9,4 @@
 * integration of fair_bowtie2_mapping
 * integration of fair_genome_indexer
 * Snakemake workflow complete
+* deeptools correlation and PCA over all peaks

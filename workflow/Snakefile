@@ -11,7 +11,9 @@ if config.get("load_fair_bowtie2_mapping", True):
     include: "rules/fair_bowtie2_mapping.smk"
 
 
-include: "rules/deeptools.smk"
+include: "rules/bedtools_merge_peaks.smk"
+include: "rules/deeptools_bam_qc.smk"
+include: "rules/deeptools_correlations.smk"
 include: "rules/macs2.smk"
 include: "rules/homer.smk"
 include: "rules/multiqc.smk"

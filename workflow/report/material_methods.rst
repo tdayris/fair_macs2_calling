@@ -6,10 +6,11 @@ and Picard_ [#picardpaper]_ were used to index genome sequences.
 Agat_ [#agatpaper]_ was used to correct common issues found in Ensembl
 genome annotation files.
 
+Raw fastq file quality was assessed with FastQC_ [#fastqcpaper]_.
 Raw fastq files were trimmed using Fastp_ [#fastppaper]_ . Cleaned reads were aligned 
 over indexed Ensembl genome with Bowtie2_ [#bowtie2paper]_. Sambamba_ [#sambambapaper]_ 
 was used to sort, filter, mark duplicates, and compress aligned reads. Quality 
-controls were done using Picard_ [#picardpaper]_. 
+controls were done using Picard_ [#picardpaper]_ and Samtools_ [#samtoolspaper]_.
 
 Genome coverage and associated quality controls were produced by DeepTools_ [#deeptoolspaper]_,
 peak calling was performed with Macs2_ [#macs2paper]_ and annotated with Homer_ [#homerpaper]_.
@@ -23,6 +24,7 @@ usage, and resutls can be found on the `Snakemake workflow`_ page.
 .. [#samtoolspaper] Li, Heng, et al. "The sequence alignment/map format and SAMtools." bioinformatics 25.16 (2009): 2078-2079.
 .. [#picardpaper] McKenna, Aaron, et al. "The Genome Analysis Toolkit: a MapReduce framework for analyzing next-generation DNA sequencing data." Genome research 20.9 (2010): 1297-1303.
 .. [#agatpaper] Dainat J. AGAT: Another Gff Analysis Toolkit to handle annotations in any GTF/GFF format.  (Version v0.7.0). Zenodo. https://www.doi.org/10.5281/zenodo.3552717
+.. [#fastqcpaper] Andrews, S. Fastqc. "A quality control tool for high throughput sequence data. Augen, J.(2004). Bioinformatics in the post-genomic era: Genome, transcriptome, proteome, and information-based medicine." (2010).
 .. [#fastppaper] Chen, Shifu, et al. "fastp: an ultra-fast all-in-one FASTQ preprocessor." Bioinformatics 34.17 (2018): i884-i890.
 .. [#bowtie2paper] Langmead, Ben, and Steven L. Salzberg. "Fast gapped-read alignment with Bowtie 2." Nature methods 9.4 (2012): 357-359.
 .. [#sambambapaper] Tarasov, Artem, et al. "Sambamba: fast processing of NGS alignment formats." Bioinformatics 31.12 (2015): 2032-2034.
@@ -45,8 +47,9 @@ usage, and resutls can be found on the `Snakemake workflow`_ page.
 .. _DeepTools: https://snakemake-wrappers.readthedocs.io/en/v3.0.0/wrappers/deeptools.html
 .. _Macs2: https://snakemake-wrappers.readthedocs.io/en/v3.0.0/wrappers/macs2/callpeak.html
 .. _Homer: https://snakemake-wrappers.readthedocs.io/en/v3.0.0/wrappers/homer/annotatePeaks.html
+.. _FastQC: https://snakemake-wrappers.readthedocs.io/en/v3.0.0/wrappers/fastqc.html
 
 :Authors:
     Thibault Dayris
 
-:Version: 2.2.1 of 11/27/2023
+:Version: 1.0.0 of 12/8/2023

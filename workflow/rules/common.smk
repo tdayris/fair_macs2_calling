@@ -470,7 +470,9 @@ def get_deeptools_fingerprint_input(
 
 
 def get_multiqc_report_input(
-    wildcards: snakemake.io.Wildcards, sample: pandas.DataFrame = samples
+    wildcards: snakemake.io.Wildcards,
+    sample: pandas.DataFrame = samples,
+    config: Dict[str, Any] = config,
 ) -> Dict[str, Union[str, List[str]]]:
     """
     Return expected input files for Multiqc peak calling report,
@@ -479,6 +481,7 @@ def get_multiqc_report_input(
     Parameters:
     wildcards (snakemake.io.Wildcards): Required for snakemake unpacking function
     samples   (pandas.DataFrame)      : Describe sample names and related paths/genome
+    config    (Dict[str, Any])        : User defined configuration
 
     Return (Dict[str, Union[str, List[str]]]):
     Input files dict, as required by MultiQC's snakemake-wrapper
@@ -490,6 +493,8 @@ def get_multiqc_report_input(
         "macs2": [],
         "deeptools_coverage": [],
         "deeptools_fingerprint": [],
+        "deeptools_pca": [],
+        "deeptools_correlation": [],
         "bowtie2": [],
     }
 
@@ -553,6 +558,19 @@ def get_multiqc_report_input(
         else:
             results["fastp"].append(f"tmp/fastp/report_se/{sample}.fastp.json")
             results["fastqc"].append(f"results/QC/report_pe/{sample}_fastqc.zip")
+
+    peak_types: List[str] = (
+        config.get("params", {})
+        .get("macs2", {})
+        .get("modes", ["broadPeak", "narrowPeak"])
+    )
+    for macs2_peak_type in peak_types:
+        results["deeptools_pca"].append(
+            f"tmp/deeptools/plot_pca/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tab"
+        )
+        results["deeptools_correlation"].append(
+            f"tmp/deeptools/plot_correlation/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tab"
+        )
 
     return results
 

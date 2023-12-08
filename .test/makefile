@@ -8,13 +8,15 @@ MAKEFLAGS += --no-builtin-rules
 
 # List of snakefiles to lint
 snakefiles := \
-	"../workflow/rules/deeptools.smk" \
+	"../workflow/rules/deeptools_bam_qc.smk" \
+	"../workflow/rules/deeptools_correlations.smk" \
 	"../workflow/rules/homer.smk" \
 	"../workflow/rules/macs2.smk" \
 	"../workflow/rules/fair_genome_indexer.smk" \
 	"../workflow/rules/fair_bowtie2_mapping.smk" \
 	"../workflow/rules/common.smk" \
 	"../workflow/rules/multiqc.smk" \
+	"../workflow/rules/bedtools_merge_peaks.smk" \
 	"../workflow/Snakefile"
 
 
