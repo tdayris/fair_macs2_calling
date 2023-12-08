@@ -1,2 +1,2 @@
 sample_id,upstream_file,downstream_file,species,build,release,input
-sac_a,yeast_500k_SRR1822137.1.fq.gz,yeast_500k_SRR1822137.2.fq.gz,saccharomyces_cerevisiae,R64-1-1,110,
+sac_a,data/reads/a.chr21.1.fq,data/reads/a.chr21.2.fq,homo_sapiens,GRCh38,99,

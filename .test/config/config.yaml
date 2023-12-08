@@ -9,18 +9,18 @@ params:
     align: ""
   sambamba:
     # Optional parameters for sambamba view
-    view: "--format 'bam' --filter 'mapping_quality >= 30 and not (unmapped or mate_is_unmapped)' "
+    view: "--format 'bam'"
     # Optional parameters for sambamba markdup
-    markdup: "--remove-duplicates"
+    markdup: ""
   picard:
     # Mapping QC optional parameters
     metrics: ""
   macs2:
     # Optional parameters for Macs2 Callpeaks
-    callpeak: ""
+    callpeak: "--keep-dup all --pvalue 1"
   homer:
     # Optional parameters for Homer AnnotatePeaks
-    annotatepeaks: ""
+    annotatepeaks: "-homer2 "
   deeptools:
     # Optional parameters for DeepTools bamCoverage
     bamcoverage: ""

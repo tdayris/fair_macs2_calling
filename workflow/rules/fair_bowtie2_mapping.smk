@@ -1,6 +1,6 @@
 module fair_bowtie2_mapping:
     snakefile:
-        github("tdayris/fair_bowtie2_mapping", path="workflow/Snakefile", tag="2.2.5")
+        github("tdayris/fair_bowtie2_mapping", path="workflow/Snakefile", tag="2.2.6")
     config:
         {
             "samples": config["samples"],
@@ -11,8 +11,3 @@ module fair_bowtie2_mapping:
 
 
 use rule * from fair_bowtie2_mapping as fair_bowtie2_mapping_*
-
-
-use rule fair_bowtie2_mapping_multiqc_report from fair_bowtie2_mapping with:
-    input:
-        unpack(get_multiqc_macs2_peakcalling_report_input),

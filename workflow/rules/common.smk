@@ -3,6 +3,7 @@ import pandas
 import snakemake
 import snakemake.utils
 
+from collections import defaultdict
 from typing import Any, Dict, List, Optional, Union
 
 snakemake.utils.min_version("7.29.0")
@@ -92,6 +93,29 @@ def get_sample_information(
     Sample information
     """
     result: Optional[str] = samples.loc[(samples["sample_id"] == str(wildcards.sample))]
+    if len(result) > 0:
+        return next(iter(result.to_dict(orient="index").values()))
+    return defaultdict(lambda: None)
+
+
+def get_reference_genome_data(
+    wildcards: snakemake.io.Wildcards, genomes: pandas.DataFrame
+) -> Dict[str, Optional[str]]:
+    """
+    Return genome information for a given set of {species, build, release} wildcards
+
+    Parameters:
+    wildcards (snakemake.io.Wildcards): Required for snakemake unpacking function
+    genomes   (pandas.DataFrame)      : Describe genomes and reference file(s)
+
+    Return (Dict[str, Optional[str]]):
+    Genome information
+    """
+    result: Optional[str] = genomes.loc[
+        (genomes["species"] == str(wildcards.species))
+        & (genomes["build"] == str(wildcards.build))
+        & (genomes["release"] == str(wildcards.release))
+    ]
     if len(result) > 0:
         return next(iter(result.to_dict(orient="index").values()))
     return defaultdict(lambda: None)
@@ -210,6 +234,7 @@ def get_macs2_callpeak_params(
     wildcards: snakemake.io.Wildcards,
     samples: pandas.DataFrame = samples,
     config: Dict[str, Any] = config,
+    genomes: pandas.DataFrame = genomes,
 ) -> str:
     """
     Return expected parameters for Macs2 peak calling, according to user-input,
@@ -218,6 +243,7 @@ def get_macs2_callpeak_params(
     Parameters:
     wildcards (snakemake.io.Wildcards): Required for snakemake unpacking function
     samples   (pandas.DataFrame)      : Describe sample names and related paths/genome
+    genomes   (pandas.DataFrame)      : Describe genomes
 
     Return (str):
     Parameters as string, as required by Macs2's snakemake-wrapper
@@ -231,6 +257,8 @@ def get_macs2_callpeak_params(
 
         if "--nomodel" not in results:
             results += " --nomodel "
+    elif "--nolambda" not in results:
+        results += " --nolambda "
 
     species: str = str(sample_data["species"])
     if species.lower() == "homo_sapiens" and " hs " not in results:
@@ -243,6 +271,98 @@ def get_macs2_callpeak_params(
         results += " --gsize ce "
 
     return results
+
+
+def get_homer_annotate_peaks_input(
+    wildcards: snakemake.io.Wildcards,
+    genomes: pandas.DataFrame = genomes,
+    samples: pandas.DataFrame = samples,
+) -> Dict[str, str]:
+    """
+    Return expected input files for Homer annotate peaks,
+    according to user-input, and snakemake-wrapper requirements
+
+    Parameters:
+    wildcards (snakemake.io.Wildcards): Required for snakemake unpacking function
+    samples   (pandas.DataFrame)      : Describe sample names and related paths/genome
+    genomes   (pandas.DataFrame)      : Describe sample names and related paths/genome
+
+    Return (Dict[str, str]):
+    Input files dict, as required by homer annotatepeaks's snakemake-wrapper
+    """
+    datatype: str = "dna"
+    species: str = str(wildcards.species)
+    build: str = str(wildcards.build)
+    release: str = str(wildcards.release)
+    sample: str = str(wildcards.sample)
+    macs2_peak_type: str = str(wildcards.macs2_peak_type)
+    reference: Dict[str, str] = get_reference_genome_data(wildcards, genomes)
+
+    result: Dict[str, str] = {
+        "wig": f"results/{species}.{build}.{release}.{datatype}/Coverage/{sample}.bw",
+        "peaks": f"results/{species}.{build}.{release}.{datatype}/PeakCalling/{macs2_peak_type}_bed/{sample}.{macs2_peak_type}.bed",
+    }
+
+    fasta = reference.get("fasta")
+    result["genome"] = (
+        fasta or f"reference/{species}.{build}.{release}.{datatype}.fasta"
+    )
+
+    fai = reference.get("fasta_index")
+    result["genome_index"] = (
+        fai or f"reference/{species}.{build}.{release}.{datatype}.fasta.fai"
+    )
+
+    gtf = reference.get("gtf")
+    result["gtf"] = gtf or f"reference/{species}.{build}.{release}.gtf"
+
+    return result
+
+
+def get_homer_annotate_peaks_params(
+    wildcards: snakemake.io.Wildcards,
+    samples: pandas.DataFrame = samples,
+    genomes: pandas.DataFrame = genomes,
+    config: Dict[str, Any] = config,
+) -> Dict[str, Optional[str]]:
+    """
+    Return expected parameters for Homer annotate peaks,
+    according to user-input, and snakemake-wrapper requirements
+
+    Parameters:
+    wildcards (snakemake.io.Wildcards): Required for snakemake unpacking function
+    samples   (pandas.DataFrame)      : Describe sample names and related paths/genome
+    genomes   (pandas.DataFrame)      : Describe sample names and related paths/genome
+    config    (Dict[str, Any])        : User defined configuration
+
+    Return (Dict[str, Optional[str]]):
+    Parameters, as required by homer annotatepeaks's snakemake-wrapper
+    """
+    extra: str = config.get("params", {}).get("homer", {}).get("annotatepeaks", "")
+    sample_data: Dict[str, Optional[str]] = get_sample_information(wildcards, samples)
+    fragment_size: Optional[str] = sample_data.get("fragment_size")
+    downstream_file: Optional[str] = sample_data.get("downstream_file")
+
+    if fragment_size and ("fragLength" not in extra) and downstream_file:
+        extra += " -fragLength {fragment_size} "
+
+    mode: Optional[str] = "tss"
+
+    species: str = str(wildcards.species)
+    release: str = str(wildcards.release)
+    if species == "homo_sapiens":
+        if release == "GRCh38":
+            mode = "tss hg38"
+        elif release == "GRCh37":
+            mode = "tss hg19"
+    elif species == "mus_musculus":
+        if release == "GRCm38":
+            mode = "tss mm10"
+
+    return {
+        "extra": extra,
+        "mode": mode,
+    }
 
 
 def get_deeptools_plotcoverage_input(
@@ -349,7 +469,7 @@ def get_deeptools_fingerprint_input(
     return results
 
 
-def get_multiqc_macs2_peakcalling_report_input(
+def get_multiqc_report_input(
     wildcards: snakemake.io.Wildcards, sample: pandas.DataFrame = samples
 ) -> Dict[str, Union[str, List[str]]]:
     """
@@ -365,7 +485,8 @@ def get_multiqc_macs2_peakcalling_report_input(
     """
     results: Dict[str, Union[str, List[str]]] = {
         "picard_qc": [],
-        "fasp": [],
+        "fastp": [],
+        "fastqc": [],
         "macs2": [],
         "deeptools_coverage": [],
         "deeptools_fingerprint": [],
@@ -402,10 +523,10 @@ def get_multiqc_macs2_peakcalling_report_input(
         )
 
         results["deeptools_coverage"].append(
-            f"tmp/deeptools/plotcoverage/{species}.{build}.{release}.{datatype}/Coverage.raw"
+            f"tmp/deeptools/plot_coverage/{species}.{build}.{release}.{datatype}/Coverage.raw"
         )
         results["deeptools_coverage"].append(
-            f"tmp/deeptools/plotcoverage/{species}.{build}.{release}.{datatype}/Coverage.metrics"
+            f"tmp/deeptools/plot_coverage/{species}.{build}.{release}.{datatype}/Coverage.metrics"
         )
 
         results["deeptools_fingerprint"].append(
@@ -427,10 +548,11 @@ def get_multiqc_macs2_peakcalling_report_input(
 
         if downstream_file:
             results["fastp"].append(f"tmp/fastp/report_pe/{sample}.fastp.json")
-            results["fastp"].append(f"results/QC/report_pe/{sample}.html")
+            results["fastqc"].append(f"results/QC/report_pe/{sample}.1_fastqc.zip")
+            results["fastqc"].append(f"results/QC/report_pe/{sample}.2_fastqc.zip")
         else:
             results["fastp"].append(f"tmp/fastp/report_se/{sample}.fastp.json")
-            results["fastp"].append(f"results/QC/report_se/{sample}.html")
+            results["fastqc"].append(f"results/QC/report_pe/{sample}_fastqc.zip")
 
     return results
 
@@ -456,9 +578,10 @@ def get_macs2_calling_pipeline_targets(
         "coverage": [],
         "homer": [],
         "bedtools": [],
+        "mapping": "tmp/targets/fair_bowtie2_mapping_target.flag",
         "multiqc": [
             "results/QC/MultiQC.html",
-            "results/QC/MultiQC_data.zip",
+            "results/QC/MultiQC.PeakCalling.html",
         ],
     }
     sample_iterator = zip(
@@ -473,19 +596,19 @@ def get_macs2_calling_pipeline_targets(
         )
 
         results["homer"].append(
-            f"results/{species}.{build}.{release}.dna/PeakCalling/{sample}.narrowPeak.bed"
+            f"results/{species}.{build}.{release}.dna/PeakCalling/narrowPeak_annotation/{sample}.narrowPeak.tsv"
         )
 
         results["homer"].append(
-            f"results/{species}.{build}.{release}.dna/PeakCalling/{sample}.broadPeak.bed"
+            f"results/{species}.{build}.{release}.dna/PeakCalling/broadPeak_annotation/{sample}.broadPeak.tsv"
         )
 
         results["bedtools"].append(
-            f"results/{species}.{build}.{release}.dna/PlotCoverage.png"
+            f"results/{species}.{build}.{release}.dna/Graphs/PlotCoverage.png"
         )
 
         results["bedtools"].append(
-            f"results/{species}.{build}.{release}.dna/PlotFingerprint.png"
+            f"results/{species}.{build}.{release}.dna/Graphs/PlotFingerprint.png"
         )
 
     return results

@@ -44,19 +44,41 @@ use rule macs2_callpeak_narrow as macs2_callpeak_broad with:
         "benchmark/macs2/{species}.{build}.{release}.{datatype}/{sample}.broad.tsv"
 
 
-rule macs2_preaks_to_bed:
+rule macs2_peaks_to_csv:
     input:
-        table="tmp/macs2/{species}.{build}.{release}.{datatype}/{macs2_preak_type}/{sample}_peaks.{macs2_preak_type}",
+        table="tmp/macs2/{species}.{build}.{release}.{datatype}/{macs2_peak_type}/{sample}_peaks.{macs2_peak_type}",
     output:
         temp(
-            "tmp/xsv_select/{species}.{build}.{release}.{datatype}/{macs2_preak_type}/{sample}_peaks.{macs2_preak_type}.bed"
+            "tmp/macs2/{species}.{build}.{release}.{datatype}/{macs2_peak_type}/{sample}.csv"
         ),
     log:
-        "logs/xsv/select/{species}.{build}.{release}.{datatype}/{sample}.{macs2_preak_type}.log",
+        "logs/xsv/select/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.log",
     benchmark:
-        "benchmark/xsv/select/{species}.{build}.{release}.{datatype}/{sample}.{macs2_preak_type}.tsv"
+        "benchmark/xsv/select/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.tsv"
+    group:
+        "macs2_reformat"
     params:
         subcommand="select",
         extra="1-6 --delimiter $'\t'",
+    wrapper:
+        f"{snakemake_wrappers_version}/utils/xsv"
+
+
+rule macs2_csv_to_bed:
+    input:
+        table="tmp/macs2/{species}.{build}.{release}.{datatype}/{macs2_peak_type}/{sample}.csv",
+    output:
+        protected(
+            "results/{species}.{build}.{release}.{datatype}/PeakCalling/{macs2_peak_type}_bed/{sample}.{macs2_peak_type}.bed"
+        ),
+    log:
+        "logs/xsv/select/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.log",
+    benchmark:
+        "benchmark/xsv/select/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.tsv"
+    group:
+        "macs2_reformat"
+    params:
+        subcommand="fmt",
+        extra="--out-delimiter $'\t'",
     wrapper:
         f"{snakemake_wrappers_version}/utils/xsv"

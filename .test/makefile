@@ -14,6 +14,7 @@ snakefiles := \
 	"../workflow/rules/fair_genome_indexer.smk" \
 	"../workflow/rules/fair_bowtie2_mapping.smk" \
 	"../workflow/rules/common.smk" \
+	"../workflow/rules/multiqc.smk" \
 	"../workflow/Snakefile"
 
 
@@ -56,7 +57,7 @@ linter.txt:
 
 .PHONY: clean
 clean:
-	rm -rv linter.txt \
+	rm -rvf linter.txt \
 		   format.txt \
 		   reference \
 		   results \

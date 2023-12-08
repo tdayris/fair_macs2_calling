@@ -1,20 +1,35 @@
 rule homer_annotate_peaks:
     input:
-        genome="reference/{species}.{build}.{release}.{datatype}.fasta",
-        genome_index="reference/{species}.{build}.{release}.{datatype}.fasta.fai",
-        gtf="reference/{species}.{build}.{release}.gtf",
-        wig="results/{species}.{build}.{release}.{datatype}/Coverage/{sample}.bw",
-        peaks="tmp/xsv_select/{species}.{build}.{release}.{datatype}/{macs2_preak_type}/{sample}_peaks.{macs2_preak_type}.bed",
+        unpack(get_homer_annotate_peaks_input),
     output:
         annotations=protected(
-            "results/{species}.{build}.{release}.{datatype}/PeakCalling/{sample}.{macs2_preak_type}.bed"
+            ensure(
+                "results/{species}.{build}.{release}.{datatype}/PeakCalling/{macs2_peak_type}_annotation/{sample}.{macs2_peak_type}.tsv",
+                non_empty=True,
+            ),
         ),
     log:
-        "logs/homer/annotatepeaks/{species}.{build}.{release}.{datatype}/{sample}.{macs2_preak_type}.log",
+        "logs/homer/annotatepeaks/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.log",
     benchmark:
-        "benchmark/homer/annotatepeaks/{species}.{build}.{release}.{datatype}/{sample}.{macs2_preak_type}.tsv"
+        "benchmark/homer/annotatepeaks/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.tsv"
     params:
-        mode="tss",
-        extra=config.get("params", {}).get("homer", {}).get("annotatepeaks", ""),
-    wrapper:
-        f"{snakemake_wrappers_version}/bio/homer/annotatePeaks"
+        mode="tss hg38",
+        #lambda wildcards: get_homer_annotate_peaks_params(
+        #    wildcards, samples, genomes, config
+        #)["mode"],
+        extra=lambda wildcards: get_homer_annotate_peaks_params(
+            wildcards, samples, genomes, config
+        )["extra"],
+    conda:
+        "../envs/homer.yaml"
+    shell:
+        "annotatePeaks.pl "
+        "{input.peaks} "
+        "{input.genome} "
+
+        "-wig {input.wig} "
+        "-cpu {threads} "
+        "{params.extra} "
+        "> {output.annotations} "
+        "2> {log} "
+        # "{params.mode} "

@@ -24,7 +24,7 @@ rule deeptools_plotcoverage:
         unpack(get_deeptools_plotcoverage_input),
     output:
         plot=report(
-            "results/{species}.{build}.{release}.{datatype}/PlotCoverage.png",
+            "results/{species}.{build}.{release}.{datatype}/Graphs/PlotCoverage.png",
             caption="../report/deeptools_plotcoverage.rst",
             category="Coverage analysis",
             subcategory="Coverage",
@@ -54,7 +54,7 @@ rule deeptools_fingerprint:
         unpack(get_deeptools_fingerprint_input),
     output:
         fingerprint=report(
-            "results/{species}.{build}.{release}.{datatype}/PlotFingerprint.png",
+            "results/{species}.{build}.{release}.{datatype}/Graphs/PlotFingerprint.png",
             caption="../report/deeptools_plotfingerprint.rst",
             category="Coverage analysis",
             subcategory="Coverage",

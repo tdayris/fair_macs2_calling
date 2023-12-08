@@ -14,11 +14,14 @@ if config.get("load_fair_bowtie2_mapping", True):
 include: "rules/deeptools.smk"
 include: "rules/macs2.smk"
 include: "rules/homer.smk"
+include: "rules/multiqc.smk"
 
 
 rule macs2_calling_pipeline_targets:
     input:
         unpack(get_macs2_calling_pipeline_targets),
+    output:
+        touch("tmp/targets/macs2_calling_pipeline_targets.txt"),
     log:
         "logs/macs2_calling_pipeline_targets.log",
     benchmark:
