@@ -4,7 +4,7 @@ rule homer_annotate_peaks:
     output:
         annotations=protected(
             ensure(
-                "results/{species}.{build}.{release}.{datatype}/PeakCalling/{macs2_peak_type}_annotation/{sample}.{macs2_peak_type}.tsv",
+                "results/{species}.{build}.{release}.{datatype}/PeakCalling/{macs2_peak_type}/{sample}.{macs2_peak_type}.tsv",
                 non_empty=True,
             ),
         ),
@@ -18,12 +18,5 @@ rule homer_annotate_peaks:
         )["extra"],
     conda:
         "../envs/homer.yaml"
-    shell:
-        "annotatePeaks.pl "
-        "{input.peaks} "
-        "{input.genome} "
-        "-wig {input.wig} "
-        "-cpu {threads} "
-        "{params.extra} "
-        "> {output.annotations} "
-        "2> {log} "
+    script:
+        "../scripts/homer_wrapper.py"

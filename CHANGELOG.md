@@ -10,3 +10,4 @@
 * integration of fair_genome_indexer
 * Snakemake workflow complete
 * deeptools correlation and PCA over all peaks
+* in-house scripts + datavzrd for Homer results

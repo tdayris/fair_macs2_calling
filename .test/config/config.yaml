@@ -17,7 +17,7 @@ params:
     metrics: ""
   macs2:
     # Optional parameters for Macs2 Callpeaks
-    callpeak: "--keep-dup all --pvalue 1"
+    callpeak: "--keep-dup all --pvalue 0.9"
   homer:
     # Optional parameters for Homer AnnotatePeaks
     annotatepeaks: "-homer2 "

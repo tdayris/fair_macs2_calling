@@ -69,7 +69,7 @@ rule macs2_csv_to_bed:
         table="tmp/macs2/{species}.{build}.{release}.{datatype}/{macs2_peak_type}/{sample}.csv",
     output:
         protected(
-            "results/{species}.{build}.{release}.{datatype}/PeakCalling/{macs2_peak_type}_bed/{sample}.{macs2_peak_type}.bed"
+            "results/{species}.{build}.{release}.{datatype}/PeakCalling/{macs2_peak_type}/{sample}.{macs2_peak_type}.bed"
         ),
     log:
         "logs/xsv/select/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.log",

@@ -16,6 +16,8 @@ include: "rules/deeptools_bam_qc.smk"
 include: "rules/deeptools_correlations.smk"
 include: "rules/macs2.smk"
 include: "rules/homer.smk"
+include: "rules/datavzrd.smk"
+include: "rules/in_house_homer_post_process.smk"
 include: "rules/multiqc.smk"
 
 

@@ -51,35 +51,52 @@ the following files are present:
 ::
 
     results/
-    ├── XXX
+    ├── YYY
     │   ├── Coverage
-    │   │   └── YYY.bw
+    │   │   └── XXX.bw
     │   ├── Graphs
+    │   │   ├── broadPeak
+    │   │   │   ├── Heatmap.png
+    │   │   │   └── PCA.png
+    │   │   ├── narrowPeak
+    │   │   │   ├── Heatmap.png
+    │   │   │   └── PCA.png
     │   │   ├── PlotCoverage.png
     │   │   └── PlotFingerprint.png
     │   ├── Mapping
-    │   │   ├── YYY.bam
-    │   │   └── YYY.bam.bai
+    │   │   ├── XXX.bam
+    │   │   └── XXX.bam.bai
     │   └── PeakCalling
     │       ├── broadPeak_annotation
-    │       │   └── YYY.broadPeak.tsv
+    │       │   └── XXX.broadPeak.tsv
     │       ├── broadPeak_bed
-    │       │   └── YYY.broadPeak.bed
+    │       │   └── XXX.broadPeak.bed
+    │       ├── broadPeak_reports
+    │       │   └── XXX
+    │       │       ├── homer
+    │       │       ├── index.html
+    │       │       └── static
     │       ├── narrowPeak_annotation
-    │       │   └── YYY.narrowPeak.tsv
-    │       └── narrowPeak_bed
-    │           └── YYY.narrowPeak.bed
+    │       │   └── XXX.narrowPeak.tsv
+    │       ├── narrowPeak_bed
+    │       │   └── XXX.narrowPeak.bed
+    │       └── narrowPeak_reports
+    │           └── XXX
+    │               ├── homer
+    │               ├── index.html
+    │               └── static
     └── QC
         ├── MultiQC_data.zip
         ├── MultiQC.html
         ├── MultiQC.PeakCalling_data.zip
         ├── MultiQC.PeakCalling.html
         └── report_pe
-            ├── YYY.1_fastqc.zip
-            ├── YYY.1.html
-            ├── YYY.2_fastqc.zip
-            ├── YYY.2.html
-            └── YYY.html
+            ├── XXX.1_fastqc.zip
+            ├── XXX.1.html
+            ├── XXX.2_fastqc.zip
+            ├── XXX.2.html
+            └── XXX.html
+
 
 
 

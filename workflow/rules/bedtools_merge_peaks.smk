@@ -1,7 +1,7 @@
 rule xsv_cat:
     input:
         table=expand(
-            "results/{species}.{build}.{release}.{datatype}/PeakCalling/{macs2_peak_type}_bed/{sample}.{macs2_peak_type}.bed",
+            "results/{species}.{build}.{release}.{datatype}/PeakCalling/{macs2_peak_type}/{sample}.{macs2_peak_type}.bed",
             sample=samples.sample_id,
             allow_missing=True,
         ),

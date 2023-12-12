@@ -17,7 +17,19 @@ snakefiles := \
 	"../workflow/rules/common.smk" \
 	"../workflow/rules/multiqc.smk" \
 	"../workflow/rules/bedtools_merge_peaks.smk" \
+	"../workflow/rules/in_house_homer_post_process.smk" \
+	"../workflow/rules/datavzrd.smk" \
 	"../workflow/Snakefile"
+
+
+# List of python files to lint
+python_scripts := \
+	"../workflow/scripts/build_datavzrd_yaml.py" \
+	"../workflow/scripts/homer_to_json.py" \
+	"../workflow/scripts/homer_wrapper.py" \
+	"../workflow/scripts/merge_homer_summaries.py" \
+	"../workflow/scripts/plot_homer_multisample.py"
+
 
 
 .PHONY: all
@@ -34,7 +46,7 @@ dag.png: format.txt linter.txt
 report.txt: pipeline.txt
 	mamba activate test-snakemake-wrappers && \
 	snakemake -s ../workflow/Snakefile \
-		--report report.html 2>&1 | tee report.txt
+		--report report.zip 2>&1 | tee report.txt
 
 
 pipeline.txt: format.txt linter.txt
@@ -51,10 +63,15 @@ format.txt:
 	snakefmt $(snakefiles) 2>&1 | tee format.txt
 
 
-linter.txt:
+linter.txt: black.txt
 	mamba activate test-snakemake-wrappers && \
 	snakemake -s ../workflow/Snakefile \
 		--lint 2>&1 | tee linter.txt
+
+
+black.txt:
+	mamba activate test-snakemake-wrappers && \
+	black $(python_scripts) 2>&1 | tee black.txt
 
 
 .PHONY: clean
@@ -68,4 +85,5 @@ clean:
 		   benchmark \
 		   report.html \
 		   report.txt \
-		   pipeline.txt
+		   pipeline.txt \
+		   black.txt
