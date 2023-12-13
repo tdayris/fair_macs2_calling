@@ -37,8 +37,8 @@ rule deeptools_plot_pca:
         png=report(
             "results/{species}.{build}.{release}.{datatype}/Graphs/{macs2_peak_type}/PCA.png",
             caption="../report/deeptools_plotpca.rst",
-            category="{macs2_peak_type}",
-            subcategory="Correlation",
+            subcategory="{macs2_peak_type}",
+            category="Correlation",
             labels={
                 "figure": "plot_pca",
                 "species": "{species}.{build}.{release}",
@@ -71,8 +71,8 @@ rule deeptools_plot_correlation:
         png=report(
             "results/{species}.{build}.{release}.{datatype}/Graphs/{macs2_peak_type}/Heatmap.png",
             caption="../report/deeptools_plotcorrelation.rst",
-            category="{macs2_peak_type}",
-            subcategory="Correlation",
+            subcategory="{macs2_peak_type}",
+            category="Correlation",
             labels={
                 "figure": "plot_heatmap",
                 "species": "{species}.{build}.{release}",

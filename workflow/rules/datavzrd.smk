@@ -29,10 +29,10 @@ rule datavzrd_homer_render:
             htmlindex="index.html",
             caption="../report/datavzrd_homer.rst",
             category="Peak Calling",
+            subcategory="{macs2_peak_type}",
             labels={
                 "species": "{species}.{build}.{release}",
                 "sample": "{sample}",
-                "peaks": "{macs2_peak_type}",
             },
         ),
     log:

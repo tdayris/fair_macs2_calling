@@ -78,11 +78,11 @@ def read_homer_table(path: str) -> pandas.DataFrame:
         ]
     df.set_index("PeakID", inplace=True)
 
-    df["Annotation"] = [
+    df["Annotations"] = [
         annotation.split(" (")[0].capitalize()
         for annotation in df["CompleteAnnotation"]
     ]
-    df["GeneType"] = df["OriginalGeneType"].str.lower().replace("rna", "RNA")
+    df["GeneTypes"] = df["OriginalGeneType"].str.lower().replace("rna", "RNA")
 
     df.sort_values(by=["Chromosome", "Start", "End"], ascending=True)
     logging.debug(df.head())
@@ -108,10 +108,10 @@ def pandas_to_json(df: pandas.DataFrame, sample_id: str) -> dict[str, str | nume
             [key, int(value)] for key, value in df["Chromosome"].value_counts().items()
         ),
         "peak_per_gene_type": dict(
-            [key, int(value)] for key, value in df["GeneType"].value_counts().items()
+            [key, int(value)] for key, value in df["GeneTypes"].value_counts().items()
         ),
         "peak_per_annotation": dict(
-            [key, int(value)] for key, value in df["Annotation"].value_counts().items()
+            [key, int(value)] for key, value in df["Annotations"].value_counts().items()
         ),
         "pct_peak_per_chr": dict(
             [key, round(number=value * 100, ndigits=1)]
@@ -119,11 +119,11 @@ def pandas_to_json(df: pandas.DataFrame, sample_id: str) -> dict[str, str | nume
         ),
         "pct_peak_per_gene_type": dict(
             [key, round(number=value * 100, ndigits=1)]
-            for key, value in df["GeneType"].value_counts(normalize=True).items()
+            for key, value in df["GeneTypes"].value_counts(normalize=True).items()
         ),
         "pct_peak_per_annotation": dict(
             [key, round(number=value * 100, ndigits=1)]
-            for key, value in df["Annotation"].value_counts(normalize=True).items()
+            for key, value in df["Annotations"].value_counts(normalize=True).items()
         ),
     }
 

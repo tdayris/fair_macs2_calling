@@ -6,7 +6,7 @@ rule multiqc_report:
             "results/QC/MultiQC.PeakCalling.html",
             caption="../report/multiqc.rst",
             category="Quality Controls",
-            subcategory="General",
+            subcategory="PeakCalling",
             labels={
                 "report": "html",
             },

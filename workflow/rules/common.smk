@@ -70,6 +70,7 @@ report: "../report/workflow.rst"
 release_list: List[str] = list(set(genomes.release.tolist()))
 build_list: List[str] = list(set(genomes.build.tolist()))
 species_list: List[str] = list(set(genomes.species.tolist()))
+datatypes: List[str] = ["dna", "cdna"]
 
 
 wildcard_constraints:
@@ -77,6 +78,7 @@ wildcard_constraints:
     release=r"|".join(release_list),
     build=r"|".join(build_list),
     species=r"|".join(species_list),
+    datatype=r"|".join(datatypes),
 
 
 def get_sample_information(
@@ -643,6 +645,7 @@ def get_macs2_calling_pipeline_targets(
             "results/QC/MultiQC.PeakCalling.html",
         ],
         "datavzrd": [],
+        "inhouse": [],
     }
     sample_iterator = zip(
         samples.sample_id,
@@ -674,5 +677,14 @@ def get_macs2_calling_pipeline_targets(
             results["homer"].append(
                 f"results/{species}.{build}.{release}.dna/PeakCalling/{macs2_peak_type}/{sample}.{macs2_peak_type}.tsv"
             )
+
+            for content in ["Annotations", "GeneTypes"]:
+                results["inhouse"].append(
+                    f"results/{species}.{build}.{release}.dna/Graphs/{macs2_peak_type}/{content}.catplot.png"
+                )
+
+                # results["inhouse"].append(
+                #     f"results/{species}.{build}.{release}.dna/Graphs/{macs2_peak_type}/{content}.dotplot.png"
+                # )
 
     return results

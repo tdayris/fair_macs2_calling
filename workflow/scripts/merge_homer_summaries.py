@@ -63,7 +63,7 @@ def dict_to_pandas(summaries: list[dict[str, numeric]]) -> dict[str, pandas.Data
             summary_df.index.name = (
                 "Chromosome"
                 if content == "chr"
-                else ("Annotation" if content == "annotation" else "Gene_Type")
+                else ("Annotations" if content == "annotation" else "GeneTypes")
             )
             summary_df.reset_index(inplace=True)
 

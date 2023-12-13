@@ -55,22 +55,23 @@ rule plot_homer_summaries_for_regions:
                 "species": "{species}.{build}.{release}",
             },
         ),
-        dotplot=report(
-            "results/{species}.{build}.{release}.{datatype}/Graphs/{macs2_peak_type}/{content}.dotplot.png",
-            caption="../report/dotplot.rst",
-            category="Peak Calling",
-            subcategory="{macs2_peak_type}",
-            labels={
-                "figure": "dotplot",
-                "species": "{species}.{build}.{release}",
-            },
-        ),
+        # dotplot=report(
+        #     "results/{species}.{build}.{release}.{datatype}/Graphs/{macs2_peak_type}/{content}.dotplot.png",
+        #     caption="../report/dotplot.rst",
+        #     category="Peak Calling",
+        #     subcategory="{macs2_peak_type}",
+        #     labels={
+        #         "figure": "dotplot",
+        #         "species": "{species}.{build}.{release}",
+        #     },
+        # ),
     log:
         "logs/plot_homer_summaries/{species}.{build}.{release}.{datatype}.{macs2_peak_type}/{content}.log",
     benchmark:
         "benchmark/plot_homer_summaries/{species}.{build}.{release}.{datatype}.{macs2_peak_type}/{content}.tsv"
     params:
         content="{content}",
+        title=lambda wildcards: f"Percent of {wildcards.macs2_peak_type} falling over Homer {wildcards.content}",
     conda:
         "../envs/python.yaml"
     script:

@@ -95,12 +95,10 @@ def dotplots(df: pandas.DataFrame, x: str, out_png: str, title: str) -> None:
         df.pivot(index="Sample_id", columns=x, values="Percent")
         .fillna(0.0)
         .sort_index()
-        .round(0)
-        .astype(int)
     )
     logging.debug(data.head())
 
-    graph = seaborn.PariGrid(
+    graph = seaborn.PairGrid(
         data=df,
         x_vars=list(df.columns),
         y_vars=list(df.index),
@@ -151,7 +149,8 @@ def main(
     """
     summary: pandas.DataFrame = read_table(path=summaries_path)
     catplot(df=summary, x=content, out_png=out_catplot, title=title)
-    dotplots(df=summary, x=content, out_png=out_dotplot, title=title)
+    if out_dotplot:
+        dotplots(df=summary, x=content, out_png=out_dotplot, title=title)
 
 
 if __name__ == "__main__":
@@ -160,8 +159,8 @@ if __name__ == "__main__":
         main(
             summaries_path=snakemake.input.summaries,
             content=snakemake.params.content,
-            out_catplot=snakemake.output.catplot,
-            out_dotplot=snakemake.output.dotplot,
+            out_catplot=snakemake.output.get("catplot"),
+            out_dotplot=snakemake.output.get("dotplot"),
             title=snakemake.params.title,
         )
     except Exception as e:
