@@ -86,4 +86,6 @@ clean:
 		   report.html \
 		   report.txt \
 		   pipeline.txt \
-		   black.txt
+		   black.txt \
+		   report.zip \
+		   report

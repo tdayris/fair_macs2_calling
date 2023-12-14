@@ -36,7 +36,7 @@ def read_table(path: str) -> pandas.DataFrame:
         header=0,
         index_col=None,
         comment="#",
-        dtype=str,
+        # dtype=str,
     )
 
 
@@ -57,20 +57,21 @@ def catplot(df: pandas.DataFrame, x: str, out_png: str, title: str) -> None:
 
     graph = seaborn.catplot(
         data=df,
-        y=x,
-        x="Percent",
+        x=x,
+        y="Percent",
         hue="Sample_id",
         errorbar="sd",
         palette="tab10",
         kind="bar",
-        orient="h",
+        legend_out=True,
     )
 
     graph.despine(left=True)
     graph.set_axis_labels("", "Percent of peaks")
     graph.legend.set_title(title)
 
-    plt.savefig(out_png)
+    plt.tight_layout()
+    plt.savefig(out_png, dpi=100)
     plt.cla()
     plt.clf()
     plt.close()
@@ -95,6 +96,8 @@ def dotplots(df: pandas.DataFrame, x: str, out_png: str, title: str) -> None:
         df.pivot(index="Sample_id", columns=x, values="Percent")
         .fillna(0.0)
         .sort_index()
+        .round(1)
+        .astype(float)
     )
     logging.debug(data.head())
 
@@ -126,7 +129,8 @@ def dotplots(df: pandas.DataFrame, x: str, out_png: str, title: str) -> None:
 
     seaborn.despine(left=True, bottom=True)
 
-    plt.savefig(out_png)
+    plt.tight_layout()
+    plt.savefig(out_png, dpi=100)
     plt.cla()
     plt.clf()
     plt.close()
@@ -148,6 +152,7 @@ def main(
     Return: None
     """
     summary: pandas.DataFrame = read_table(path=summaries_path)
+    logging.debug(summary.head())
     catplot(df=summary, x=content, out_png=out_catplot, title=title)
     if out_dotplot:
         dotplots(df=summary, x=content, out_png=out_dotplot, title=title)

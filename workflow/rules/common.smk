@@ -71,6 +71,7 @@ release_list: List[str] = list(set(genomes.release.tolist()))
 build_list: List[str] = list(set(genomes.build.tolist()))
 species_list: List[str] = list(set(genomes.species.tolist()))
 datatypes: List[str] = ["dna", "cdna"]
+macs2_peak_types: List[str] = ["broadPeak", "narrowPeak"]
 
 
 wildcard_constraints:
@@ -79,6 +80,7 @@ wildcard_constraints:
     build=r"|".join(build_list),
     species=r"|".join(species_list),
     datatype=r"|".join(datatypes),
+    macs2_peak_type=r"|".join(macs2_peak_types),
 
 
 def get_sample_information(

@@ -53,6 +53,7 @@ rule plot_homer_summaries_for_regions:
             labels={
                 "figure": "catplot",
                 "species": "{species}.{build}.{release}",
+                "sample": "all",
             },
         ),
         # dotplot=report(
