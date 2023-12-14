@@ -3,9 +3,9 @@
 usage:
   mandatory-flags:
     desc: Call peaks with Macs2 and annotate them with Homer
-    flags: FAIR Macs2 Snakemake Homer Deeptools
+    flags: --profile ./profiles/
   software-stack-deployment:
     conda: true
-    singularity: true
-    singularity+conda: true
+    singularity: false
+    singularity+conda: false
   report: true
