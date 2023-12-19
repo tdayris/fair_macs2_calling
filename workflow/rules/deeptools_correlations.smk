@@ -93,15 +93,15 @@ rule deeptools_plot_enrichment:
                 "species": "{species}.{build}.{release}",
             },
         ),
-        out_raw_counts=temp("tmp/deeptools/plot_enrichment/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tab"),
+        out_raw_counts=temp(
+            "tmp/deeptools/plot_enrichment/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tab"
+        ),
     log:
         "logs/deeptools/plot_enrichment/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.log",
     benchmark:
         "benchmark/deeptools/plot_enrichment/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tsv"
     params:
-        extra=config.get("params", {})
-        .get("deeptools", {})
-        .get("plot_enrichment", ""),
+        extra=config.get("params", {}).get("deeptools", {}).get("plot_enrichment", ""),
     conda:
         "../envs/deeptools.yaml"
     script:

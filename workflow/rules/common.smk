@@ -150,7 +150,9 @@ def get_effective_genome_size(
     return None
 
 
-def get_blacklist(wildcards: snakemake.io.Wildcards, genomes: pandas.DataFrame = genomes) -> str | None:
+def get_blacklist(
+    wildcards: snakemake.io.Wildcards, genomes: pandas.DataFrame = genomes
+) -> str | None:
     """
     Return blacklist file, if any.
 
@@ -230,12 +232,16 @@ def get_macs2_callpeak_input(
     datatype: str = "dna"
 
     input_sample: str | None = sample_data.get("input")
-    treatment: str = f"results/{species}.{build}.{release}.{datatype}/Mapping/{sample_id}.bam"
+    treatment: str = (
+        f"results/{species}.{build}.{release}.{datatype}/Mapping/{sample_id}.bam"
+    )
     treatment_index: str = f"{treatment}.bai"
     if input_sample:
         input_data = get_sample_information(wildcards, samples=samples)
         input_id: str = str(input_data["sample_id"])
-        control: str = f"results/{species}.{build}.{release}.{datatype}/Mapping/{input_id}.bam"
+        control: str = (
+            f"results/{species}.{build}.{release}.{datatype}/Mapping/{input_id}.bam"
+        )
         control_index: str = f"{control}.bai"
 
         return {
@@ -320,10 +326,14 @@ def get_homer_annotate_peaks_input(
 
     reference: dict[str, str] = get_reference_genome_data(wildcards, genomes)
 
-    wig: str =  f"results/{species}.{build}.{release}.{datatype}/Coverage/{sample}.bw"
+    wig: str = f"results/{species}.{build}.{release}.{datatype}/Coverage/{sample}.bw"
     peaks: str = f"results/{species}.{build}.{release}.{datatype}/PeakCalling/{macs2_peak_type}/{sample}.{macs2_peak_type}.bed"
-    fasta: str = reference.get("fasta", f"reference/{species}.{build}.{release}.{datatype}.fasta")
-    fai: str = reference.get("fasta_index", f"reference/{species}.{build}.{release}.{datatype}.fasta.fai")
+    fasta: str = reference.get(
+        "fasta", f"reference/{species}.{build}.{release}.{datatype}.fasta"
+    )
+    fai: str = reference.get(
+        "fasta_index", f"reference/{species}.{build}.{release}.{datatype}.fasta.fai"
+    )
     gtf: str = reference.get("gtf", f"reference/{species}.{build}.{release}.gtf")
 
     return {"wig": wig, "peaks": peaks, "fasta": fasta, "fai": fai, "gtf": gtf}
@@ -376,7 +386,9 @@ def get_homer_annotate_peaks_params(
 
 
 def get_deeptools_plotcoverage_input(
-    wildcards: snakemake.io.Wildcards, samples: pandas.DataFrame = samples, genomes: pandas.DataFrame = genomes
+    wildcards: snakemake.io.Wildcards,
+    samples: pandas.DataFrame = samples,
+    genomes: pandas.DataFrame = genomes,
 ) -> dict[str, list[str]]:
     """
     Return expected input files for deeptools plotCoverage,
@@ -491,11 +503,13 @@ def get_deeptools_multibigwig_summary_input(
     release: str = str(wildcards.release)
     datatype: str = "dna"
 
-    samples_list: list[str] = list(samples.loc[
-        (samples.species == species)
-        & (samples.build == build)
-        & (samples.release == release)
-    ].sample_id)
+    samples_list: list[str] = list(
+        samples.loc[
+            (samples.species == species)
+            & (samples.build == build)
+            & (samples.release == release)
+        ].sample_id
+    )
 
     results: dict[str, list[str] | str] = {
         "bed": f"tmp/bedtools/merge/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.merged.bed",

@@ -56,16 +56,6 @@ rule plot_homer_summaries_for_regions:
                 "sample": "all",
             },
         ),
-        # dotplot=report(
-        #     "results/{species}.{build}.{release}.{datatype}/Graphs/{macs2_peak_type}/{content}.dotplot.png",
-        #     caption="../report/dotplot.rst",
-        #     category="Peak Calling",
-        #     subcategory="{macs2_peak_type}",
-        #     labels={
-        #         "figure": "dotplot",
-        #         "species": "{species}.{build}.{release}",
-        #     },
-        # ),
     log:
         "logs/plot_homer_summaries/{species}.{build}.{release}.{datatype}.{macs2_peak_type}/{content}.log",
     benchmark:

@@ -24,10 +24,5 @@ else:
 out_file_name_data: str | None = snakemake.input.get("tab")
 if out_file_name_data:
     extra += f" --outFileNameData {out_file_name_data} "
-    
-shell(
-    "plotPCA "
-    "--corData {input} "
-    "--plotFile {output.png} "
-    "{extra} {log} "
-)
+
+shell("plotPCA " "--corData {input} " "--plotFile {output.png} " "{extra} {log} ")
