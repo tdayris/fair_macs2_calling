@@ -171,14 +171,9 @@ def get_blacklist(wildcards: snakemake.io.Wildcards, genomes: pandas.DataFrame =
         & (genomes["release"] == release)
     ]
     if len(genome_data) > 0:
-        blacklist = next(iter(genome_data.to_dict(orient="index").values())).get(
-            "blacklist"
+        return next(iter(genome_data.to_dict(orient="index").values())).get(
+            "blacklist", f"reference/blacklist/{species}.{build}.{release}.merged.bed"
         )
-
-    if blacklist:
-        return blacklist
-    elif build in ["GRCh38", "GRCh37", "GRCm38", "NCBIM37"]:
-        return f"reference/blacklist/{species}.{build}.{release}.merged.bed"
 
 
 def get_deeptools_bamcoverage_input(
@@ -235,20 +230,24 @@ def get_macs2_callpeak_input(
     datatype: str = "dna"
 
     input_sample: str | None = sample_data.get("input")
+    treatment: str = f"results/{species}.{build}.{release}.{datatype}/Mapping/{sample_id}.bam"
+    treatment_index: str = f"{treatment}.bai"
     if input_sample:
         input_data = get_sample_information(wildcards, samples=samples)
         input_id: str = str(input_data["sample_id"])
+        control: str = f"results/{species}.{build}.{release}.{datatype}/Mapping/{input_id}.bam"
+        control_index: str = f"{control}.bai"
 
         return {
-            "treatment": f"results/{species}.{build}.{release}.{datatype}/Mapping/{sample_id}.bam",
-            "treatment_index": f"results/{species}.{build}.{release}.{datatype}/Mapping/{sample_id}.bam.bai",
-            "control": f"results/{species}.{build}.{release}.{datatype}/Mapping/{input_id}.bam",
-            "control_index": f"results/{species}.{build}.{release}.{datatype}/Mapping/{input_id}.bam.bai",
+            "treatment": treatment,
+            "treatment_index": treatment_index,
+            "control": control,
+            "control_index": control_index,
         }
 
     return {
-        "treatment": f"results/{species}.{build}.{release}.{datatype}/Mapping/{sample_id}.bam",
-        "treatment_index": f"results/{species}.{build}.{release}.{datatype}/Mapping/{sample_id}.bam.bai",
+        "treatment": treatment,
+        "treatment_index": treatment_index,
     }
 
 
@@ -318,27 +317,16 @@ def get_homer_annotate_peaks_input(
     release: str = str(wildcards.release)
     sample: str = str(wildcards.sample)
     macs2_peak_type: str = str(wildcards.macs2_peak_type)
+
     reference: dict[str, str] = get_reference_genome_data(wildcards, genomes)
 
-    result: dict[str, str] = {
-        "wig": f"results/{species}.{build}.{release}.{datatype}/Coverage/{sample}.bw",
-        "peaks": f"results/{species}.{build}.{release}.{datatype}/PeakCalling/{macs2_peak_type}/{sample}.{macs2_peak_type}.bed",
-    }
+    wig: str =  f"results/{species}.{build}.{release}.{datatype}/Coverage/{sample}.bw"
+    peaks: str = f"results/{species}.{build}.{release}.{datatype}/PeakCalling/{macs2_peak_type}/{sample}.{macs2_peak_type}.bed"
+    fasta: str = reference.get("fasta", f"reference/{species}.{build}.{release}.{datatype}.fasta")
+    fai: str = reference.get("fasta_index", f"reference/{species}.{build}.{release}.{datatype}.fasta.fai")
+    gtf: str = reference.get("gtf", f"reference/{species}.{build}.{release}.gtf")
 
-    fasta = reference.get("fasta")
-    result["genome"] = (
-        fasta if fasta is not None else f"reference/{species}.{build}.{release}.{datatype}.fasta"
-    )
-
-    fai = reference.get("fasta_index")
-    result["genome_index"] = (
-        fai  if fai is not None else  f"reference/{species}.{build}.{release}.{datatype}.fasta.fai"
-    )
-
-    gtf = reference.get("gtf")
-    result["gtf"] = gtf  if gtf is not None else  f"reference/{species}.{build}.{release}.gtf"
-
-    return result
+    return {"wig": wig, "peaks": peaks, "fasta": fasta, "fai": fai, "gtf": gtf}
 
 
 def get_homer_annotate_peaks_params(
