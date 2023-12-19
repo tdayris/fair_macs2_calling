@@ -1,11 +1,6 @@
 rule deeptools_multibigwig_summary:
     input:
-        bed="tmp/bedtools/merge/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.merged.bed",
-        bw=expand(
-            "results/{species}.{build}.{release}.{datatype}/Coverage/{sample}.bw",
-            sample=samples.sample_id,
-            allow_missing=True,
-        ),
+        unpack(get_deeptools_multibigwig_summary_input),
     output:
         temp(
             "tmp/deeptools/multibigwig_summary/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.npz"
@@ -20,14 +15,8 @@ rule deeptools_multibigwig_summary:
         .get("multibigwig_summary", ""),
     conda:
         "../envs/deeptools.yaml"
-    shell:
-        "multiBigwigSummary BED-file "
-        "--bwfiles {input.bw} "
-        "--outFileName {output} "
-        "--BED {input.bed} "
-        "--numberOfProcessors {threads} "
-        "{params.extra} "
-        "> {log} 2>&1"
+    script:
+        "../scripts/deeptools_multi_bigwig_summary_wrapper.py"
 
 
 rule deeptools_plot_pca:
@@ -55,13 +44,8 @@ rule deeptools_plot_pca:
         extra=config.get("params", {}).get("deeptools", {}).get("plot_pca", ""),
     conda:
         "../envs/deeptools.yaml"
-    shell:
-        "plotPCA "
-        "--corData {input} "
-        "--plotFile {output.png} "
-        "--outFileNameData {output.tab} "
-        "{params.extra} "
-        "> {log} 2>&1"
+    script:
+        "../scripts/deeptools_plot_pca_wrapper.py"
 
 
 rule deeptools_plot_correlation:
@@ -91,10 +75,34 @@ rule deeptools_plot_correlation:
         .get("plot_correlation", "--corMethod spearman --whatToPlot heatmap"),
     conda:
         "../envs/deeptools.yaml"
-    shell:
-        "plotCorrelation "
-        "--corData {input} "
-        "--plotFile {output.png} "
-        "--outFileCorMatrix {output.tab} "
-        "{params.extra} "
-        "> {log} 2>&1"
+    script:
+        "../scripts/deeptools_plot_correlation_wrapper.py"
+
+
+rule deeptools_plot_enrichment:
+    input:
+        unpack(get_deeptools_plot_enrichment_input),
+    output:
+        png=report(
+            "results/{species}.{build}.{release}.{datatype}/Graphs/{macs2_peak_type}/Enrichment.png",
+            caption="../report/deeptools_plotenrichment.rst",
+            subcategory="{macs2_peak_type}",
+            category="Correlation",
+            labels={
+                "figure": "plot_enrichment",
+                "species": "{species}.{build}.{release}",
+            },
+        ),
+        out_raw_counts=temp("tmp/deeptools/plot_enrichment/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tab"),
+    log:
+        "logs/deeptools/plot_enrichment/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.log",
+    benchmark:
+        "benchmark/deeptools/plot_enrichment/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tsv"
+    params:
+        extra=config.get("params", {})
+        .get("deeptools", {})
+        .get("plot_enrichment", ""),
+    conda:
+        "../envs/deeptools.yaml"
+    script:
+        "../scripts/deeptools_plot_enrichment_wrapper.py"

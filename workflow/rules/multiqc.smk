@@ -20,4 +20,4 @@ rule multiqc_report:
     benchmark:
         "benchmark/multiqc.tsv"
     wrapper:
-        f"{snakemake_wrappers_version}/bio/multiqc"
+        "v3.2.0/bio/multiqc"

@@ -19,7 +19,7 @@ rule xsv_cat:
         subcommand="cat rows",
         extra="--no-headers --delimiter $'\t'",
     wrapper:
-        f"{snakemake_wrappers_version}/utils/xsv"
+        "v3.2.0/utils/xsv"
 
 
 rule xsv_sort:
@@ -39,7 +39,7 @@ rule xsv_sort:
         subcommand="sort",
         extra="--no-headers --numeric --select 1-3",
     wrapper:
-        f"{snakemake_wrappers_version}/utils/xsv"
+        "v3.2.0/utils/xsv"
 
 
 rule xsv_fmt:
@@ -57,7 +57,7 @@ rule xsv_fmt:
         subcommand="fmt",
         extra="--out-delimiter $'\t'",
     wrapper:
-        f"{snakemake_wrappers_version}/utils/xsv"
+        "v3.2.0/utils/xsv"
 
 
 rule bedtools_merge:
@@ -74,4 +74,4 @@ rule bedtools_merge:
     params:
         extra=config.get("params", {}).get("bedtools", {}).get("merge_peaks", ""),
     wrapper:
-        f"{snakemake_wrappers_version}/bio/bedtools/merge"
+        "v3.2.0/bio/bedtools/merge"

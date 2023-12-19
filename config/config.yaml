@@ -11,7 +11,7 @@ params:
     # Optional parameters for sambamba view
     view: "--format 'bam' --filter 'mapping_quality >= 30 and not (unmapped or mate_is_unmapped)' "
     # Optional parameters for sambamba markdup
-    markdup: "--remove-duplicates"
+    markdup: "--remove-duplicates --overflow-size 500000"
   picard:
     # Mapping QC optional parameters
     metrics: ""

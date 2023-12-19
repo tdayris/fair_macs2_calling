@@ -25,6 +25,10 @@ snakefiles := \
 # List of python files to lint
 python_scripts := \
 	"../workflow/scripts/build_datavzrd_yaml.py" \
+	"../workflow/scripts/deeptools_plot_correlation_wrapper.py" \
+	"../workflow/scripts/deeptools_multi_bigwig_summay_wrapper.py" \
+	"../workflow/scripts/deeptools_plot_enrichment_wrapper.py" \
+	"../workflow/scripts/deeptools_plot_pca_wrapper.py" \
 	"../workflow/scripts/homer_to_json.py" \
 	"../workflow/scripts/homer_wrapper.py" \
 	"../workflow/scripts/merge_homer_summaries.py" \

@@ -42,4 +42,4 @@ rule datavzrd_homer_render:
     params:
         extra="",
     wrapper:
-        f"{snakemake_wrappers_version}/utils/datavzrd"
+        "v3.2.0/utils/datavzrd"
