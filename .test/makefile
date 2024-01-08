@@ -57,8 +57,7 @@ pipeline.txt: format.txt linter.txt
 	mamba activate test-snakemake-wrappers && \
 	snakemake -s ../workflow/Snakefile \
 		--cores 2 \
-		--use-conda \
-		--use-singularity \
+		--software-deployment-method conda \
 		--workflow-profile ../profiles 2>&1 | tee pipeline.txt
 
 
