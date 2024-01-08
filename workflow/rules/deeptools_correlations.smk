@@ -2,7 +2,7 @@ rule deeptools_multibigwig_summary:
     input:
         unpack(get_deeptools_multibigwig_summary_input),
     output:
-        temp(
+        npz=temp(
             "tmp/deeptools/multibigwig_summary/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.npz"
         ),
     log:
@@ -81,7 +81,7 @@ rule deeptools_plot_correlation:
 
 rule deeptools_plot_enrichment:
     input:
-        unpack(get_deeptools_plot_enrichment_input),
+        unpack(get_deeptools_plotcoverage_input),
     output:
         png=report(
             "results/{species}.{build}.{release}.{datatype}/Graphs/{macs2_peak_type}/Enrichment.png",

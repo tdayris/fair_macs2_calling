@@ -21,8 +21,13 @@ else:
     raise ValueError(f"Plot file format sould be one of {accepted_plot_file_format}")
 
 
-out_file_name_data: str | None = snakemake.input.get("tab")
+out_file_name_data: str | None = snakemake.output.get("tab")
 if out_file_name_data:
     extra += f" --outFileNameData {out_file_name_data} "
 
-shell("plotPCA " "--corData {input} " "--plotFile {output.png} " "{extra} {log} ")
+shell(
+    "plotPCA "
+    "--corData {snakemake.input} "
+    "--plotFile {snakemake.output.png} "
+    "{extra} {log} "
+)

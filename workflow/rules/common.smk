@@ -336,7 +336,7 @@ def get_homer_annotate_peaks_input(
     )
     gtf: str = reference.get("gtf", f"reference/{species}.{build}.{release}.gtf")
 
-    return {"wig": wig, "peaks": peaks, "fasta": fasta, "fai": fai, "gtf": gtf}
+    return {"wig": wig, "peaks": peaks, "genome": fasta, "fai": fai, "gtf": gtf}
 
 
 def get_homer_annotate_peaks_params(
@@ -502,6 +502,7 @@ def get_deeptools_multibigwig_summary_input(
     build: str = str(wildcards.build)
     release: str = str(wildcards.release)
     datatype: str = "dna"
+    macs2_peak_type: str = str(wildcards.macs2_peak_type)
 
     samples_list: list[str] = list(
         samples.loc[
@@ -523,7 +524,7 @@ def get_deeptools_multibigwig_summary_input(
         ),
     }
 
-    blacklist: str | None = get_blacklist(wildcards, genome)
+    blacklist: str | None = get_blacklist(wildcards, genomes)
     if blacklist:
         results["blacklist"] = blacklist
 

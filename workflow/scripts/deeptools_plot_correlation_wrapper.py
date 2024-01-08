@@ -34,5 +34,8 @@ if plot:
 
 
 shell(
-    "plotCorrelation " "--corData {input} " "--plotFile {output.png} " "{extra} {log}"
+    "plotCorrelation "
+    "--corData {snakemake.input} "
+    "--plotFile {snakemake.output.png} "
+    "{extra} {log}"
 )
