@@ -23,11 +23,17 @@ params:
     annotatepeaks: "-homer2 "
   deeptools:
     # Optional parameters for DeepTools bamCoverage
-    bamcoverage: ""
+    bamcoverage: "--ignoreDuplicates"
     # Optional parameters for DeepTools plotCoverage
-    plot_coverage: "--coverageThresholds 1"
+    plot_coverage: "--ignoreDuplicates --coverageThresholds 1"
     # Optional parameters for DeepTools plotFingerprint
-    plot_fingerprint: ""
+    plot_fingerprint: "--ignoreDuplicates"
+    # Optional parameters for DeepTools plotPCA
+    plot_pca: "--ntop 10"
+    # Optional parameters for DeepTools plotEnrichment
+    plot_enrichment: "--ignoreDuplicates"
+    # Optional parameters for DeepTools plotCorrelations
+    plot_correlation: "--whatToPlot heatmap --corMethod spearman"
   
 # Optional path to a `genome.csv` file
 genomes: config/genomes.csv

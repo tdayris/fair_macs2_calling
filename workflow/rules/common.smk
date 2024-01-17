@@ -22,7 +22,7 @@ snakemake.utils.validate(config, "../schemas/config.schema.yaml")
 # Load and check samples properties table
 sample_table_path: str = config.get("samples", "config/samples.csv")
 with open(sample_table_path, "r") as sample_table_stream:
-    dialect: csv.Dialect = csv.Sniffer().sniff(sample_table_stream.read(1024))
+    dialect: csv.Dialect = csv.Sniffer().sniff(sample_table_stream.readline())
     sample_table_stream.seek(0)
 
 samples: pandas.DataFrame = pandas.read_csv(
@@ -40,7 +40,7 @@ snakemake.utils.validate(samples, "../schemas/samples.schema.yaml")
 genome_table_path: str = config.get("genomes")
 if genome_table_path:
     with open(genome_table_path, "r") as genome_table_stream:
-        dialect: csv.Dialect = csv.Sniffer().sniff(genome_table_stream.read(1024))
+        dialect: csv.Dialect = csv.Sniffer().sniff(genome_table_stream.readline())
         genome_table_stream.seek(0)
 
     genomes: pandas.DataFrame = pandas.read_csv(

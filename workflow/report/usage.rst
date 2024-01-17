@@ -44,7 +44,7 @@ Second, run:
     
     snakedeploy deploy-workflow \
                 https://github.com/tdayris/fair_macs2_calling . \
-                --tag v1.0.0
+                --tag v1.0.2
 
 Snakedeploy will create two folders `workflow` and `config`. The former contains the 
 deployment of the chosen workflow as a `Snakemake module`_, the latter contains 

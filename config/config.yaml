@@ -30,14 +30,20 @@ params:
     callpeak: ""
   homer:
     # Optional parameters for Homer AnnotatePeaks
-    annotatepeaks: ""
+    annotatepeaks: "-homer2"
   deeptools:
     # Optional parameters for DeepTools bamCoverage
-    bamcoverage: ""
+    bamcoverage: "--ignoreDuplicates --minMappingQuality 30 --samFlagExclude 4 --ignoreForNormalization X Y MT"
     # Optional parameters for DeepTools plotCoverage
-    plot_coverage: "--coverageThresholds 1"
+    plot_coverage: "--skipZeros --ignoreDuplicates --minMappingQuality 30 --samFlagExclude 4"
     # Optional parameters for DeepTools plotFingerprint
-    plot_fingerprint: ""
+    plot_fingerprint: "--skipZeros --ignoreDuplicates --minMappingQuality 30 --samFlagExclude 4"
+    # Optional parameters for DeepTools plotPCA
+    plot_pca: "--ntop 1000"
+    # Optional parameters for DeepTools plotEnrichment
+    plot_enrichment: "--ignoreDuplicates --minMappingQuality 30 --samFlagExclude 4 --smartLabels"
+    # Optional parameters for DeepTools plotCorrelations
+    plot_correlation: "--whatToPlot heatmap --corMethod spearman --skipZeros --plotNumbers --colorMap RdYlBu"
   # Optional parameters for MultQC
   multiqc: "--module deeptools --module macs2 --module picard --module fastqc --module fastp --module samtools --module bowtie2 --module sambamba --zip-data-dir --verbose --no-megaqc-upload --no-ansi --force"
 

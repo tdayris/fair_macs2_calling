@@ -1,3 +1,14 @@
+# 1.0.2
+
+## Features
+
+* Missing parameters added to documentation
+
+## Fixes
+
+* Typo in usage
+* Fix csv.Sniffer too large data content
+
 # 1.0.1
 
 ## Features
