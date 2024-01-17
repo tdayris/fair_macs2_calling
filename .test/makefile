@@ -12,8 +12,9 @@ snakefiles := \
 	"../workflow/rules/deeptools_correlations.smk" \
 	"../workflow/rules/homer.smk" \
 	"../workflow/rules/macs2.smk" \
-	"../workflow/rules/fair_genome_indexer.smk" \
-	"../workflow/rules/fair_bowtie2_mapping.smk" \
+	"../workflow/rules/fair_fastqc_multiqc_pipeline.smk" \
+	"../workflow/rules/fair_genome_indexer_pipeline.smk" \
+	"../workflow/rules/fair_bowtie2_mapping_pipeline.smk" \
 	"../workflow/rules/common.smk" \
 	"../workflow/rules/multiqc.smk" \
 	"../workflow/rules/bedtools_merge_peaks.smk" \
@@ -56,9 +57,9 @@ report.txt: pipeline.txt
 pipeline.txt: format.txt linter.txt
 	mamba activate test-snakemake-wrappers && \
 	snakemake -s ../workflow/Snakefile \
-		--cores 2 \
+		--cores 7 \
 		--software-deployment-method conda \
-		--workflow-profile ../profiles 2>&1 | tee pipeline.txt
+		2>&1 | tee pipeline.txt
 
 
 format.txt:

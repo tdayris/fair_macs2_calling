@@ -16,7 +16,7 @@ rule deeptools_bamcoverage:
         ),
         extra=config.get("params", {}).get("deeptools", {}).get("bamcoverage", ""),
     wrapper:
-        "v3.2.0/bio/deeptools/bamcoverage"
+        "v3.3.3/bio/deeptools/bamcoverage"
 
 
 rule deeptools_plotcoverage:
@@ -46,7 +46,7 @@ rule deeptools_plotcoverage:
     params:
         extra=config.get("params", {}).get("deeptools", {}).get("plot_coverage", ""),
     wrapper:
-        "v3.2.0/bio/deeptools/plotcoverage"
+        "v3.3.3/bio/deeptools/plotcoverage"
 
 
 rule deeptools_fingerprint:
@@ -76,4 +76,4 @@ rule deeptools_fingerprint:
     params:
         config.get("params", {}).get("deeptools", {}).get("plot_fingerprint", ""),
     wrapper:
-        "v3.2.0/bio/deeptools/plotfingerprint"
+        "v3.3.3/bio/deeptools/plotfingerprint"

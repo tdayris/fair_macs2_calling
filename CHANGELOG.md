@@ -1,3 +1,20 @@
+# 1.0.1
+
+## Features
+
+* Include FastQC in quality report
+* Snakemake v8+ compatibility
+* Snakemake-wrappers v3.3.3
+* All MultiQC are in same tab in the report
+* Snakemake environment always point to the latest version of Snakemake
+
+## Fixes
+
+* Typo in multiqc tab of snakemake report
+* Fix x/y axis visibility in catplot
+
+
+
 # 1.0.0
 
 ## Features

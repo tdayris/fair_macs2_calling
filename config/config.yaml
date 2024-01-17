@@ -2,6 +2,14 @@ samples: config/samples.csv
 
 # Optional parameters
 params:
+  # Optional parameters for FastQC
+  fastqc: ""
+  # Optional parameters for FastP
+  fastp:
+    # Optional command line adapters
+    adapters: ""
+    # Optional command line parameters
+    extra: ""
   bowtie2:
     # Optional parameters for bowtie2-build
     build: ""
@@ -15,6 +23,8 @@ params:
   picard:
     # Mapping QC optional parameters
     metrics: ""
+  # Optional parameters for samtools stats
+  samtools: ""
   macs2:
     # Optional parameters for Macs2 Callpeaks
     callpeak: ""
@@ -28,4 +38,19 @@ params:
     plot_coverage: "--coverageThresholds 1"
     # Optional parameters for DeepTools plotFingerprint
     plot_fingerprint: ""
-  
+  # Optional parameters for MultQC
+  multiqc: "--module deeptools --module macs2 --module picard --module fastqc --module fastp --module samtools --module bowtie2 --module sambamba --zip-data-dir --verbose --no-megaqc-upload --no-ansi --force"
+
+# Optional path to a genome.csv file
+genomes: config/genomes.csv
+
+# Internal use only, not described in documentation.
+# deactivate import of fair_genome_indexer pipeline.
+# Requires the file `genome.csv` to be filled.
+# load_fair_genome_indexer: true
+# Deactivate the import of fair_fastqc_multiqc pipeline.
+# Requires to redefine fastqc and multiqc rules.
+# load_fair_fastqc_multiqc: true
+# Deactivate import of fair_bowtie2_mapping
+# Required to redefine bowtie2 mapping and QC.
+# load_bowtie2_mapping: true

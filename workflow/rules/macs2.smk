@@ -21,7 +21,7 @@ rule macs2_callpeak_narrow:
     params:
         lambda wildcards: get_macs2_callpeak_params(wildcards, samples, config),
     wrapper:
-        "v3.2.0/bio/macs2/callpeak"
+        "v3.3.3/bio/macs2/callpeak"
 
 
 use rule macs2_callpeak_narrow as macs2_callpeak_broad with:
@@ -61,7 +61,7 @@ rule macs2_peaks_to_csv:
         subcommand="select",
         extra="1-6 --delimiter $'\t'",
     wrapper:
-        "v3.2.0/utils/xsv"
+        "v3.3.3/utils/xsv"
 
 
 rule macs2_csv_to_bed:
@@ -81,4 +81,4 @@ rule macs2_csv_to_bed:
         subcommand="fmt",
         extra="--out-delimiter $'\t'",
     wrapper:
-        "v3.2.0/utils/xsv"
+        "v3.3.3/utils/xsv"

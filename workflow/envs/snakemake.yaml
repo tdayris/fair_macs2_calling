@@ -4,6 +4,7 @@ channels:
   - nodefaults
 dependencies:
   - snakemake
+  - snakemake-executor-plugin-slurm
   - black
   - snakefmt
   - pandas

@@ -63,15 +63,17 @@ def catplot(df: pandas.DataFrame, x: str, out_png: str, title: str) -> None:
         errorbar="sd",
         palette="tab10",
         kind="bar",
-        legend_out=True,
+        legend_out=False,
     )
 
     graph.despine(left=True)
     graph.set_axis_labels("", "Percent of peaks")
-    graph.legend.set_title(title)
+    graph.set(title=title)
+
+    graph.set_xticklabels(rotation=90)
 
     plt.tight_layout()
-    plt.savefig(out_png, dpi=100)
+    plt.savefig(out_png, dpi=180)
     plt.cla()
     plt.clf()
     plt.close()

@@ -701,8 +701,9 @@ def get_macs2_calling_pipeline_targets(
         "bedtools": [],
         "mapping": "tmp/targets/fair_bowtie2_mapping_target.flag",
         "multiqc": [
-            "results/QC/MultiQC.html",
-            "results/QC/MultiQC.PeakCalling.html",
+            "results/QC/MultiQC_FastQC.html",
+            "results/QC/MultiQC_Mapping.html",
+            "results/QC/MultiQC_PeakCalling.html",
         ],
         "datavzrd": [],
         "inhouse": [],

@@ -3,12 +3,17 @@ include: "rules/common.smk"
 
 if config.get("load_fair_genome_indexer", True):
 
-    include: "rules/fair_genome_indexer.smk"
+    include: "rules/fair_genome_indexer_pipeline.smk"
 
 
 if config.get("load_fair_bowtie2_mapping", True):
 
-    include: "rules/fair_bowtie2_mapping.smk"
+    include: "rules/fair_bowtie2_mapping_pipeline.smk"
+
+
+if config.get("load_fair_fastqc_multiqc", True):
+
+    include: "rules/fair_fastqc_multiqc_pipeline.smk"
 
 
 include: "rules/bedtools_merge_peaks.smk"

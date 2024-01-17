@@ -42,4 +42,4 @@ rule datavzrd_homer_render:
     params:
         extra="",
     wrapper:
-        "v3.2.0/utils/datavzrd"
+        "v3.3.3/utils/datavzrd"
