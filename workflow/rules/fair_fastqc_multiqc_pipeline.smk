@@ -9,8 +9,7 @@ module fair_fastqc_multiqc:
                 "fastqc": config.get("params", {}).get("fastqc", ""),
                 "multiqc": config.get("params", {}).get(
                     "multiqc",
-                    "--module fastqc --zip-data-dir --verbose "
-                    "--no-megaqc-upload --no-ansi --force",
+                    "--module fastqc --zip-data-dir --verbose --no-megaqc-upload --no-ansi --force",
                 ),
             },
         }
