@@ -2,6 +2,12 @@ samples: config/samples.csv
 
 # Optional parameters
 params:
+  # Optional parameters for pyfaidx
+  pyfaidx:
+    # Filter-out non canonical chromosomes
+    dna: ''
+    # Keep all cdna sequences
+    cdna: ""
   bowtie2:
     # Optional parameters for bowtie2-build
     build: ""

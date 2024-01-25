@@ -1,3 +1,25 @@
+`Gustave Roussy`_ special launching steps
+=========================================
+
+If you belong to `Gustave Roussy`_, and use `flamingo` computing cluster, please use the following command lines
+and ignore the rest of this documentation.
+
+::
+
+    # Activate conda environment
+    conda activate /mnt/beegfs/pipelines/unofficial-snakemake-wrappers/shared_install/bigr_epicure_pipeline/
+
+    # Deploy workflow with the version of your choice
+    snakedeploy deploy-workflow \
+        https://github.com/tdayris/fair_macs2_calling . \
+        --tag <version>
+
+    # Run snakemake command
+    snakemake --profile '/mnt/beegfs/pipelines/unofficial-snakemake-wrappers/profiles/slurm-web/'
+
+With `version` being the latest available version of this pipeline. Select your `version here`_
+
+
 Step 1 : Install Snakemake and Snakedeploy
 ==========================================
 
@@ -12,7 +34,10 @@ Given that Mamba is installed, run
     mamba create -c conda-forge \
                  -c bioconda \
                  --name snakemake \
-                 snakemake snakedeploy
+                 snakemake \
+                 snakedeploy \
+                 mamba \
+
 
 to install both Snakemake and Snakedeploy in an isolated environment.
 For all following commands ensure that this environment is activated 
@@ -44,7 +69,9 @@ Second, run:
     
     snakedeploy deploy-workflow \
                 https://github.com/tdayris/fair_macs2_calling . \
-                --tag v1.0.2
+                --tag <version>
+
+Where <version> is the latest available verison.
 
 Snakedeploy will create two folders `workflow` and `config`. The former contains the 
 deployment of the chosen workflow as a `Snakemake module`_, the latter contains 
@@ -73,13 +100,12 @@ the `Mamba package manager`_ by default), run Snakemake with:
 
 ::
     
-    snakemake --cores all --use-conda 
+    snakemake --cores all --software-deployment-method conda
 
 Snakemake will automatically detect the main `Snakefile` in the `workflow` subfolder 
 and execute the workflow module that has been defined by the deployment in step 2.
 
 For further options, e.g. for cluster and cloud execution, see Snakemake_ documentation.
-
 
 Step 5 : Generate report
 ========================
@@ -102,6 +128,8 @@ file in publications, or uploaded to a service like Zenodo_ in order to obtain a
 .. _`mamba-org`: https://github.com/mamba-org/mamba
 .. _`Snakemake module`: https://snakemake.readthedocs.io/en/stable/snakefiles/deployment.html#using-and-combining-pre-exising-workflows
 .. _`managing it via a (private) Github repository`: https://docs.github.com/en/github/importing-your-projects-to-github/adding-an-existing-project-to-github-using-the-command-line
-.. _`config/README.md`: https://github.com/tdayris/fair_genome_indexer/blob/main/config/README.md
+.. _`config/README.md`: https://github.com/tdayris/fair_macs2_calling/blob/main/config/README.md
 .. _Zenodo: https://zenodo.org/
 .. _DOI: https://en.wikipedia.org/wiki/Digital_object_identifier
+.. _`Gustave Roussy`: https://www.gustaveroussy.fr/en
+.. _`version here`: https://github.com/tdayris/fair_macs2_calling/releases

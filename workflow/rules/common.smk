@@ -329,12 +329,15 @@ def get_homer_annotate_peaks_input(
     wig: str = f"results/{species}.{build}.{release}.{datatype}/Coverage/{sample}.bw"
     peaks: str = f"results/{species}.{build}.{release}.{datatype}/PeakCalling/{macs2_peak_type}/{sample}.{macs2_peak_type}.bed"
     fasta: str = reference.get(
-        "fasta", f"reference/{species}.{build}.{release}.{datatype}.fasta"
+        "fasta", f"reference/sequences/{species}.{build}.{release}.{datatype}.fasta"
     )
     fai: str = reference.get(
-        "fasta_index", f"reference/{species}.{build}.{release}.{datatype}.fasta.fai"
+        "fasta_index",
+        f"reference/sequences/{species}.{build}.{release}.{datatype}.fasta.fai",
     )
-    gtf: str = reference.get("gtf", f"reference/{species}.{build}.{release}.gtf")
+    gtf: str = reference.get(
+        "gtf", f"reference/annotation/{species}.{build}.{release}.gtf"
+    )
 
     return {"wig": wig, "peaks": peaks, "genome": fasta, "fai": fai, "gtf": gtf}
 
@@ -699,7 +702,6 @@ def get_macs2_calling_pipeline_targets(
         "coverage": [],
         "homer": [],
         "bedtools": [],
-        "mapping": "tmp/targets/fair_bowtie2_mapping_target.flag",
         "multiqc": [
             "results/QC/MultiQC_FastQC.html",
             "results/QC/MultiQC_Mapping.html",

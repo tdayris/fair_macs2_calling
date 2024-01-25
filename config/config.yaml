@@ -2,6 +2,12 @@ samples: config/samples.csv
 
 # Optional parameters
 params:
+  # Optional parameters for pyfaidx
+  pyfaidx:
+    # Filter-out non canonical chromosomes
+    dna: '--regex "^[[0-9]+|X|Y|MT]"'
+    # Keep all cdna sequences
+    cdna: '--regex "^.+\|.+\|.+\|[[0-9]+|X|Y|MT]"'
   # Optional parameters for FastQC
   fastqc: ""
   # Optional parameters for FastP

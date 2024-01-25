@@ -22,16 +22,27 @@ The tools used in this pipeline are described [here](https://github.com/tdayris/
 
 ### Index and genome sequences with [`fair_genome_indexer`](https://github.com/tdayris/fair_genome_indexer/tree/main)
 
-| Step                          | Wrapper - Script                                                                                                                     |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| Download DNA fasta            | [ensembl-sequence](https://snakemake-wrappers.readthedocs.io/en/v3.3.3/wrappers/reference/ensembl-sequence.html)                     |
-| Download cDNA fasta           | [ensembl-sequence](https://snakemake-wrappers.readthedocs.io/en/v3.3.3/wrappers/reference/ensembl-sequence.html)                     |
-| Download GTF annotation       | [ensembl-annotation](https://snakemake-wrappers.readthedocs.io/en/v3.3.3/wrappers/reference/ensembl-annotation.html)                 |
-| Samtools index fasta          | [samtools-faidx](https://snakemake-wrappers.readthedocs.io/en/v3.3.3/wrappers/samtools/faidx.html)                                   |
-| Picard sequence dictionary    | [picard-createsequencedictionary](https://snakemake-wrappers.readthedocs.io/en/v3.3.3/wrappers/picard/createsequencedictionary.html) |
-| Download VCF variation        | [ensembl-variation](https://snakemake-wrappers.readthedocs.io/en/v3.3.3/wrappers/reference/ensembl-variation.html)                   |
-| Fix Ensembl GTF common errors | [Agat](https://agat.readthedocs.io/en/latest/tools/agat_convert_sp_gff2gtf.html)                                                     |
-| Download known blacklist      | [Github source](https://github.com/Boyle-Lab/Blacklist/tree/master/lists)                                                            |
+| Step                                                       | Commands/Wrapper                                                                                                             |
+| ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Download DNA Fasta from Ensembl                            | [ensembl-sequence](https://snakemake-wrappers.readthedocs.io/en/v3.3.3/wrappers/reference/ensembl-sequence.html)     |
+| Remove non-canonical chromosomes                           | [pyfaidx](https://github.com/mdshw5/pyfaidx)                                                                         |
+| Index DNA sequence                                         | [samtools](https://snakemake-wrappers.readthedocs.io/en/v3.3.3/wrappers/samtools/faidx.html)                         |
+| Creatse sequence Dictionary                                | [picard](https://snakemake-wrappers.readthedocs.io/en/v3.3.3/wrappers/picard/createsequencedictionary.html)          |
+| Download GTF annotation                                    | [ensembl-annotation](https://snakemake-wrappers.readthedocs.io/en/v3.3.3/wrappers/reference/ensembl-annotation.html) |
+| Fix format errors                                          | [Agat](https://agat.readthedocs.io/en/latest/tools/agat_convert_sp_gff2gtf.html)                                     |
+| Remove non-canonical chromosomes, based on above DNA Fasta | [Agat](https://agat.readthedocs.io/en/latest/tools/agat_sq_filter_feature_from_fasta.html)                           |
+| Remove `<NA>` Transcript support levels                    | [Agat](https://agat.readthedocs.io/en/latest/tools/agat_sp_filter_feature_by_attribute_value.html)                   |
+| Download blacklisted regions                               | [Github source](https://github.com/Boyle-Lab/Blacklist/tree/master/lists)                                            |
+| Merge overlapping intervals                                | [bedtools](https://snakemake-wrappers.readthedocs.io/en/v3.3.3/wrappers/bedtools/merge.html)                         |
+
+
+### Raw-sequences QC with [`fair_fastqc_multiqc`](https://github.com/tdayris/fair_fastqc_multiqc/)
+
+| Step    | Wrapper                                                                                      |
+| ------- | -------------------------------------------------------------------------------------------- |
+| FastQC  | [fastqc-wrapper](https://snakemake-wrappers.readthedocs.io/en/v3.3.3/wrappers/fastqc.html)   |
+| MultiQC | [multiqc-wrapper](https://snakemake-wrappers.readthedocs.io/en/v3.3.3/wrappers/multiqc.html) |
+
 
 ### Bowtie2 Mapping with [`fair_bowtie2_mapping`](https://github.com/tdayris/fair_bowtie2_mapping/tree/main)
 
@@ -46,7 +57,7 @@ The tools used in this pipeline are described [here](https://github.com/tdayris/
 | Sambamba-index   | [bowtie2-sambamba meta-wrapper](https://snakemake-wrappers.readthedocs.io/en/v3.3.3/meta-wrappers/bowtie2_sambamba.html) | [sambamba-index](https://snakemake-wrappers.readthedocs.io/en/v3.3.3/wrappers/sambamba/index.html)                               |
 | Picard           |                                                                                                                          | [picard-collectmultiplemetrics](https://snakemake-wrappers.readthedocs.io/en/stable/wrappers/picard/collectmultiplemetrics.html) |
 | Samtools         |                                                                                                                          | [samtools-stats](https://snakemake-wrappers.readthedocs.io/en/v3.3.3/wrappers/samtools/stats.html)                               |
-| FastQC           |                                                                                                                          | [fastqc-wrapper](https://snakemake-wrappers.readthedocs.io/en/v3.3.3/wrappers/fastqc.html)                                       |
+|
 
 
 ### Peak Calling
