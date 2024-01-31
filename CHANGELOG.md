@@ -1,3 +1,9 @@
+# 2.0.3
+
+## Fix
+
+* Type error on missing effective genome size
+
 # 2.0.2
 
 ## Features
