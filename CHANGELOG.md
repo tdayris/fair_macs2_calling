@@ -1,3 +1,13 @@
+# 2.0.1
+
+## Features
+
+* Resources reservation
+
+## Fixes
+
+* Samtools configuration
+
 # 2.0.0
 
 Breaking change: Non-canonical chromosomes removed by defaults

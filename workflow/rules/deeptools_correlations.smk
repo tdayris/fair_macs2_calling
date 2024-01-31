@@ -5,6 +5,10 @@ rule deeptools_multibigwig_summary:
         npz=temp(
             "tmp/deeptools/multibigwig_summary/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.npz"
         ),
+    resources:
+        mem_mb=lambda wildcards, attempt: attempt * (1024 * 45) + (1024 * 20),
+        runtime=lambda wildcards, attempt: attempt * 120 + 60,
+        tmpdir="tmp",
     log:
         "logs/deeptools/multibigwig_summary/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.log",
     benchmark:
@@ -36,6 +40,10 @@ rule deeptools_plot_pca:
         tab=temp(
             "tmp/deeptools/plot_pca/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tab"
         ),
+    resources:
+        mem_mb=lambda wildcards, attempt: attempt * (1024 * 45) + (1024 * 20),
+        runtime=lambda wildcards, attempt: attempt * 120 + 60,
+        tmpdir="tmp",
     log:
         "logs/deeptools/plot_pca/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.log",
     benchmark:
@@ -65,6 +73,10 @@ rule deeptools_plot_correlation:
         tab=temp(
             "tmp/deeptools/plot_correlation/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tab"
         ),
+    resources:
+        mem_mb=lambda wildcards, attempt: attempt * (1024 * 45) + (1024 * 20),
+        runtime=lambda wildcards, attempt: attempt * 120 + 60,
+        tmpdir="tmp",
     log:
         "logs/deeptools/plot_correlation/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.log",
     benchmark:
@@ -96,6 +108,10 @@ rule deeptools_plot_enrichment:
         out_raw_counts=temp(
             "tmp/deeptools/plot_enrichment/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tab"
         ),
+    resources:
+        mem_mb=lambda wildcards, attempt: attempt * (1024 * 45) + (1024 * 20),
+        runtime=lambda wildcards, attempt: attempt * 120 + 60,
+        tmpdir="tmp",
     log:
         "logs/deeptools/plot_enrichment/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.log",
     benchmark:

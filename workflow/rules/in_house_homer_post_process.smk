@@ -8,6 +8,10 @@ rule summarize_homer:
         tsv=temp(
             "tmp/summarize_homer/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.tsv"
         ),
+    resources:
+        mem_mb=lambda wildcards, attempt: attempt * (1024 * 2),
+        runtime=lambda wildcards, attempt: attempt * 25,
+        tmpdir="tmp",
     log:
         "logs/summarize_homer/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.log",
     benchmark:
@@ -31,6 +35,10 @@ rule merge_homer_summaries:
         genes=temp(
             "tmp/summarize_homer/{species}.{build}.{release}.{datatype}.{macs2_peak_type}/GeneTypes.tsv"
         ),
+    resources:
+        mem_mb=lambda wildcards, attempt: attempt * (1024 * 2),
+        runtime=lambda wildcards, attempt: attempt * 25,
+        tmpdir="tmp",
     log:
         "logs/summarize_homer/{species}.{build}.{release}.{datatype}.{macs2_peak_type}.log",
     benchmark:
@@ -56,6 +64,10 @@ rule plot_homer_summaries_for_regions:
                 "sample": "all",
             },
         ),
+    resources:
+        mem_mb=lambda wildcards, attempt: attempt * (1024 * 2),
+        runtime=lambda wildcards, attempt: attempt * 25,
+        tmpdir="tmp",
     log:
         "logs/plot_homer_summaries/{species}.{build}.{release}.{datatype}.{macs2_peak_type}/{content}.log",
     benchmark:

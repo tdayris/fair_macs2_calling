@@ -9,6 +9,10 @@ rule xsv_cat_macs2_peaks:
         temp(
             "tmp/csv/cat_rows/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.csv"
         ),
+    resources:
+        mem_mb=lambda wildcards, attempt: attempt * 1024,
+        runtime=lambda wildcards, attempt: attempt * 10,
+        tmpdir="tmp",
     group:
         "concat_beds"
     log:
@@ -29,6 +33,10 @@ rule xsv_sort_macs2_concat_peaks:
         temp(
             "tmp/csv/sort/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.csv"
         ),
+    resources:
+        mem_mb=lambda wildcards, attempt: attempt * 1024,
+        runtime=lambda wildcards, attempt: attempt * 10,
+        tmpdir="tmp",
     group:
         "concat_beds"
     log:
@@ -47,6 +55,10 @@ rule xsv_fmt_macs2_sorted_peaks:
         table="tmp/csv/sort/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.csv",
     output:
         temp("tmp/csv/fmt/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.bed"),
+    resources:
+        mem_mb=lambda wildcards, attempt: attempt * 1024,
+        runtime=lambda wildcards, attempt: attempt * 10,
+        tmpdir="tmp",
     group:
         "concat_beds"
     log:
@@ -67,6 +79,10 @@ rule bedtools_merge_macs2_sorted_peaks:
         temp(
             "tmp/bedtools/merge/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.merged.bed"
         ),
+    resources:
+        mem_mb=lambda wildcards, attempt: attempt * (1024 * 4),
+        runtime=lambda wildcards, attempt: attempt * 35,
+        tmpdir="tmp",
     log:
         "logs/bedtools/merge/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.log",
     benchmark:

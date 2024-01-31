@@ -5,6 +5,10 @@ rule datavzrd_homer_yaml:
         yaml=temp(
             "tmp/datavzrd/{species}.{build}.{release}.{datatype}/homer/{macs2_peak_type}/{sample}.yaml"
         ),
+    resources:
+        mem_mb=lambda wildcards, attempt: attempt * 512,
+        runtime=lambda wildcards, attempt: attempt * 5,
+        tmpdir="tmp",
     log:
         "logs/datavzrd/{species}.{build}.{release}.{datatype}/homer/{macs2_peak_type}/{sample}.config.log",
     benchmark:
@@ -35,6 +39,10 @@ rule datavzrd_homer_render:
                 "sample": "{sample}",
             },
         ),
+    resources:
+        mem_mb=lambda wildcards, attempt: attempt * (1024 * 2),
+        runtime=lambda wildcards, attempt: attempt * 25,
+        tmpdir="tmp",
     log:
         "logs/datavzrd/{species}.{build}.{release}.{datatype}/homer/{macs2_peak_type}/{sample}.render.log",
     benchmark:

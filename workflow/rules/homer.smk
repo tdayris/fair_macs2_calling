@@ -8,6 +8,10 @@ rule homer_annotate_peaks:
                 non_empty=True,
             ),
         ),
+    resources:
+        mem_mb=lambda wildcards, attempt: attempt * (1024 * 3),
+        runtime=lambda wildcards, attempt: attempt * 45,
+        tmpdir="tmp",
     log:
         "logs/homer/annotatepeaks/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.log",
     benchmark:

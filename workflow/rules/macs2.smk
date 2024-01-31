@@ -14,6 +14,10 @@ rule macs2_callpeak_narrow:
         temp(
             "tmp/macs2/{species}.{build}.{release}.{datatype}/narrowPeak/{sample}_summits.bed"
         ),
+    resources:
+        mem_mb=lambda wildcards, attempt: attempt * (1024 * 4),
+        runtime=lambda wildcards, attempt: attempt * 45,
+        tmpdir="tmp",
     log:
         "logs/macs2/{species}.{build}.{release}.{datatype}/{sample}.narrow.log",
     benchmark:
@@ -38,6 +42,10 @@ use rule macs2_callpeak_narrow as macs2_callpeak_broad with:
         temp(
             "tmp/macs2/{species}.{build}.{release}.{datatype}/broadPeak/{sample}_peaks.gappedPeak"
         ),
+    resources:
+        mem_mb=lambda wildcards, attempt: attempt * (1024 * 4),
+        runtime=lambda wildcards, attempt: attempt * 45,
+        tmpdir="tmp",
     log:
         "logs/macs2/{species}.{build}.{release}.{datatype}/{sample}.broad.log",
     benchmark:
@@ -55,6 +63,10 @@ rule macs2_peaks_to_csv:
         "logs/xsv/select/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.log",
     benchmark:
         "benchmark/xsv/select/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.tsv"
+    resources:
+        mem_mb=lambda wildcards, attempt: attempt * 1024,
+        runtime=lambda wildcards, attempt: attempt * 10,
+        tmpdir="tmp",
     group:
         "macs2_reformat"
     params:
@@ -71,6 +83,10 @@ rule macs2_csv_to_bed:
         protected(
             "results/{species}.{build}.{release}.{datatype}/PeakCalling/{macs2_peak_type}/{sample}.{macs2_peak_type}.bed"
         ),
+    resources:
+        mem_mb=lambda wildcards, attempt: attempt * 1024,
+        runtime=lambda wildcards, attempt: attempt * 10,
+        tmpdir="tmp",
     log:
         "logs/xsv/select/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.log",
     benchmark:

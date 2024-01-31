@@ -5,6 +5,10 @@ rule deeptools_bamcoverage:
         protected(
             "results/{species}.{build}.{release}.{datatype}/Coverage/{sample}.bw",
         ),
+    resources:
+        mem_mb=lambda wildcards, attempt: attempt * (1024 * 45) + (1024 * 20),
+        runtime=lambda wildcards, attempt: attempt * 120 + 60,
+        tmpdir="tmp",
     log:
         "logs/deeptools/bamcoverage/{species}.{build}.{release}.{datatype}/{sample}.log",
     benchmark:
@@ -39,6 +43,10 @@ rule deeptools_plotcoverage:
         metrics=temp(
             "tmp/deeptools/plot_coverage/{species}.{build}.{release}.{datatype}/Coverage.metrics"
         ),
+    resources:
+        mem_mb=lambda wildcards, attempt: attempt * (1024 * 45) + (1024 * 20),
+        runtime=lambda wildcards, attempt: attempt * 120 + 60,
+        tmpdir="tmp",
     log:
         "logs/deeptools/plot_coverage/{species}.{build}.{release}.{datatype}.log",
     benchmark:
@@ -69,6 +77,10 @@ rule deeptools_fingerprint:
         qc_metrics=temp(
             "tmp/deeptools/plot_fingerprint/{species}.{build}.{release}.{datatype}/qc_metrics.txt"
         ),
+    resources:
+        mem_mb=lambda wildcards, attempt: attempt * (1024 * 45) + (1024 * 20),
+        runtime=lambda wildcards, attempt: attempt * 120 + 60,
+        tmpdir="tmp",
     log:
         "logs/deeptools/plot_fingerprint/{species}.{build}.{release}.{datatype}.log",
     benchmark:

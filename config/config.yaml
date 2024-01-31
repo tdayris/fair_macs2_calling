@@ -2,20 +2,39 @@ samples: config/samples.csv
 
 # Optional parameters
 params:
-  # Optional parameters for pyfaidx
+  # Optional parameters for pyfaidx (filter/correct fasta format)
   pyfaidx:
     # Filter-out non canonical chromosomes
     dna: '--regex "^[[0-9]+|X|Y|MT]"'
     # Keep all cdna sequences
-    cdna: '--regex "^.+\|.+\|.+\|[[0-9]+|X|Y|MT]"'
-  # Optional parameters for FastQC
-  fastqc: ""
-  # Optional parameters for FastP
+    cdna: ""
+  # Optional parameters for agat (filter/correct GTF format)
+  agat:
+    # Optional parameters for agat_convert_sp_gff2gtf.pl
+    gff2gtf: ""
+    # Optional parameters for agat_sq_filter_feature_from_fasta.pl
+    filter_features: ""
+    # Optional parameters for agat_sq_select_feature_by_attribute_value.pl
+    select_feature_by_attribute_value: "--attribute 'transcript_support_level' --value '\"NA\"' --test '='"
+    # Optional parameters for agat_convert_sp_gff2tsv
+    agat_convert_sp_gff2tsv: ""
+  # Optional parameters for GFFRead
+  gffread: ""
+  # Optional parameters for bedtools
+  bedtools:
+    # Optional parameters for filtering non-canonical chromosomes over dbSNP
+    filter_non_canonical_chrom: ""
+  # Optional parameters for tabix index VCF
+  tabix: "-p vcf"
+  # Optional parameters for fastp
   fastp:
-    # Optional command line adapters
+    # Optional adapters to remove
     adapters: ""
-    # Optional command line parameters
+    # Optional command line arguments for fastp
     extra: ""
+  # Optional parameters for fastqc
+  fastqc: ""
+  # Optional parameters for bowtie2
   bowtie2:
     # Optional parameters for bowtie2-build
     build: ""
@@ -25,12 +44,18 @@ params:
     # Optional parameters for sambamba view
     view: "--format 'bam' --filter 'mapping_quality >= 30 and not (unmapped or mate_is_unmapped)' "
     # Optional parameters for sambamba markdup
-    markdup: "--remove-duplicates --overflow-size 500000"
+    markdup: "--remove-duplicates --overflow-list-size=500000"
   picard:
     # Mapping QC optional parameters
     metrics: ""
+    # Optional parameters for picard create sequence dictionary
+    createsequencedictionary: ""
   # Optional parameters for samtools stats
-  samtools: ""
+  samtools:
+    # Optional parameters for samtools fasta index
+    faidx: ""
+    # Optional parameters for samtools stats
+    stats: ""
   macs2:
     # Optional parameters for Macs2 Callpeaks
     callpeak: ""

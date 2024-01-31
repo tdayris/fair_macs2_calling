@@ -13,6 +13,10 @@ rule multiqc_report:
             },
         ),
         "results/QC/MultiQC_PeakCalling_data.zip",
+    resources:
+        mem_mb=lambda wildcards, attempt: attempt * (1024 * 2),
+        runtime=lambda wildcards, attempt: attempt * 45,
+        tmpdir="tmp",
     params:
         extra=config.get("params", {}).get(
             "multiqc", "--zip-data-dir --verbose --no-megaqc-upload --no-ansi --force"
