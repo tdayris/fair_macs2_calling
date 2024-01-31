@@ -12,6 +12,7 @@ rule homer_annotate_peaks:
         mem_mb=lambda wildcards, attempt: attempt * (1024 * 3),
         runtime=lambda wildcards, attempt: attempt * 45,
         tmpdir="tmp",
+    shadow: "minimal"
     log:
         "logs/homer/annotatepeaks/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.log",
     benchmark:

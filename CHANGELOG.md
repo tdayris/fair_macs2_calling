@@ -1,3 +1,14 @@
+# 2.0.2
+
+## Features
+
+* Prevent homer temp file collision
+* Update github checkout images
+
+## Fix
+
+* Missing read length in default genome size computation
+
 # 2.0.1
 
 ## Features

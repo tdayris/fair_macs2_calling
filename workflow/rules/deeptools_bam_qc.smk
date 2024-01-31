@@ -18,6 +18,7 @@ rule deeptools_bamcoverage:
         effective_genome_size=lambda wildcards: get_effective_genome_size(
             wildcards, genomes
         ),
+        read_length=lambda wildcards: get_read_length(wildcards, samples),
         extra=config.get("params", {}).get("deeptools", {}).get("bamcoverage", ""),
     wrapper:
         "v3.3.3/bio/deeptools/bamcoverage"

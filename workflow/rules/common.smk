@@ -150,6 +150,23 @@ def get_effective_genome_size(
     return None
 
 
+def get_read_length(
+    wildcards: snakemake.io.Wildcards, samples: pandas.DataFrame = samples
+) -> str:
+    """
+    Return read length
+
+    Parameters:
+
+    wildcards (snakemake.io.Wildcards): Required for snakemake unpacking function
+    samples   (pandas.DataFrame)      : Samples description and their file paths
+
+    Return    (str): Read length (default "100")
+    """
+    sample_data: dict[str, str | None] = get_sample_information(wildcards, samples)
+    return str(sample_data.get("read_length", 100))
+
+
 def get_blacklist(
     wildcards: snakemake.io.Wildcards, genomes: pandas.DataFrame = genomes
 ) -> str | None:
