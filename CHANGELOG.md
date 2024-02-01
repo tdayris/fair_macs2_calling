@@ -1,3 +1,9 @@
+# 2.0.4
+
+## Feature
+
+* Sort Macs2 BED before annotation
+
 # 2.0.3
 
 ## Fix

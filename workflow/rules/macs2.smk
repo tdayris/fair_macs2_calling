@@ -80,8 +80,8 @@ rule macs2_csv_to_bed:
     input:
         table="tmp/macs2/{species}.{build}.{release}.{datatype}/{macs2_peak_type}/{sample}.csv",
     output:
-        protected(
-            "results/{species}.{build}.{release}.{datatype}/PeakCalling/{macs2_peak_type}/{sample}.{macs2_peak_type}.bed"
+        temp(
+            "tmp/macs2/{species}.{build}.{release}.{datatype}/{macs2_peak_type}/{sample}.bed"
         ),
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024,
@@ -98,3 +98,24 @@ rule macs2_csv_to_bed:
         extra="--out-delimiter $'\t'",
     wrapper:
         "v3.3.3/utils/xsv"
+
+
+rule sort_macs2_bed:
+    input:
+        in_file="tmp/macs2/{species}.{build}.{release}.{datatype}/{macs2_peak_type}/{sample}.bed",
+    output:
+        protected(
+            "results/{species}.{build}.{release}.{datatype}/PeakCalling/{macs2_peak_type}/{sample}.{macs2_peak_type}.bed"
+        ),
+    resources:
+        mem_mb=lambda wildcards, attempt: attempt * (1024 * 4),
+        runtime=lambda wildcards, attempt: attempt * 35,
+        tmpdir="tmp",
+    log:
+        "logs/bdtools/sort/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.log",
+    benchmark:
+        "benchmark/bedtools/sort/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.tsv"
+    params:
+        extra=config.get("params", {}).get("bedtools", {}).get("sort", ""),
+    wrapper:
+        "v3.3.3/bedtools/sort"
