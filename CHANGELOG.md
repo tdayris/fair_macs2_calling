@@ -1,3 +1,15 @@
+# 2.0.5
+
+## Feature
+
+* Sort Macs2 BED before merging
+* Raise plot-fingerprint time reservation
+* Provide default value for coverage threshold in plotCoverage
+
+## Fix
+
+* 
+
 # 2.0.4
 
 ## Feature

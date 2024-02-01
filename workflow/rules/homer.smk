@@ -9,7 +9,7 @@ rule homer_annotate_peaks:
             ),
         ),
     resources:
-        mem_mb=lambda wildcards, attempt: attempt * (1024 * 3),
+        mem_mb=lambda wildcards, attempt: attempt * (1024 * 6),
         runtime=lambda wildcards, attempt: attempt * 45,
         tmpdir="tmp",
     shadow: "minimal"

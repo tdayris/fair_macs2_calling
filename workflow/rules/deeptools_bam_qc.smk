@@ -46,7 +46,7 @@ rule deeptools_plotcoverage:
         ),
     resources:
         mem_mb=lambda wildcards, attempt: attempt * (1024 * 45) + (1024 * 20),
-        runtime=lambda wildcards, attempt: attempt * 120 + 60,
+        runtime=lambda wildcards, attempt: attempt * (60 * 5),
         tmpdir="tmp",
     log:
         "logs/deeptools/plot_coverage/{species}.{build}.{release}.{datatype}.log",

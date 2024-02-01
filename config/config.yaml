@@ -66,7 +66,7 @@ params:
     # Optional parameters for DeepTools bamCoverage
     bamcoverage: "--ignoreDuplicates --minMappingQuality 30 --samFlagExclude 4 --ignoreForNormalization X Y MT"
     # Optional parameters for DeepTools plotCoverage
-    plot_coverage: "--skipZeros --ignoreDuplicates --minMappingQuality 30 --samFlagExclude 4"
+    plot_coverage: "--skipZeros --coverageThresholds 1 --ignoreDuplicates --minMappingQuality 30 --samFlagExclude 4"
     # Optional parameters for DeepTools plotFingerprint
     plot_fingerprint: "--skipZeros --ignoreDuplicates --minMappingQuality 30 --samFlagExclude 4"
     # Optional parameters for DeepTools plotPCA
