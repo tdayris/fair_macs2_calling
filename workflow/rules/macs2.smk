@@ -118,4 +118,4 @@ rule sort_macs2_bed:
     params:
         extra=config.get("params", {}).get("bedtools", {}).get("sort", ""),
     wrapper:
-        "v3.3.3/bedtools/sort"
+        "v3.3.3/bio/bedtools/sort"
