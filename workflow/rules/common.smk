@@ -344,7 +344,9 @@ def get_homer_annotate_peaks_input(
     reference: dict[str, str] = get_reference_genome_data(wildcards, genomes)
 
     wig: str = f"results/{species}.{build}.{release}.{datatype}/Coverage/{sample}.bw"
-    peaks: str = f"results/{species}.{build}.{release}.{datatype}/PeakCalling/{macs2_peak_type}/{sample}.{macs2_peak_type}.bed"
+    peaks: str = (
+        f"results/{species}.{build}.{release}.{datatype}/PeakCalling/{macs2_peak_type}/{sample}.{macs2_peak_type}.bed"
+    )
     fasta: str = reference.get(
         "fasta", f"reference/sequences/{species}.{build}.{release}.{datatype}.fasta"
     )
@@ -624,9 +626,9 @@ def get_multiqc_report_input(
             f"tmp/deeptools/plot_fingerprint/{species}.{build}.{release}.{datatype}/qc_metrics.txt"
         )
 
-        results[
-            "bowtie2"
-        ] = f"logs/bowtie2/align/{species}.{build}.{release}.{datatype}/{sample}.log"
+        results["bowtie2"] = (
+            f"logs/bowtie2/align/{species}.{build}.{release}.{datatype}/{sample}.log"
+        )
 
         sample_data: dict[str, str | None] = get_sample_information(
             snakemake.io.Wildcards(fromdict={"sample": sample}), samples
