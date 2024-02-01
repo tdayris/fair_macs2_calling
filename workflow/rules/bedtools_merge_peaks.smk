@@ -74,7 +74,7 @@ rule xsv_fmt_macs2_sorted_peaks:
 
 rule bedtools_sort_macs2_concat_beds:
     input:
-        "tmp/csv/fmt/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.bed",
+        in_file="tmp/csv/fmt/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.bed",
     output:
         temp(
             "tmp/csv/fmt/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.sorted.bed"
