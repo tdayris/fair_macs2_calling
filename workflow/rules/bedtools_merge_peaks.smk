@@ -73,19 +73,19 @@ rule xsv_fmt_macs2_sorted_peaks:
 
 
 
-rule bedtools_sort_macs2_beds:
+rule bedtools_sort_macs2_concat_beds:
     input:
         "tmp/csv/fmt/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.bed",
     output:
         temp("tmp/csv/fmt/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.sorted.bed"),
     resources:
-        mem_mb=lambda wildcards, attempt: attempt * (1024 * 4),
+        mem_mb=lambda wildcards, attempt: attempt * (1024 * 8),
         runtime=lambda wildcards, attempt: attempt * 35,
         tmpdir="tmp",
     log:
-        "logs/bedtools/sort/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.before_merge.log",
+        "logs/bdtools/sort/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.log",
     benchmark:
-        "benchmark/bedtools/sort/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.before_merge.tsv"
+        "benchmark/bedtools/sort/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.tsv"
     params:
         extra=config.get("params", {}).get("bedtools", {}).get("sort", ""),
     wrapper:

@@ -2,13 +2,13 @@
 
 ## Feature
 
-* Sort Macs2 BED before merging
 * Raise plot-fingerprint time reservation
 * Provide default value for coverage threshold in plotCoverage
+* Raise number of threads in DeepTools
 
 ## Fix
 
-* 
+* Sort Macs2 BED before merging
 
 # 2.0.4
 
