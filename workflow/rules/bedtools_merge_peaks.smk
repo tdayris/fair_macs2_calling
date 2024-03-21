@@ -1,4 +1,4 @@
-rule xsv_cat_macs2_peaks:
+rule fair_mac2_calling_xsv_cat_macs2_peaks:
     input:
         table=expand(
             "results/{species}.{build}.{release}.{datatype}/PeakCalling/{macs2_peak_type}/{sample}.{macs2_peak_type}.bed",
@@ -7,7 +7,7 @@ rule xsv_cat_macs2_peaks:
         ),
     output:
         temp(
-            "tmp/csv/cat_rows/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.csv"
+            "tmp/fair_mac2_calling/csv/cat_rows/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.csv"
         ),
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024,
@@ -16,22 +16,22 @@ rule xsv_cat_macs2_peaks:
     group:
         "concat_beds"
     log:
-        "logs/csv/cat_rows/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.log",
+        "logs/fair_mac2_calling/csv/cat_rows/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.log",
     benchmark:
-        "benchmark/csv/cat_rows/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tsv"
+        "benchmark/fair_mac2_calling/csv/cat_rows/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tsv"
     params:
         subcommand="cat rows",
-        extra="--no-headers --delimiter $'\t'",
+        extra=dlookup(dpath="params/fair_macs2_calling/xsv/cat_macs2_peaks", within=config, default="--no-headers --delimiter $'\t'"),
     wrapper:
-        "v3.3.3/utils/xsv"
+        f"{snakemake_wrappers_prefix}/utils/xsv"
 
 
-rule xsv_sort_macs2_concat_peaks:
+rule fair_mac2_calling_xsv_sort_macs2_concat_peaks:
     input:
-        table="tmp/csv/cat_rows/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.csv",
+        table="tmp/fair_mac2_calling/csv/cat_rows/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.csv",
     output:
         temp(
-            "tmp/csv/sort/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.csv"
+            "tmp/fair_mac2_calling/csv/sort/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.csv"
         ),
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024,
@@ -40,21 +40,21 @@ rule xsv_sort_macs2_concat_peaks:
     group:
         "concat_beds"
     log:
-        "logs/csv/sort/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.log",
+        "logs/fair_mac2_calling/csv/sort/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.log",
     benchmark:
-        "benchmark/csv/sort/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tsv"
+        "benchmark/fair_mac2_calling/csv/sort/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tsv"
     params:
         subcommand="sort",
-        extra="--no-headers --numeric --select 1-3",
+        extra=dlookup(dpath="params/fair_macs2_calling/xsv/sort_macs2_peaks", within=config, default="--no-headers --numeric --select 1-3"),
     wrapper:
-        "v3.3.3/utils/xsv"
+        f"{snakemake_wrappers_prefix}/utils/xsv"
 
 
-rule xsv_fmt_macs2_sorted_peaks:
+rule fair_mac2_calling_xsv_fmt_macs2_sorted_peaks:
     input:
-        table="tmp/csv/sort/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.csv",
+        table="tmp/fair_mac2_calling/csv/sort/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.csv",
     output:
-        temp("tmp/csv/fmt/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.bed"),
+        temp("tmp/fair_mac2_calling/csv/fmt/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.bed"),
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024,
         runtime=lambda wildcards, attempt: attempt * 10,
@@ -62,53 +62,53 @@ rule xsv_fmt_macs2_sorted_peaks:
     group:
         "concat_beds"
     log:
-        "logs/csv/fmt/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.log",
+        "logs/fair_mac2_calling/csv/fmt/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.log",
     benchmark:
-        "benchmark/csv/fmt/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tsv"
+        "benchmark/fair_mac2_calling/csv/fmt/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tsv"
     params:
         subcommand="fmt",
-        extra="--out-delimiter $'\t'",
+        extra=dlookup(dpath="params/fair_macs2_calling/xsv/format_macs2_peaks", within=config, default="--out-delimiter $'\t'"),
     wrapper:
-        "v3.3.3/utils/xsv"
+        f"{snakemake_wrappers_prefix}/utils/xsv"
 
 
-rule bedtools_sort_macs2_concat_beds:
+rule fair_mac2_calling_bedtools_sort_macs2_concat_beds:
     input:
-        in_file="tmp/csv/fmt/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.bed",
+        in_file="tmp/fair_mac2_calling/csv/fmt/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.bed",
     output:
         temp(
-            "tmp/csv/fmt/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.sorted.bed"
+            "tmp/fair_mac2_calling/csv/fmt/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.sorted.bed"
         ),
     resources:
         mem_mb=lambda wildcards, attempt: attempt * (1024 * 8),
         runtime=lambda wildcards, attempt: attempt * 35,
         tmpdir="tmp",
     log:
-        "logs/bdtools/sort/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.log",
+        "logs/fair_mac2_calling/bdtools/sort/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.log",
     benchmark:
-        "benchmark/bedtools/sort/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tsv"
+        "benchmark/fair_mac2_calling/bedtools/sort/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tsv"
     params:
-        extra=config.get("params", {}).get("bedtools", {}).get("sort", ""),
+        extra=dlookup(dpath="params/fair_macs2_calling/bedtools/sort_macs2_bed", within=config, default=""),
     wrapper:
-        "v3.3.3/bio/bedtools/sort"
+        f"{snakemake_wrappers_prefix}/bio/bedtools/sort"
 
 
-rule bedtools_merge_macs2_sorted_peaks:
+rule fair_mac2_calling_bedtools_merge_macs2_sorted_peaks:
     input:
-        "tmp/csv/fmt/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.sorted.bed",
+        "tmp/fair_mac2_calling/csv/fmt/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.sorted.bed",
     output:
         temp(
-            "tmp/bedtools/merge/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.merged.bed"
+            "tmp/fair_mac2_calling/bedtools/merge/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.merged.bed"
         ),
     resources:
         mem_mb=lambda wildcards, attempt: attempt * (1024 * 4),
         runtime=lambda wildcards, attempt: attempt * 35,
         tmpdir="tmp",
     log:
-        "logs/bedtools/merge/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.log",
+        "logs/fair_mac2_calling/bedtools/merge/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.log",
     benchmark:
-        "benchmark/bedtools/merge/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tsv"
+        "benchmark/fair_mac2_calling/bedtools/merge/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tsv"
     params:
-        extra=config.get("params", {}).get("bedtools", {}).get("merge_peaks", ""),
+        extra=dlookup(dpath="params/fair_macs2_calling/bedtools/merge_macs2_peaks", within=config, default=""),
     wrapper:
-        "v3.3.3/bio/bedtools/merge"
+        f"{snakemake_wrappers_prefix}/bio/bedtools/merge"

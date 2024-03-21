@@ -1,6 +1,16 @@
+# 2.1.0
+
+## Features
+
+* Snakemake-wrappers up to version 3.5.2
+* Configuration keys *all* optional
+* fair_bowtie2_mapping update
+* fair_fastqc_multiqc update
+* fair_genome_indexer update
+
 # 2.0.5
 
-## Feature
+## Features
 
 * Raise plot-fingerprint time reservation
 * Provide default value for coverage threshold in plotCoverage

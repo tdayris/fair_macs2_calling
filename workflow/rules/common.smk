@@ -61,7 +61,7 @@ else:
 
 snakemake.utils.validate(genomes, "../schemas/genomes.schema.yaml")
 
-snakemake_wrappers_version: str = "v3.0.0"
+snakemake_wrappers_prefix: str = "v3.5.2"
 
 
 report: "../report/workflow.rst"

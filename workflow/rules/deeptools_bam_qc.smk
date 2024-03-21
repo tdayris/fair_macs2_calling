@@ -11,18 +11,18 @@ rule deeptools_bamcoverage:
         runtime=lambda wildcards, attempt: attempt * 120 + 60,
         tmpdir="tmp",
     log:
-        "logs/deeptools/bamcoverage/{species}.{build}.{release}.{datatype}/{sample}.log",
+        "logs/fair_mac2_calling/deeptools/bamcoverage/{species}.{build}.{release}.{datatype}/{sample}.log",
     benchmark:
-        "benchmark/deeptools/bamcoverage/{species}.{build}.{release}.{datatype}/{sample}.tsv"
+        "benchmark/fair_mac2_calling/deeptools/bamcoverage/{species}.{build}.{release}.{datatype}/{sample}.tsv"
     params:
         genome="{build}",
         effective_genome_size=lambda wildcards: get_effective_genome_size(
             wildcards, genomes
         ),
         read_length=lambda wildcards: get_read_length(wildcards, samples),
-        extra=config.get("params", {}).get("deeptools", {}).get("bamcoverage", ""),
+        extra=dlookup(dpath="params/fair_mac2_calling/deeptools/bamcoverage", within=config, default="--ignoreDuplicates --minMappingQuality 30 --samFlagExclude 4 --ignoreForNormalization X Y MT"),
     wrapper:
-        "v3.3.3/bio/deeptools/bamcoverage"
+        f"{snakemake_wrappers_prefix}/bio/deeptools/bamcoverage"
 
 
 rule deeptools_plotcoverage:
@@ -40,10 +40,10 @@ rule deeptools_plotcoverage:
             },
         ),
         raw_counts=temp(
-            "tmp/deeptools/plot_coverage/{species}.{build}.{release}.{datatype}/Coverage.raw"
+            "tmp/fair_mac2_calling/deeptools/plot_coverage/{species}.{build}.{release}.{datatype}/Coverage.raw"
         ),
         metrics=temp(
-            "tmp/deeptools/plot_coverage/{species}.{build}.{release}.{datatype}/Coverage.metrics"
+            "tmp/fair_mac2_calling/deeptools/plot_coverage/{species}.{build}.{release}.{datatype}/Coverage.metrics"
         ),
     threads: 20
     resources:
@@ -51,13 +51,13 @@ rule deeptools_plotcoverage:
         runtime=lambda wildcards, attempt: attempt * (60 * 5),
         tmpdir="tmp",
     log:
-        "logs/deeptools/plot_coverage/{species}.{build}.{release}.{datatype}.log",
+        "logs/fair_mac2_calling/deeptools/plot_coverage/{species}.{build}.{release}.{datatype}.log",
     benchmark:
-        "benchmark/deeptools/plot_coverage/{species}.{build}.{release}.{datatype}.tsv"
+        "benchmark/fair_mac2_calling/deeptools/plot_coverage/{species}.{build}.{release}.{datatype}.tsv"
     params:
-        extra=config.get("params", {}).get("deeptools", {}).get("plot_coverage", ""),
+        dlookup(dpath="params/fair_mac2_calling/deeptools/plot_coverage", within=config, default="--skipZeros --coverageThresholds 1 --ignoreDuplicates --minMappingQuality 30 --samFlagExclude 4"),
     wrapper:
-        "v3.3.3/bio/deeptools/plotcoverage"
+        f"{snakemake_wrappers_prefix}/bio/deeptools/plotcoverage"
 
 
 rule deeptools_fingerprint:
@@ -75,10 +75,10 @@ rule deeptools_fingerprint:
             },
         ),
         counts=temp(
-            "tmp/deeptools/plot_fingerprint/{species}.{build}.{release}.{datatype}/raw_counts.tab"
+            "tmp/fair_mac2_calling/deeptools/plot_fingerprint/{species}.{build}.{release}.{datatype}/raw_counts.tab"
         ),
         qc_metrics=temp(
-            "tmp/deeptools/plot_fingerprint/{species}.{build}.{release}.{datatype}/qc_metrics.txt"
+            "tmp/fair_mac2_calling/deeptools/plot_fingerprint/{species}.{build}.{release}.{datatype}/qc_metrics.txt"
         ),
     threads: 20
     resources:
@@ -86,10 +86,10 @@ rule deeptools_fingerprint:
         runtime=lambda wildcards, attempt: attempt * 120 + 60,
         tmpdir="tmp",
     log:
-        "logs/deeptools/plot_fingerprint/{species}.{build}.{release}.{datatype}.log",
+        "logs/fair_mac2_calling/deeptools/plot_fingerprint/{species}.{build}.{release}.{datatype}.log",
     benchmark:
-        "benchmark/deeptools/plot_fingerprint/{species}.{build}.{release}.{datatype}.tsv"
+        "benchmark/fair_mac2_calling/deeptools/plot_fingerprint/{species}.{build}.{release}.{datatype}.tsv"
     params:
-        config.get("params", {}).get("deeptools", {}).get("plot_fingerprint", ""),
+        dlookup(dpath="params/fair_mac2_calling/deeptools/plot_fingerprint", within=config, default="--skipZeros --ignoreDuplicates --minMappingQuality 30 --samFlagExclude 4"),
     wrapper:
-        "v3.3.3/bio/deeptools/plotfingerprint"
+        f"{snakemake_wrappers_prefix}/bio/deeptools/plotfingerprint"
