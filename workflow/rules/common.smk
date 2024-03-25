@@ -292,7 +292,9 @@ def get_macs2_callpeak_params(
     Return (str):
     Parameters as string, as required by Macs2's snakemake-wrapper
     """
-    results: str = dlookup(dpath="params/fair_macs2_calling/macs2/callpeak", within=config, default="")
+    results: str = dlookup(
+        dpath="params/fair_macs2_calling/macs2/callpeak", within=config, default=""
+    )
 
     sample_data = get_sample_information(wildcards, samples=samples)
     if sample_data.get("downstream_file", False):
@@ -380,7 +382,9 @@ def get_homer_annotate_peaks_params(
     Return (dict[str, str | None]):
     Parameters, as required by homer annotatepeaks's snakemake-wrapper
     """
-    extra: str = dlookup(dpath="params/fair_macs2_calling/homer/annotatepeaks", within=config, default="")
+    extra: str = dlookup(
+        dpath="params/fair_macs2_calling/homer/annotatepeaks", within=config, default=""
+    )
     sample_data: dict[str, str | None] = get_sample_information(wildcards, samples)
     fragment_size: str | None = sample_data.get("fragment_size")
     downstream_file: str | None = sample_data.get("downstream_file")
@@ -636,11 +640,15 @@ def get_multiqc_report_input(
         downstream_file: str | None = sample_data.get("downstream_file")
 
         if downstream_file:
-            results["fastp"].append(f"tmp/fair_fastqc_multiqc/fastp/report_pe/{sample}.fastp.json")
+            results["fastp"].append(
+                f"tmp/fair_fastqc_multiqc/fastp/report_pe/{sample}.fastp.json"
+            )
             results["fastqc"].append(f"results/QC/report_pe/{sample}.1_fastqc.zip")
             results["fastqc"].append(f"results/QC/report_pe/{sample}.2_fastqc.zip")
         else:
-            results["fastp"].append(f"tmp/fair_fastqc_multiqc/fastp/report_se/{sample}.fastp.json")
+            results["fastp"].append(
+                f"tmp/fair_fastqc_multiqc/fastp/report_se/{sample}.fastp.json"
+            )
             results["fastqc"].append(f"results/QC/report_pe/{sample}_fastqc.zip")
 
     peak_types: list[str] = (

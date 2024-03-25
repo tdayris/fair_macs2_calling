@@ -20,7 +20,11 @@ rule deeptools_bamcoverage:
             wildcards, genomes
         ),
         read_length=lambda wildcards: get_read_length(wildcards, samples),
-        extra=dlookup(dpath="params/fair_mac2_calling/deeptools/bamcoverage", within=config, default="--ignoreDuplicates --minMappingQuality 30 --samFlagExclude 4 --ignoreForNormalization X Y MT"),
+        extra=dlookup(
+            dpath="params/fair_mac2_calling/deeptools/bamcoverage",
+            within=config,
+            default="--ignoreDuplicates --minMappingQuality 30 --samFlagExclude 4 --ignoreForNormalization X Y MT",
+        ),
     wrapper:
         f"{snakemake_wrappers_prefix}/bio/deeptools/bamcoverage"
 
@@ -55,7 +59,11 @@ rule deeptools_plotcoverage:
     benchmark:
         "benchmark/fair_mac2_calling/deeptools/plot_coverage/{species}.{build}.{release}.{datatype}.tsv"
     params:
-        dlookup(dpath="params/fair_mac2_calling/deeptools/plot_coverage", within=config, default="--skipZeros --coverageThresholds 1 --ignoreDuplicates --minMappingQuality 30 --samFlagExclude 4"),
+        dlookup(
+            dpath="params/fair_mac2_calling/deeptools/plot_coverage",
+            within=config,
+            default="--skipZeros --coverageThresholds 1 --ignoreDuplicates --minMappingQuality 30 --samFlagExclude 4",
+        ),
     wrapper:
         f"{snakemake_wrappers_prefix}/bio/deeptools/plotcoverage"
 
@@ -90,6 +98,10 @@ rule deeptools_fingerprint:
     benchmark:
         "benchmark/fair_mac2_calling/deeptools/plot_fingerprint/{species}.{build}.{release}.{datatype}.tsv"
     params:
-        dlookup(dpath="params/fair_mac2_calling/deeptools/plot_fingerprint", within=config, default="--skipZeros --ignoreDuplicates --minMappingQuality 30 --samFlagExclude 4"),
+        dlookup(
+            dpath="params/fair_mac2_calling/deeptools/plot_fingerprint",
+            within=config,
+            default="--skipZeros --ignoreDuplicates --minMappingQuality 30 --samFlagExclude 4",
+        ),
     wrapper:
         f"{snakemake_wrappers_prefix}/bio/deeptools/plotfingerprint"

@@ -71,7 +71,11 @@ rule macs2_peaks_to_csv:
         "macs2_reformat"
     params:
         subcommand="select",
-        extra=dlookup(dpath="params/fair_macs2_calling/xsv/macs_peaks_to_csv", within=config, default="1-6 --delimiter $'\t'"),
+        extra=dlookup(
+            dpath="params/fair_macs2_calling/xsv/macs_peaks_to_csv",
+            within=config,
+            default="1-6 --delimiter $'\t'",
+        ),
     wrapper:
         f"{snakemake_wrappers_prefix}/utils/xsv"
 
@@ -95,7 +99,11 @@ rule macs2_csv_to_bed:
         "macs2_reformat"
     params:
         subcommand="fmt",
-        extra=dlookup(dpath="params/fair_macs2_calling/xsv/macs_csv_to_bed", within=config, default="--out-delimiter $'\t'"),
+        extra=dlookup(
+            dpath="params/fair_macs2_calling/xsv/macs_csv_to_bed",
+            within=config,
+            default="--out-delimiter $'\t'",
+        ),
     wrapper:
         f"{snakemake_wrappers_prefix}/utils/xsv"
 
@@ -116,6 +124,8 @@ rule sort_macs2_bed:
     benchmark:
         "benchmark/fair_macs2_calling/bedtools/sort/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.tsv"
     params:
-        extra=dlookup(dpath="params/fair_macs2_calling/bedtools/sort", within=config, default=""),
+        extra=dlookup(
+            dpath="params/fair_macs2_calling/bedtools/sort", within=config, default=""
+        ),
     wrapper:
         f"{snakemake_wrappers_prefix}/bio/bedtools/sort"

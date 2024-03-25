@@ -18,7 +18,11 @@ rule multiqc_report:
         runtime=lambda wildcards, attempt: attempt * 45,
         tmpdir=tmp,
     params:
-        extra=dlookup(dpath="params/fair_macs2_calling/multiqc", within=config, default="--zip-data-dir --verbose --no-megaqc-upload --no-ansi --force"
+        extra=dlookup(
+            dpath="params/fair_macs2_calling/multiqc",
+            within=config,
+            default="--zip-data-dir --verbose --no-megaqc-upload --no-ansi --force",
+        ),
         use_input_files_only=True,
     log:
         "logs/multiqc.log",

@@ -15,7 +15,11 @@ rule deeptools_multibigwig_summary:
     benchmark:
         "benchmark/fair_macs2_calling/deeptools/multibigwig_summary/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tsv"
     params:
-        extra=dlookup(dpath="params/fair_macs2_calling/deeptools/multibigwig_summary", within=config, default=""),
+        extra=dlookup(
+            dpath="params/fair_macs2_calling/deeptools/multibigwig_summary",
+            within=config,
+            default="",
+        ),
     conda:
         "../envs/deeptools.yaml"
     script:
@@ -49,7 +53,11 @@ rule deeptools_plot_pca:
     benchmark:
         "benchmark/fair_macs2_calling/deeptools/plot_pca/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tsv"
     params:
-        extra=dlookup(dpath="params/fair_macs2_calling/deeptools/plot_pca", within=config, default="--ntop 1000"),
+        extra=dlookup(
+            dpath="params/fair_macs2_calling/deeptools/plot_pca",
+            within=config,
+            default="--ntop 1000",
+        ),
     conda:
         "../envs/deeptools.yaml"
     script:
@@ -83,7 +91,11 @@ rule deeptools_plot_correlation:
     benchmark:
         "benchmark/fair_macs2_calling/deeptools/plot_correlation/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tsv"
     params:
-        extra=dlookup(dpath="params/fair_macs2_calling/deeptools/plot_correlation", within=config, default="--whatToPlot heatmap --corMethod spearman --skipZeros --plotNumbers --colorMap RdYlBu"),
+        extra=dlookup(
+            dpath="params/fair_macs2_calling/deeptools/plot_correlation",
+            within=config,
+            default="--whatToPlot heatmap --corMethod spearman --skipZeros --plotNumbers --colorMap RdYlBu",
+        ),
     conda:
         "../envs/deeptools.yaml"
     script:
@@ -117,7 +129,11 @@ rule deeptools_plot_enrichment:
     benchmark:
         "benchmark/fair_macs2_calling/deeptools/plot_enrichment/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tsv"
     params:
-        extra=dlookup(dpath="params/fair_macs2_calling/deeptools/plot_enrichment", within=config, default="--ignoreDuplicates --minMappingQuality 30 --samFlagExclude 4 --smartLabels"),
+        extra=dlookup(
+            dpath="params/fair_macs2_calling/deeptools/plot_enrichment",
+            within=config,
+            default="--ignoreDuplicates --minMappingQuality 30 --samFlagExclude 4 --smartLabels",
+        ),
     conda:
         "../envs/deeptools.yaml"
     script:
