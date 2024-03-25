@@ -3,7 +3,7 @@ rule deeptools_bamcoverage:
         unpack(get_deeptools_bamcoverage_input),
     output:
         protected(
-            "results/{species}.{build}.{release}.{datatype}/Coverage/{sample}.bw",
+            "results/{species}.{build}.{release}.dna/Coverage/{sample}.bw",
         ),
     threads: 20
     resources:
@@ -11,9 +11,9 @@ rule deeptools_bamcoverage:
         runtime=lambda wildcards, attempt: attempt * 120 + 60,
         tmpdir=tmp,
     log:
-        "logs/fair_mac2_calling/deeptools/bamcoverage/{species}.{build}.{release}.{datatype}/{sample}.log",
+        "logs/fair_mac2_calling/deeptools/bamcoverage/{species}.{build}.{release}.dna/{sample}.log",
     benchmark:
-        "benchmark/fair_mac2_calling/deeptools/bamcoverage/{species}.{build}.{release}.{datatype}/{sample}.tsv"
+        "benchmark/fair_mac2_calling/deeptools/bamcoverage/{species}.{build}.{release}.dna/{sample}.tsv"
     params:
         genome="{build}",
         effective_genome_size=lambda wildcards: get_effective_genome_size(
@@ -34,7 +34,7 @@ rule deeptools_plotcoverage:
         unpack(get_deeptools_plotcoverage_input),
     output:
         plot=report(
-            "results/{species}.{build}.{release}.{datatype}/Graphs/PlotCoverage.png",
+            "results/{species}.{build}.{release}.dna/Graphs/PlotCoverage.png",
             caption="../report/deeptools_plotcoverage.rst",
             category="Coverage analysis",
             subcategory="Coverage",
@@ -44,10 +44,10 @@ rule deeptools_plotcoverage:
             },
         ),
         raw_counts=temp(
-            "tmp/fair_mac2_calling/deeptools/plot_coverage/{species}.{build}.{release}.{datatype}/Coverage.raw"
+            "tmp/fair_mac2_calling/deeptools/plot_coverage/{species}.{build}.{release}.dna/Coverage.raw"
         ),
         metrics=temp(
-            "tmp/fair_mac2_calling/deeptools/plot_coverage/{species}.{build}.{release}.{datatype}/Coverage.metrics"
+            "tmp/fair_mac2_calling/deeptools/plot_coverage/{species}.{build}.{release}.dna/Coverage.metrics"
         ),
     threads: 20
     resources:
@@ -55,9 +55,9 @@ rule deeptools_plotcoverage:
         runtime=lambda wildcards, attempt: attempt * (60 * 5),
         tmpdir=tmp,
     log:
-        "logs/fair_mac2_calling/deeptools/plot_coverage/{species}.{build}.{release}.{datatype}.log",
+        "logs/fair_mac2_calling/deeptools/plot_coverage/{species}.{build}.{release}.dna.log",
     benchmark:
-        "benchmark/fair_mac2_calling/deeptools/plot_coverage/{species}.{build}.{release}.{datatype}.tsv"
+        "benchmark/fair_mac2_calling/deeptools/plot_coverage/{species}.{build}.{release}.dna.tsv"
     params:
         dlookup(
             dpath="params/fair_mac2_calling/deeptools/plot_coverage",
@@ -73,7 +73,7 @@ rule deeptools_fingerprint:
         unpack(get_deeptools_fingerprint_input),
     output:
         fingerprint=report(
-            "results/{species}.{build}.{release}.{datatype}/Graphs/PlotFingerprint.png",
+            "results/{species}.{build}.{release}.dna/Graphs/PlotFingerprint.png",
             caption="../report/deeptools_plotfingerprint.rst",
             category="Coverage analysis",
             subcategory="Coverage",
@@ -83,10 +83,10 @@ rule deeptools_fingerprint:
             },
         ),
         counts=temp(
-            "tmp/fair_mac2_calling/deeptools/plot_fingerprint/{species}.{build}.{release}.{datatype}/raw_counts.tab"
+            "tmp/fair_mac2_calling/deeptools/plot_fingerprint/{species}.{build}.{release}.dna/raw_counts.tab"
         ),
         qc_metrics=temp(
-            "tmp/fair_mac2_calling/deeptools/plot_fingerprint/{species}.{build}.{release}.{datatype}/qc_metrics.txt"
+            "tmp/fair_mac2_calling/deeptools/plot_fingerprint/{species}.{build}.{release}.dna/qc_metrics.txt"
         ),
     threads: 20
     resources:
@@ -94,9 +94,9 @@ rule deeptools_fingerprint:
         runtime=lambda wildcards, attempt: attempt * 120 + 60,
         tmpdir=tmp,
     log:
-        "logs/fair_mac2_calling/deeptools/plot_fingerprint/{species}.{build}.{release}.{datatype}.log",
+        "logs/fair_mac2_calling/deeptools/plot_fingerprint/{species}.{build}.{release}.dna.log",
     benchmark:
-        "benchmark/fair_mac2_calling/deeptools/plot_fingerprint/{species}.{build}.{release}.{datatype}.tsv"
+        "benchmark/fair_mac2_calling/deeptools/plot_fingerprint/{species}.{build}.{release}.dna.tsv"
     params:
         dlookup(
             dpath="params/fair_mac2_calling/deeptools/plot_fingerprint",

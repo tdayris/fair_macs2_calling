@@ -1,13 +1,13 @@
 rule fair_mac2_calling_xsv_cat_macs2_peaks:
     input:
         table=expand(
-            "results/{species}.{build}.{release}.{datatype}/PeakCalling/{macs2_peak_type}/{sample}.{macs2_peak_type}.bed",
+            "results/{species}.{build}.{release}.dna/PeakCalling/{macs2_peak_type}/{sample}.{macs2_peak_type}.bed",
             sample=samples.sample_id,
             allow_missing=True,
         ),
     output:
         temp(
-            "tmp/fair_mac2_calling/csv/cat_rows/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.csv"
+            "tmp/fair_mac2_calling/csv/cat_rows/{species}.{build}.{release}.dna/{macs2_peak_type}.csv"
         ),
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024,
@@ -16,9 +16,9 @@ rule fair_mac2_calling_xsv_cat_macs2_peaks:
     group:
         "concat_beds"
     log:
-        "logs/fair_mac2_calling/csv/cat_rows/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.log",
+        "logs/fair_mac2_calling/csv/cat_rows/{species}.{build}.{release}.dna/{macs2_peak_type}.log",
     benchmark:
-        "benchmark/fair_mac2_calling/csv/cat_rows/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tsv"
+        "benchmark/fair_mac2_calling/csv/cat_rows/{species}.{build}.{release}.dna/{macs2_peak_type}.tsv"
     params:
         subcommand="cat rows",
         extra=dlookup(
@@ -32,10 +32,10 @@ rule fair_mac2_calling_xsv_cat_macs2_peaks:
 
 rule fair_mac2_calling_xsv_sort_macs2_concat_peaks:
     input:
-        table="tmp/fair_mac2_calling/csv/cat_rows/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.csv",
+        table="tmp/fair_mac2_calling/csv/cat_rows/{species}.{build}.{release}.dna/{macs2_peak_type}.csv",
     output:
         temp(
-            "tmp/fair_mac2_calling/csv/sort/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.csv"
+            "tmp/fair_mac2_calling/csv/sort/{species}.{build}.{release}.dna/{macs2_peak_type}.csv"
         ),
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024,
@@ -44,9 +44,9 @@ rule fair_mac2_calling_xsv_sort_macs2_concat_peaks:
     group:
         "concat_beds"
     log:
-        "logs/fair_mac2_calling/csv/sort/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.log",
+        "logs/fair_mac2_calling/csv/sort/{species}.{build}.{release}.dna/{macs2_peak_type}.log",
     benchmark:
-        "benchmark/fair_mac2_calling/csv/sort/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tsv"
+        "benchmark/fair_mac2_calling/csv/sort/{species}.{build}.{release}.dna/{macs2_peak_type}.tsv"
     params:
         subcommand="sort",
         extra=dlookup(
@@ -60,10 +60,10 @@ rule fair_mac2_calling_xsv_sort_macs2_concat_peaks:
 
 rule fair_mac2_calling_xsv_fmt_macs2_sorted_peaks:
     input:
-        table="tmp/fair_mac2_calling/csv/sort/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.csv",
+        table="tmp/fair_mac2_calling/csv/sort/{species}.{build}.{release}.dna/{macs2_peak_type}.csv",
     output:
         temp(
-            "tmp/fair_mac2_calling/csv/fmt/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.bed"
+            "tmp/fair_mac2_calling/csv/fmt/{species}.{build}.{release}.dna/{macs2_peak_type}.bed"
         ),
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024,
@@ -72,9 +72,9 @@ rule fair_mac2_calling_xsv_fmt_macs2_sorted_peaks:
     group:
         "concat_beds"
     log:
-        "logs/fair_mac2_calling/csv/fmt/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.log",
+        "logs/fair_mac2_calling/csv/fmt/{species}.{build}.{release}.dna/{macs2_peak_type}.log",
     benchmark:
-        "benchmark/fair_mac2_calling/csv/fmt/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tsv"
+        "benchmark/fair_mac2_calling/csv/fmt/{species}.{build}.{release}.dna/{macs2_peak_type}.tsv"
     params:
         subcommand="fmt",
         extra=dlookup(
@@ -88,19 +88,19 @@ rule fair_mac2_calling_xsv_fmt_macs2_sorted_peaks:
 
 rule fair_mac2_calling_bedtools_sort_macs2_concat_beds:
     input:
-        in_file="tmp/fair_mac2_calling/csv/fmt/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.bed",
+        in_file="tmp/fair_mac2_calling/csv/fmt/{species}.{build}.{release}.dna/{macs2_peak_type}.bed",
     output:
         temp(
-            "tmp/fair_mac2_calling/csv/fmt/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.sorted.bed"
+            "tmp/fair_mac2_calling/csv/fmt/{species}.{build}.{release}.dna/{macs2_peak_type}.sorted.bed"
         ),
     resources:
         mem_mb=lambda wildcards, attempt: attempt * (1024 * 8),
         runtime=lambda wildcards, attempt: attempt * 35,
         tmpdir="tmp",
     log:
-        "logs/fair_mac2_calling/bdtools/sort/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.log",
+        "logs/fair_mac2_calling/bdtools/sort/{species}.{build}.{release}.dna/{macs2_peak_type}.log",
     benchmark:
-        "benchmark/fair_mac2_calling/bedtools/sort/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tsv"
+        "benchmark/fair_mac2_calling/bedtools/sort/{species}.{build}.{release}.dna/{macs2_peak_type}.tsv"
     params:
         extra=dlookup(
             dpath="params/fair_macs2_calling/bedtools/sort_macs2_bed",
@@ -113,19 +113,19 @@ rule fair_mac2_calling_bedtools_sort_macs2_concat_beds:
 
 rule fair_mac2_calling_bedtools_merge_macs2_sorted_peaks:
     input:
-        "tmp/fair_mac2_calling/csv/fmt/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.sorted.bed",
+        "tmp/fair_mac2_calling/csv/fmt/{species}.{build}.{release}.dna/{macs2_peak_type}.sorted.bed",
     output:
         temp(
-            "tmp/fair_mac2_calling/bedtools/merge/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.merged.bed"
+            "tmp/fair_mac2_calling/bedtools/merge/{species}.{build}.{release}.dna/{macs2_peak_type}.merged.bed"
         ),
     resources:
         mem_mb=lambda wildcards, attempt: attempt * (1024 * 4),
         runtime=lambda wildcards, attempt: attempt * 35,
         tmpdir="tmp",
     log:
-        "logs/fair_mac2_calling/bedtools/merge/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.log",
+        "logs/fair_mac2_calling/bedtools/merge/{species}.{build}.{release}.dna/{macs2_peak_type}.log",
     benchmark:
-        "benchmark/fair_mac2_calling/bedtools/merge/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tsv"
+        "benchmark/fair_mac2_calling/bedtools/merge/{species}.{build}.{release}.dna/{macs2_peak_type}.tsv"
     params:
         extra=dlookup(
             dpath="params/fair_macs2_calling/bedtools/merge_macs2_peaks",

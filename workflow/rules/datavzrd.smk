@@ -1,18 +1,18 @@
 rule datavzrd_homer_yaml:
     input:
-        summary="tmp/fair_mac2_calling/summarize_homer/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.tsv",
+        summary="tmp/fair_mac2_calling/summarize_homer/{species}.{build}.{release}.dna/{sample}.{macs2_peak_type}.tsv",
     output:
         yaml=temp(
-            "tmp/fair_mac2_calling/datavzrd/{species}.{build}.{release}.{datatype}/homer/{macs2_peak_type}/{sample}.yaml"
+            "tmp/fair_mac2_calling/datavzrd/{species}.{build}.{release}.dna/homer/{macs2_peak_type}/{sample}.yaml"
         ),
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 512,
         runtime=lambda wildcards, attempt: attempt * 5,
         tmpdir="tmp",
     log:
-        "logs/fair_mac2_calling/datavzrd/{species}.{build}.{release}.{datatype}/homer/{macs2_peak_type}/{sample}.config.log",
+        "logs/fair_mac2_calling/datavzrd/{species}.{build}.{release}.dna/homer/{macs2_peak_type}/{sample}.config.log",
     benchmark:
-        "benchmark/fair_mac2_calling/datavzrd/{species}.{build}.{release}.{datatype}/homer/{macs2_peak_type}/{sample}.config.tsv"
+        "benchmark/fair_mac2_calling/datavzrd/{species}.{build}.{release}.dna/homer/{macs2_peak_type}/{sample}.config.tsv"
     params:
         sample="{sample}",
     conda:
@@ -23,12 +23,12 @@ rule datavzrd_homer_yaml:
 
 rule datavzrd_homer_render:
     input:
-        config="tmp/fair_mac2_calling/datavzrd/{species}.{build}.{release}.{datatype}/homer/{macs2_peak_type}/{sample}.yaml",
-        table="tmp/fair_mac2_calling/summarize_homer/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.tsv",
+        config="tmp/fair_mac2_calling/datavzrd/{species}.{build}.{release}.dna/homer/{macs2_peak_type}/{sample}.yaml",
+        table="tmp/fair_mac2_calling/summarize_homer/{species}.{build}.{release}.dna/{sample}.{macs2_peak_type}.tsv",
     output:
         report(
             directory(
-                "results/{species}.{build}.{release}.{datatype}/PeakCalling/{macs2_peak_type}/{sample}_reports"
+                "results/{species}.{build}.{release}.dna/PeakCalling/{macs2_peak_type}/{sample}_reports"
             ),
             htmlindex="index.html",
             caption="../report/datavzrd_homer.rst",
@@ -44,9 +44,9 @@ rule datavzrd_homer_render:
         runtime=lambda wildcards, attempt: attempt * 25,
         tmpdir="tmp",
     log:
-        "logs/fair_mac2_calling/datavzrd/{species}.{build}.{release}.{datatype}/homer/{macs2_peak_type}/{sample}.render.log",
+        "logs/fair_mac2_calling/datavzrd/{species}.{build}.{release}.dna/homer/{macs2_peak_type}/{sample}.render.log",
     benchmark:
-        "benchmark/fair_mac2_calling/datavzrd/{species}.{build}.{release}.{datatype}/homer/{macs2_peak_type}/{sample}.render.tsv"
+        "benchmark/fair_mac2_calling/datavzrd/{species}.{build}.{release}.dna/homer/{macs2_peak_type}/{sample}.render.tsv"
     params:
         extra="",
     wrapper:

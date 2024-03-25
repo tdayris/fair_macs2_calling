@@ -4,7 +4,7 @@ rule homer_annotate_peaks:
     output:
         annotations=protected(
             ensure(
-                "results/{species}.{build}.{release}.{datatype}/PeakCalling/{macs2_peak_type}/{sample}.{macs2_peak_type}.tsv",
+                "results/{species}.{build}.{release}.dna/PeakCalling/{macs2_peak_type}/{sample}.{macs2_peak_type}.tsv",
                 non_empty=True,
             ),
         ),
@@ -15,9 +15,9 @@ rule homer_annotate_peaks:
     shadow:
         "minimal"
     log:
-        "logs/fair_macs2_calling/homer/annotatepeaks/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.log",
+        "logs/fair_macs2_calling/homer/annotatepeaks/{species}.{build}.{release}.dna/{sample}.{macs2_peak_type}.log",
     benchmark:
-        "benchmark/fair_macs2_calling/homer/annotatepeaks/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.tsv"
+        "benchmark/fair_macs2_calling/homer/annotatepeaks/{species}.{build}.{release}.dna/{sample}.{macs2_peak_type}.tsv"
     params:
         extra=lambda wildcards: get_homer_annotate_peaks_params(
             wildcards, samples, genomes, config

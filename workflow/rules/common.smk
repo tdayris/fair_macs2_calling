@@ -72,7 +72,7 @@ build_list: list[str] = list(set(genomes.build.tolist()))
 species_list: list[str] = list(set(genomes.species.tolist()))
 datatypes: list[str] = ["dna", "cdna"]
 macs2_peak_types: list[str] = ["broadPeak", "narrowPeak"]
-
+tmp: str = f"{os.getcwd()}/tmp"
 
 wildcard_constraints:
     sample=r"|".join(samples.sample_id),
@@ -82,6 +82,36 @@ wildcard_constraints:
     datatype=r"|".join(datatypes),
     macs2_peak_type=r"|".join(macs2_peak_types),
 
+
+def dlookup(
+    dpath: str | None = None,
+    query: str | None = None,
+    cols: list[str] | None = None,
+    within=None,
+    default: str | dict[str, Any] | None = None,
+) -> str:
+    """
+    Return lookup() results or defaults
+
+    dpath   (str | Callable | None): Passed to dpath library
+    query   (str | Callable | None): Passed to DataFrame.query()
+    cols    (list[str] | None):      The columns to operate on
+    within  (object):                The dataframe or mappable object
+    default (str):                   The default value to return
+    """
+    value = None
+    try:
+        value = lookup(dpath=dpath, query=query, cols=cols, within=within)
+    except LookupError:
+        value = default
+    except WorkflowError:
+        value = default
+    except KeyError:
+        value = default
+    except AttributeError:
+        value = default
+
+    return value
 
 def get_sample_information(
     wildcards: snakemake.io.Wildcards, samples: pandas.DataFrame
