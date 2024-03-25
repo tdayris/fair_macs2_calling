@@ -1,45 +1,4 @@
 samples: config/samples.csv
-
-# Optional parameters
-params:
-  # Optional parameters for pyfaidx
-  pyfaidx:
-    # Filter-out non canonical chromosomes
-    dna: ''
-    # Keep all cdna sequences
-    cdna: ""
-  bowtie2:
-    # Optional parameters for bowtie2-build
-    build: ""
-    # Optional parameters for bowtie2-align
-    align: ""
-  sambamba:
-    # Optional parameters for sambamba view
-    view: "--format 'bam'"
-    # Optional parameters for sambamba markdup
-    markdup: ""
-  picard:
-    # Mapping QC optional parameters
-    metrics: ""
-  macs2:
-    # Optional parameters for Macs2 Callpeaks
-    callpeak: "--keep-dup all --pvalue 0.9"
-  homer:
-    # Optional parameters for Homer AnnotatePeaks
-    annotatepeaks: "-homer2 "
-  deeptools:
-    # Optional parameters for DeepTools bamCoverage
-    bamcoverage: "--ignoreDuplicates"
-    # Optional parameters for DeepTools plotCoverage
-    plot_coverage: "--ignoreDuplicates --coverageThresholds 1"
-    # Optional parameters for DeepTools plotFingerprint
-    plot_fingerprint: "--ignoreDuplicates"
-    # Optional parameters for DeepTools plotPCA
-    plot_pca: "--ntop 10"
-    # Optional parameters for DeepTools plotEnrichment
-    plot_enrichment: "--ignoreDuplicates"
-    # Optional parameters for DeepTools plotCorrelations
-    plot_correlation: "--whatToPlot heatmap --corMethod spearman"
   
 # Optional path to a `genome.csv` file
 genomes: config/genomes.csv

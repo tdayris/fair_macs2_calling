@@ -3,19 +3,19 @@ rule summarize_homer:
         "results/{species}.{build}.{release}.{datatype}/PeakCalling/{macs2_peak_type}/{sample}.{macs2_peak_type}.tsv",
     output:
         json=temp(
-            "tmp/summarize_homer/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.json"
+            "tmp/fair_macs2_calling/summarize_homer/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.json"
         ),
         tsv=temp(
-            "tmp/summarize_homer/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.tsv"
+            "tmp/fair_macs2_calling/summarize_homer/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.tsv"
         ),
     resources:
         mem_mb=lambda wildcards, attempt: attempt * (1024 * 2),
         runtime=lambda wildcards, attempt: attempt * 25,
-        tmpdir="tmp",
+        tmpdir=tmp,
     log:
-        "logs/summarize_homer/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.log",
+        "logs/fair_macs2_calling/summarize_homer/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.log",
     benchmark:
-        "benchmark/summarize_homer/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.tsv"
+        "benchmark/fair_macs2_calling/summarize_homer/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.tsv"
     conda:
         "../envs/python.yaml"
     script:
@@ -27,22 +27,22 @@ rule merge_homer_summaries:
         unpack(get_merge_homer_summaries_input),
     output:
         annot=temp(
-            "tmp/summarize_homer/{species}.{build}.{release}.{datatype}.{macs2_peak_type}/Annotations.tsv"
+            "tmp/fair_macs2_calling/summarize_homer/{species}.{build}.{release}.{datatype}.{macs2_peak_type}/Annotations.tsv"
         ),
         chrom=temp(
-            "tmp/summarize_homer/{species}.{build}.{release}.{datatype}.{macs2_peak_type}/Chromosomes.tsv"
+            "tmp/fair_macs2_calling/summarize_homer/{species}.{build}.{release}.{datatype}.{macs2_peak_type}/Chromosomes.tsv"
         ),
         genes=temp(
-            "tmp/summarize_homer/{species}.{build}.{release}.{datatype}.{macs2_peak_type}/GeneTypes.tsv"
+            "tmp/fair_macs2_calling/summarize_homer/{species}.{build}.{release}.{datatype}.{macs2_peak_type}/GeneTypes.tsv"
         ),
     resources:
         mem_mb=lambda wildcards, attempt: attempt * (1024 * 2),
         runtime=lambda wildcards, attempt: attempt * 25,
-        tmpdir="tmp",
+        tmpdir=tmp,
     log:
-        "logs/summarize_homer/{species}.{build}.{release}.{datatype}.{macs2_peak_type}.log",
+        "logs/fair_macs2_calling/summarize_homer/{species}.{build}.{release}.{datatype}.{macs2_peak_type}.log",
     benchmark:
-        "benchmark/summarize_homer/{species}.{build}.{release}.{datatype}.{macs2_peak_type}.tsv"
+        "benchmark/fair_macs2_calling/summarize_homer/{species}.{build}.{release}.{datatype}.{macs2_peak_type}.tsv"
     conda:
         "../envs/python.yaml"
     script:
@@ -51,7 +51,7 @@ rule merge_homer_summaries:
 
 rule plot_homer_summaries_for_regions:
     input:
-        summaries="tmp/summarize_homer/{species}.{build}.{release}.{datatype}.{macs2_peak_type}/{content}.tsv",
+        summaries="tmp/fair_macs2_calling/summarize_homer/{species}.{build}.{release}.{datatype}.{macs2_peak_type}/{content}.tsv",
     output:
         catplot=report(
             "results/{species}.{build}.{release}.{datatype}/Graphs/{macs2_peak_type}/{content}.catplot.png",
@@ -67,11 +67,11 @@ rule plot_homer_summaries_for_regions:
     resources:
         mem_mb=lambda wildcards, attempt: attempt * (1024 * 2),
         runtime=lambda wildcards, attempt: attempt * 25,
-        tmpdir="tmp",
+        tmpdir=tmp,
     log:
-        "logs/plot_homer_summaries/{species}.{build}.{release}.{datatype}.{macs2_peak_type}/{content}.log",
+        "logs/fair_macs2_calling/plot_homer_summaries/{species}.{build}.{release}.{datatype}.{macs2_peak_type}/{content}.log",
     benchmark:
-        "benchmark/plot_homer_summaries/{species}.{build}.{release}.{datatype}.{macs2_peak_type}/{content}.tsv"
+        "benchmark/fair_macs2_calling/plot_homer_summaries/{species}.{build}.{release}.{datatype}.{macs2_peak_type}/{content}.tsv"
     params:
         content="{content}",
         title=lambda wildcards: f"Percent of {wildcards.macs2_peak_type} falling over Homer {wildcards.content}",

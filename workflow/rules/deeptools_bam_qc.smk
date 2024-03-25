@@ -9,7 +9,7 @@ rule deeptools_bamcoverage:
     resources:
         mem_mb=lambda wildcards, attempt: attempt * (1024 * 45) + (1024 * 20),
         runtime=lambda wildcards, attempt: attempt * 120 + 60,
-        tmpdir="tmp",
+        tmpdir=tmp,
     log:
         "logs/fair_mac2_calling/deeptools/bamcoverage/{species}.{build}.{release}.{datatype}/{sample}.log",
     benchmark:
@@ -49,7 +49,7 @@ rule deeptools_plotcoverage:
     resources:
         mem_mb=lambda wildcards, attempt: attempt * (1024 * 45) + (1024 * 20),
         runtime=lambda wildcards, attempt: attempt * (60 * 5),
-        tmpdir="tmp",
+        tmpdir=tmp,
     log:
         "logs/fair_mac2_calling/deeptools/plot_coverage/{species}.{build}.{release}.{datatype}.log",
     benchmark:
@@ -84,7 +84,7 @@ rule deeptools_fingerprint:
     resources:
         mem_mb=lambda wildcards, attempt: attempt * (1024 * 45) + (1024 * 20),
         runtime=lambda wildcards, attempt: attempt * 120 + 60,
-        tmpdir="tmp",
+        tmpdir=tmp,
     log:
         "logs/fair_mac2_calling/deeptools/plot_fingerprint/{species}.{build}.{release}.{datatype}.log",
     benchmark:

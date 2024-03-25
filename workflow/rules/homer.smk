@@ -11,13 +11,13 @@ rule homer_annotate_peaks:
     resources:
         mem_mb=lambda wildcards, attempt: attempt * (1024 * 6),
         runtime=lambda wildcards, attempt: attempt * 45,
-        tmpdir="tmp",
+        tmpdir=tmp,
     shadow:
         "minimal"
     log:
-        "logs/homer/annotatepeaks/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.log",
+        "logs/fair_macs2_calling/homer/annotatepeaks/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.log",
     benchmark:
-        "benchmark/homer/annotatepeaks/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.tsv"
+        "benchmark/fair_macs2_calling/homer/annotatepeaks/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.tsv"
     params:
         extra=lambda wildcards: get_homer_annotate_peaks_params(
             wildcards, samples, genomes, config

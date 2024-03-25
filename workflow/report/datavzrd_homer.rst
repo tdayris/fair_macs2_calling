@@ -6,5 +6,5 @@ connexion to open this file.
 Homer content is described in its official documentation_
 
 .. _HTML: https://en.wikipedia.org/wiki/HTML
-.. _Homer: https://snakemake-wrappers.readthedocs.io/en/v3.2.0/wrappers/homer/annotatePeaks.html
+.. _Homer: https://snakemake-wrappers.readthedocs.io/en/v3.5.2/wrappers/homer/annotatePeaks.html
 .. _documentation: http://homer.ucsd.edu/homer/ngs/annotation.html

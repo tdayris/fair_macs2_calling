@@ -292,7 +292,7 @@ def get_macs2_callpeak_params(
     Return (str):
     Parameters as string, as required by Macs2's snakemake-wrapper
     """
-    results: str = config.get("params", {}).get("macs2", {}).get("callpeak", "")
+    results: str = dlookup(dpath="params/fair_macs2_calling/macs2/callpeak", within=config, default="")
 
     sample_data = get_sample_information(wildcards, samples=samples)
     if sample_data.get("downstream_file", False):
@@ -380,7 +380,7 @@ def get_homer_annotate_peaks_params(
     Return (dict[str, str | None]):
     Parameters, as required by homer annotatepeaks's snakemake-wrapper
     """
-    extra: str = config.get("params", {}).get("homer", {}).get("annotatepeaks", "")
+    extra: str = dlookup(dpath="params/fair_macs2_calling/homer/annotatepeaks", within=config, default="")
     sample_data: dict[str, str | None] = get_sample_information(wildcards, samples)
     fragment_size: str | None = sample_data.get("fragment_size")
     downstream_file: str | None = sample_data.get("downstream_file")
@@ -535,7 +535,7 @@ def get_deeptools_multibigwig_summary_input(
     )
 
     results: dict[str, list[str] | str] = {
-        "bed": f"tmp/bedtools/merge/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.merged.bed",
+        "bed": f"tmp/fair_macs2_calling/bedtools/merge/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.merged.bed",
         "bw": expand(
             "results/{species}.{build}.{release}.{datatype}/Coverage/{sample}.bw",
             sample=samples_list,
@@ -592,7 +592,7 @@ def get_multiqc_report_input(
 
     for sample, species, build, release in sample_iterator:
         results["picard_qc"] += multiext(
-            f"tmp/picard/{species}.{build}.{release}.{datatype}/stats/{sample}",
+            f"tmp/fair_bowtie2_mapping/picard/{species}.{build}.{release}.{datatype}/stats/{sample}",
             ".alignment_summary_metrics",
             ".insert_size_metrics",
             ".insert_size_histogram.pdf",
@@ -604,30 +604,30 @@ def get_multiqc_report_input(
         )
 
         results["macs2"].append(
-            f"tmp/macs2/{species}.{build}.{release}.dna/narrowPeak/{sample}_peaks.xls"
+            f"tmp/fair_macs2_calling/macs2/{species}.{build}.{release}.dna/narrowPeak/{sample}_peaks.xls"
         )
 
         results["macs2"].append(
-            f"tmp/macs2/{species}.{build}.{release}.dna/broadPeak/{sample}_peaks.xls"
+            f"tmp/fair_macs2_calling/macs2/{species}.{build}.{release}.dna/broadPeak/{sample}_peaks.xls"
         )
 
         results["deeptools_coverage"].append(
-            f"tmp/deeptools/plot_coverage/{species}.{build}.{release}.{datatype}/Coverage.raw"
+            f"tmp/fair_macs2_calling/deeptools/plot_coverage/{species}.{build}.{release}.{datatype}/Coverage.raw"
         )
         results["deeptools_coverage"].append(
-            f"tmp/deeptools/plot_coverage/{species}.{build}.{release}.{datatype}/Coverage.metrics"
+            f"tmp/fair_macs2_calling/deeptools/plot_coverage/{species}.{build}.{release}.{datatype}/Coverage.metrics"
         )
 
         results["deeptools_fingerprint"].append(
-            f"tmp/deeptools/plot_fingerprint/{species}.{build}.{release}.{datatype}/raw_counts.tab"
+            f"tmp/fair_macs2_calling/deeptools/plot_fingerprint/{species}.{build}.{release}.{datatype}/raw_counts.tab"
         )
 
         results["deeptools_fingerprint"].append(
-            f"tmp/deeptools/plot_fingerprint/{species}.{build}.{release}.{datatype}/qc_metrics.txt"
+            f"tmp/fair_macs2_calling/deeptools/plot_fingerprint/{species}.{build}.{release}.{datatype}/qc_metrics.txt"
         )
 
         results["bowtie2"] = (
-            f"logs/bowtie2/align/{species}.{build}.{release}.{datatype}/{sample}.log"
+            f"logs/fair_bowtie2_mapping/bowtie2/align/{species}.{build}.{release}.{datatype}/{sample}.log"
         )
 
         sample_data: dict[str, str | None] = get_sample_information(
@@ -636,11 +636,11 @@ def get_multiqc_report_input(
         downstream_file: str | None = sample_data.get("downstream_file")
 
         if downstream_file:
-            results["fastp"].append(f"tmp/fastp/report_pe/{sample}.fastp.json")
+            results["fastp"].append(f"tmp/fair_fastqc_multiqc/fastp/report_pe/{sample}.fastp.json")
             results["fastqc"].append(f"results/QC/report_pe/{sample}.1_fastqc.zip")
             results["fastqc"].append(f"results/QC/report_pe/{sample}.2_fastqc.zip")
         else:
-            results["fastp"].append(f"tmp/fastp/report_se/{sample}.fastp.json")
+            results["fastp"].append(f"tmp/fair_fastqc_multiqc/fastp/report_se/{sample}.fastp.json")
             results["fastqc"].append(f"results/QC/report_pe/{sample}_fastqc.zip")
 
     peak_types: list[str] = (
@@ -650,10 +650,10 @@ def get_multiqc_report_input(
     )
     for macs2_peak_type in peak_types:
         results["deeptools_pca"].append(
-            f"tmp/deeptools/plot_pca/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tab"
+            f"tmp/fair_macs2_calling/deeptools/plot_pca/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tab"
         )
         results["deeptools_correlation"].append(
-            f"tmp/deeptools/plot_correlation/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tab"
+            f"tmp/fair_macs2_calling/deeptools/plot_correlation/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tab"
         )
 
     return results
@@ -694,7 +694,7 @@ def get_merge_homer_summaries_input(
 
     for sample, species, build, release in sample_iterator:
         results["summaries"].append(
-            f"tmp/summarize_homer/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.json"
+            f"tmp/fair_macs2_calling/summarize_homer/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.json"
         )
 
     return results

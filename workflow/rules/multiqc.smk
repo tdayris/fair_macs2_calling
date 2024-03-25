@@ -16,15 +16,13 @@ rule multiqc_report:
     resources:
         mem_mb=lambda wildcards, attempt: attempt * (1024 * 2),
         runtime=lambda wildcards, attempt: attempt * 45,
-        tmpdir="tmp",
+        tmpdir=tmp,
     params:
-        extra=config.get("params", {}).get(
-            "multiqc", "--zip-data-dir --verbose --no-megaqc-upload --no-ansi --force"
-        ),
+        extra=dlookup(dpath="params/fair_macs2_calling/multiqc", within=config, default="--zip-data-dir --verbose --no-megaqc-upload --no-ansi --force"
         use_input_files_only=True,
     log:
         "logs/multiqc.log",
     benchmark:
         "benchmark/multiqc.tsv"
     wrapper:
-        "v3.3.3/bio/multiqc"
+        f"{snakemake_wrappers_prefix}/bio/multiqc"

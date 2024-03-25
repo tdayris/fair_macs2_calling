@@ -3,7 +3,7 @@ rule deeptools_multibigwig_summary:
         unpack(get_deeptools_multibigwig_summary_input),
     output:
         npz=temp(
-            "tmp/deeptools/multibigwig_summary/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.npz"
+            "tmp/fair_macs2_calling/deeptools/multibigwig_summary/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.npz"
         ),
     threads: 20
     resources:
@@ -11,13 +11,11 @@ rule deeptools_multibigwig_summary:
         runtime=lambda wildcards, attempt: attempt * 120 + 60,
         tmpdir="tmp",
     log:
-        "logs/deeptools/multibigwig_summary/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.log",
+        "logs/fair_macs2_calling/deeptools/multibigwig_summary/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.log",
     benchmark:
-        "benchmark/deeptools/multibigwig_summary/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tsv"
+        "benchmark/fair_macs2_calling/deeptools/multibigwig_summary/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tsv"
     params:
-        extra=config.get("params", {})
-        .get("deeptools", {})
-        .get("multibigwig_summary", ""),
+        extra=dlookup(dpath="params/fair_macs2_calling/deeptools/multibigwig_summary", within=config, default=""),
     conda:
         "../envs/deeptools.yaml"
     script:
@@ -26,7 +24,7 @@ rule deeptools_multibigwig_summary:
 
 rule deeptools_plot_pca:
     input:
-        "tmp/deeptools/multibigwig_summary/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.npz",
+        "tmp/fair_macs2_calling/deeptools/multibigwig_summary/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.npz",
     output:
         png=report(
             "results/{species}.{build}.{release}.{datatype}/Graphs/{macs2_peak_type}/PCA.png",
@@ -39,7 +37,7 @@ rule deeptools_plot_pca:
             },
         ),
         tab=temp(
-            "tmp/deeptools/plot_pca/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tab"
+            "tmp/fair_macs2_calling/deeptools/plot_pca/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tab"
         ),
     threads: 1
     resources:
@@ -47,11 +45,11 @@ rule deeptools_plot_pca:
         runtime=lambda wildcards, attempt: attempt * 120 + 60,
         tmpdir="tmp",
     log:
-        "logs/deeptools/plot_pca/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.log",
+        "logs/fair_macs2_calling/deeptools/plot_pca/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.log",
     benchmark:
-        "benchmark/deeptools/plot_pca/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tsv"
+        "benchmark/fair_macs2_calling/deeptools/plot_pca/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tsv"
     params:
-        extra=config.get("params", {}).get("deeptools", {}).get("plot_pca", ""),
+        extra=dlookup(dpath="params/fair_macs2_calling/deeptools/plot_pca", within=config, default="--ntop 1000"),
     conda:
         "../envs/deeptools.yaml"
     script:
@@ -60,7 +58,7 @@ rule deeptools_plot_pca:
 
 rule deeptools_plot_correlation:
     input:
-        "tmp/deeptools/multibigwig_summary/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.npz",
+        "tmp/fair_macs2_calling/deeptools/multibigwig_summary/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.npz",
     output:
         png=report(
             "results/{species}.{build}.{release}.{datatype}/Graphs/{macs2_peak_type}/Heatmap.png",
@@ -73,7 +71,7 @@ rule deeptools_plot_correlation:
             },
         ),
         tab=temp(
-            "tmp/deeptools/plot_correlation/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tab"
+            "tmp/fair_macs2_calling/deeptools/plot_correlation/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tab"
         ),
     threads: 1
     resources:
@@ -81,13 +79,11 @@ rule deeptools_plot_correlation:
         runtime=lambda wildcards, attempt: attempt * 120 + 60,
         tmpdir="tmp",
     log:
-        "logs/deeptools/plot_correlation/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.log",
+        "logs/fair_macs2_calling/deeptools/plot_correlation/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.log",
     benchmark:
-        "benchmark/deeptools/plot_correlation/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tsv"
+        "benchmark/fair_macs2_calling/deeptools/plot_correlation/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tsv"
     params:
-        extra=config.get("params", {})
-        .get("deeptools", {})
-        .get("plot_correlation", "--corMethod spearman --whatToPlot heatmap"),
+        extra=dlookup(dpath="params/fair_macs2_calling/deeptools/plot_correlation", within=config, default="--whatToPlot heatmap --corMethod spearman --skipZeros --plotNumbers --colorMap RdYlBu"),
     conda:
         "../envs/deeptools.yaml"
     script:
@@ -109,7 +105,7 @@ rule deeptools_plot_enrichment:
             },
         ),
         out_raw_counts=temp(
-            "tmp/deeptools/plot_enrichment/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tab"
+            "tmp/fair_macs2_calling/deeptools/plot_enrichment/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tab"
         ),
     threads: 20
     resources:
@@ -117,11 +113,11 @@ rule deeptools_plot_enrichment:
         runtime=lambda wildcards, attempt: attempt * 120 + 60,
         tmpdir="tmp",
     log:
-        "logs/deeptools/plot_enrichment/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.log",
+        "logs/fair_macs2_calling/deeptools/plot_enrichment/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.log",
     benchmark:
-        "benchmark/deeptools/plot_enrichment/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tsv"
+        "benchmark/fair_macs2_calling/deeptools/plot_enrichment/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tsv"
     params:
-        extra=config.get("params", {}).get("deeptools", {}).get("plot_enrichment", ""),
+        extra=dlookup(dpath="params/fair_macs2_calling/deeptools/plot_enrichment", within=config, default="--ignoreDuplicates --minMappingQuality 30 --samFlagExclude 4 --smartLabels"),
     conda:
         "../envs/deeptools.yaml"
     script:
