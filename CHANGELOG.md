@@ -2,11 +2,12 @@
 
 ## Features
 
+* Pipeline containerized
 * Snakemake-wrappers up to version 3.5.2
 * Configuration keys *all* optional
-* fair_bowtie2_mapping update
-* fair_fastqc_multiqc update
-* fair_genome_indexer update
+* fair_bowtie2_mapping update 3.3.2
+* fair_fastqc_multiqc update 2.2.6
+* fair_genome_indexer update 3.4.4
 
 # 2.0.5
 
