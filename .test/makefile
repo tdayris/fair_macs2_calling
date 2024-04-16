@@ -54,7 +54,7 @@ report.txt: pipeline.txt
 		--report report.zip 2>&1 | tee report.txt
 
 
-pipeline.txt: format.txt linter.txt
+pipeline.txt: linter.txt
 	mamba activate test-snakemake-wrappers && \
 	snakemake -s ../workflow/Snakefile \
 		--cores 7 \
@@ -67,7 +67,7 @@ format.txt:
 	snakefmt $(snakefiles) 2>&1 | tee format.txt
 
 
-linter.txt: black.txt
+linter.txt: black.txt format.txt
 	mamba activate test-snakemake-wrappers && \
 	snakemake -s ../workflow/Snakefile \
 		--lint 2>&1 | tee linter.txt
