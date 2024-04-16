@@ -1,4 +1,4 @@
-rule homer_annotate_peaks:
+rule fair_macs2_calling_homer_annotate_peaks:
     input:
         unpack(get_homer_annotate_peaks_input),
     output:

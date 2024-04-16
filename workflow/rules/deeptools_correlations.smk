@@ -15,9 +15,8 @@ rule deeptools_multibigwig_summary:
     benchmark:
         "benchmark/fair_macs2_calling/deeptools/multibigwig_summary/{species}.{build}.{release}.dna/{macs2_peak_type}.tsv"
     params:
-        extra=dlookup(
+        extra=lookup_config(
             dpath="params/fair_macs2_calling/deeptools/multibigwig_summary",
-            within=config,
             default="",
         ),
     conda:
@@ -53,9 +52,8 @@ rule deeptools_plot_pca:
     benchmark:
         "benchmark/fair_macs2_calling/deeptools/plot_pca/{species}.{build}.{release}.dna/{macs2_peak_type}.tsv"
     params:
-        extra=dlookup(
+        extra=lookup_config(
             dpath="params/fair_macs2_calling/deeptools/plot_pca",
-            within=config,
             default="--ntop 1000",
         ),
     conda:
@@ -91,9 +89,8 @@ rule deeptools_plot_correlation:
     benchmark:
         "benchmark/fair_macs2_calling/deeptools/plot_correlation/{species}.{build}.{release}.dna/{macs2_peak_type}.tsv"
     params:
-        extra=dlookup(
+        extra=lookup_config(
             dpath="params/fair_macs2_calling/deeptools/plot_correlation",
-            within=config,
             default="--whatToPlot heatmap --corMethod spearman --skipZeros --plotNumbers --colorMap RdYlBu",
         ),
     conda:
@@ -129,9 +126,8 @@ rule deeptools_plot_enrichment:
     benchmark:
         "benchmark/fair_macs2_calling/deeptools/plot_enrichment/{species}.{build}.{release}.dna/{macs2_peak_type}.tsv"
     params:
-        extra=dlookup(
+        extra=lookup_config(
             dpath="params/fair_macs2_calling/deeptools/plot_enrichment",
-            within=config,
             default="--ignoreDuplicates --minMappingQuality 30 --samFlagExclude 4 --smartLabels",
         ),
     conda:
