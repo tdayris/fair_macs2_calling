@@ -1,3 +1,2 @@
 sample_id,upstream_file,downstream_file,species,build,release,input
-sac_a,data/reads/a.chr21.1.fq,data/reads/a.chr21.2.fq,homo_sapiens,GRCh38,99,
-sac_b,data/reads/b.chr21.1.fq,data/reads/b.chr21.2.fq,homo_sapiens,GRCh38,99,
+sac_b,data/reads/b.chr21.1.fq,data/reads/b.chr21.2.fq,homo_sapiens,GRCh38,105,

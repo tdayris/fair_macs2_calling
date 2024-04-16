@@ -1,7 +1,7 @@
 species,build,release
-saccharomyces_cerevisiae,R64-1-1,111
-homo_sapiens,GRCh38,111
+saccharomyces_cerevisiae,R64-1-1,105
+homo_sapiens,GRCh38,105
 homo_sapiens,GRCh37,75
-mus_musculus,GRCm39,111
+mus_musculus,GRCm39,105
 mus_musculus,GRCm38,102
-salmo_salar,Ssal_v3.1,111
+salmo_salar,Ssal_v3.1,105

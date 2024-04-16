@@ -1,2 +1,2 @@
 species,build,release,effective_genome_size,dna_fasta,gtf,dna_fai
-homo_sapiens,GRCh38,99,2913022398,data/ref/genome.chr21.fa,data/ref/annotation.chr21.gtf,data/ref/genome.chr21.fa.fai
+homo_sapiens,GRCh38,105,2913022398,data/ref/genome.chr21.fa,data/ref/annotation.chr21.gtf,data/ref/genome.chr21.fa.fai

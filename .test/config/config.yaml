@@ -1,5 +1,18 @@
 samples: config/samples.csv
-  
+
+params:
+  fair_bowtie2_mapping:
+    sambamba:
+      view: "--format 'bam'"
+      markdup: ""
+  fair_macs2_calling:
+    macs2:
+      callpeak: "--keep-dup all --pvalue 1"
+    deeptools:
+      plot_coverage: "--coverageThresholds 1"
+    homer:
+      annotatepeaks: "-homer2 "
+
 # Optional path to a `genome.csv` file
 genomes: config/genomes.csv
 
