@@ -1,3 +1,9 @@
+*.swp
+.conda
+.cache
+.java
+.wget-hsts
+.condarc
 .test/linter.txt
 .test/format.txt
 .test/pipeline.txt
