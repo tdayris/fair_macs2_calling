@@ -177,7 +177,7 @@ def lookup_genomes(
     """
     Run lookup function with default parameters in order to search user-provided sequence/annotation files
     """
-    query: str = (
+    query = str(
         "species == '{wildcards.species}' & build == '{wildcards.build}' & release == '{wildcards.release}'".format(
             wildcards=wildcards
         )
