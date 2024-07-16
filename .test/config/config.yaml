@@ -8,4 +8,4 @@ params:
 pipeline:
   name: fair_macs2_calling
   tag: 1.0.1
-samples: .test/config/samples.csv
+samples: ./config/samples.csv
