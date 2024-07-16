@@ -1,9 +1,9 @@
-rule deeptools_multibigwig_summary:
+rule fair_macs2_calling_deeptools_multibigwig_summary:
     input:
         unpack(get_deeptools_multibigwig_summary_input),
     output:
         npz=temp(
-            "tmp/fair_macs2_calling/deeptools/multibigwig_summary/{species}.{build}.{release}.dna/{macs2_peak_type}.npz"
+            "tmp/fair_macs2_calling_deeptools_multibigwig_summary/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.npz"
         ),
     threads: 20
     resources:
@@ -11,12 +11,12 @@ rule deeptools_multibigwig_summary:
         runtime=lambda wildcards, attempt: attempt * 120 + 60,
         tmpdir="tmp",
     log:
-        "logs/fair_macs2_calling/deeptools/multibigwig_summary/{species}.{build}.{release}.dna/{macs2_peak_type}.log",
+        "logs/fair_macs2_calling_deeptools_multibigwig_summary/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.log",
     benchmark:
-        "benchmark/fair_macs2_calling/deeptools/multibigwig_summary/{species}.{build}.{release}.dna/{macs2_peak_type}.tsv"
+        "benchmark/fair_macs2_calling_deeptools_multibigwig_summary/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tsv"
     params:
         extra=lookup_config(
-            dpath="params/fair_macs2_calling/deeptools/multibigwig_summary",
+            dpath="params/fair_macs2_calling_deeptools_multibigwig_summary",
             default="",
         ),
     conda:
@@ -25,12 +25,12 @@ rule deeptools_multibigwig_summary:
         "../scripts/deeptools_multi_bigwig_summary_wrapper.py"
 
 
-rule deeptools_plot_pca:
+rule fair_macs2_calling_deeptools_plot_pca:
     input:
-        "tmp/fair_macs2_calling/deeptools/multibigwig_summary/{species}.{build}.{release}.dna/{macs2_peak_type}.npz",
+        "tmp/fair_macs2_calling_deeptools_multibigwig_summary/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.npz",
     output:
         png=report(
-            "results/{species}.{build}.{release}.dna/Graphs/{macs2_peak_type}/PCA.png",
+            "results/{species}.{build}.{release}.{datatype}/Graphs/{macs2_peak_type}/PCA.png",
             caption="../report/deeptools_plotpca.rst",
             subcategory="{macs2_peak_type}",
             category="Correlation",
@@ -40,7 +40,7 @@ rule deeptools_plot_pca:
             },
         ),
         tab=temp(
-            "tmp/fair_macs2_calling/deeptools/plot_pca/{species}.{build}.{release}.dna/{macs2_peak_type}.tab"
+            "tmp/fair_macs2_calling_deeptools_plot_pca/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tab"
         ),
     threads: 1
     resources:
@@ -48,12 +48,12 @@ rule deeptools_plot_pca:
         runtime=lambda wildcards, attempt: attempt * 120 + 60,
         tmpdir="tmp",
     log:
-        "logs/fair_macs2_calling/deeptools/plot_pca/{species}.{build}.{release}.dna/{macs2_peak_type}.log",
+        "logs/fair_macs2_calling_deeptools_plot_pca/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.log",
     benchmark:
-        "benchmark/fair_macs2_calling/deeptools/plot_pca/{species}.{build}.{release}.dna/{macs2_peak_type}.tsv"
+        "benchmark/fair_macs2_calling_deeptools_plot_pca/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tsv"
     params:
         extra=lookup_config(
-            dpath="params/fair_macs2_calling/deeptools/plot_pca",
+            dpath="params/fair_macs2_calling_deeptools_plot_pca",
             default="--ntop 1000",
         ),
     conda:
@@ -62,12 +62,12 @@ rule deeptools_plot_pca:
         "../scripts/deeptools_plot_pca_wrapper.py"
 
 
-rule deeptools_plot_correlation:
+rule fair_macs2_calling_deeptools_plot_correlation:
     input:
-        "tmp/fair_macs2_calling/deeptools/multibigwig_summary/{species}.{build}.{release}.dna/{macs2_peak_type}.npz",
+        "tmp/fair_macs2_calling_deeptools_multibigwig_summary/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.npz",
     output:
         png=report(
-            "results/{species}.{build}.{release}.dna/Graphs/{macs2_peak_type}/Heatmap.png",
+            "results/{species}.{build}.{release}.{datatype}/Graphs/{macs2_peak_type}/Heatmap.png",
             caption="../report/deeptools_plotcorrelation.rst",
             subcategory="{macs2_peak_type}",
             category="Correlation",
@@ -77,7 +77,7 @@ rule deeptools_plot_correlation:
             },
         ),
         tab=temp(
-            "tmp/fair_macs2_calling/deeptools/plot_correlation/{species}.{build}.{release}.dna/{macs2_peak_type}.tab"
+            "tmp/fair_macs2_calling_deeptools_plot_correlation/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tab"
         ),
     threads: 1
     resources:
@@ -85,12 +85,12 @@ rule deeptools_plot_correlation:
         runtime=lambda wildcards, attempt: attempt * 120 + 60,
         tmpdir="tmp",
     log:
-        "logs/fair_macs2_calling/deeptools/plot_correlation/{species}.{build}.{release}.dna/{macs2_peak_type}.log",
+        "logs/fair_macs2_calling_deeptools_plot_correlation/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.log",
     benchmark:
-        "benchmark/fair_macs2_calling/deeptools/plot_correlation/{species}.{build}.{release}.dna/{macs2_peak_type}.tsv"
+        "benchmark/fair_macs2_calling_deeptools_plot_correlation/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tsv"
     params:
         extra=lookup_config(
-            dpath="params/fair_macs2_calling/deeptools/plot_correlation",
+            dpath="params/fair_macs2_calling_deeptools_plot_correlation",
             default="--whatToPlot heatmap --corMethod spearman --skipZeros --plotNumbers --colorMap RdYlBu",
         ),
     conda:
@@ -99,12 +99,12 @@ rule deeptools_plot_correlation:
         "../scripts/deeptools_plot_correlation_wrapper.py"
 
 
-rule deeptools_plot_enrichment:
+rule fair_macs2_calling_deeptools_plot_enrichment:
     input:
         unpack(get_deeptools_plotcoverage_input),
     output:
         png=report(
-            "results/{species}.{build}.{release}.dna/Graphs/{macs2_peak_type}/Enrichment.png",
+            "results/{species}.{build}.{release}.{datatype}/Graphs/{macs2_peak_type}/Enrichment.png",
             caption="../report/deeptools_plotenrichment.rst",
             subcategory="{macs2_peak_type}",
             category="Correlation",
@@ -114,7 +114,7 @@ rule deeptools_plot_enrichment:
             },
         ),
         out_raw_counts=temp(
-            "tmp/fair_macs2_calling/deeptools/plot_enrichment/{species}.{build}.{release}.dna/{macs2_peak_type}.tab"
+            "tmp/fair_macs2_calling_deeptools_plot_enrichment/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tab"
         ),
     threads: 20
     resources:
@@ -122,12 +122,12 @@ rule deeptools_plot_enrichment:
         runtime=lambda wildcards, attempt: attempt * 120 + 60,
         tmpdir="tmp",
     log:
-        "logs/fair_macs2_calling/deeptools/plot_enrichment/{species}.{build}.{release}.dna/{macs2_peak_type}.log",
+        "logs/fair_macs2_calling_deeptools_plot_enrichment/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.log",
     benchmark:
-        "benchmark/fair_macs2_calling/deeptools/plot_enrichment/{species}.{build}.{release}.dna/{macs2_peak_type}.tsv"
+        "benchmark/fair_macs2_calling_deeptools_plot_enrichment/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tsv"
     params:
         extra=lookup_config(
-            dpath="params/fair_macs2_calling/deeptools/plot_enrichment",
+            dpath="params/fair_macs2_calling_deeptools_plot_enrichment",
             default="--ignoreDuplicates --minMappingQuality 30 --samFlagExclude 4 --smartLabels",
         ),
     conda:

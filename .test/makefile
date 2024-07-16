@@ -8,26 +8,26 @@ MAKEFLAGS += --no-builtin-rules
 
 # List of snakefiles to lint
 snakefiles := \
+	"../workflow/rules/bedtools_merge_peaks.smk" \
+	"../workflow/rules/common.smk" \
+	"../workflow/rules/datavzrd.smk" \
 	"../workflow/rules/deeptools_bam_qc.smk" \
 	"../workflow/rules/deeptools_correlations.smk" \
-	"../workflow/rules/homer.smk" \
-	"../workflow/rules/macs2.smk" \
 	"../workflow/rules/fair_fastqc_multiqc_pipeline.smk" \
 	"../workflow/rules/fair_genome_indexer_pipeline.smk" \
 	"../workflow/rules/fair_bowtie2_mapping_pipeline.smk" \
-	"../workflow/rules/common.smk" \
-	"../workflow/rules/multiqc.smk" \
-	"../workflow/rules/bedtools_merge_peaks.smk" \
+	"../workflow/rules/homer.smk" \
 	"../workflow/rules/in_house_homer_post_process.smk" \
-	"../workflow/rules/datavzrd.smk" \
+	"../workflow/rules/macs2.smk" \
+	"../workflow/rules/multiqc.smk" \
 	"../workflow/Snakefile"
 
 
 # List of python files to lint
 python_scripts := \
 	"../workflow/scripts/build_datavzrd_yaml.py" \
-	"../workflow/scripts/deeptools_plot_correlation_wrapper.py" \
 	"../workflow/scripts/deeptools_multi_bigwig_summary_wrapper.py" \
+	"../workflow/scripts/deeptools_plot_correlation_wrapper.py" \
 	"../workflow/scripts/deeptools_plot_enrichment_wrapper.py" \
 	"../workflow/scripts/deeptools_plot_pca_wrapper.py" \
 	"../workflow/scripts/homer_to_json.py" \
@@ -42,20 +42,17 @@ all: report.txt
 
 
 dag.png: format.txt linter.txt
-	mamba activate test-snakemake-wrappers && \
 	snakemake -s ../workflow/Snakefile \
 		--rulegraph --forceall | dot -Tpng > dag.png && \
 	cp --verbose dag.png ../dag.png
 
 
 report.txt: pipeline.txt
-	mamba activate test-snakemake-wrappers && \
 	snakemake -s ../workflow/Snakefile \
 		--report report.zip 2>&1 | tee report.txt
 
 
 pipeline.txt: linter.txt
-	mamba activate test-snakemake-wrappers && \
 	snakemake -s ../workflow/Snakefile \
 		--cores 7 \
 		--software-deployment-method conda \
@@ -63,18 +60,15 @@ pipeline.txt: linter.txt
 
 
 format.txt:
-	mamba activate test-snakemake-wrappers && \
 	snakefmt $(snakefiles) 2>&1 | tee format.txt
 
 
 linter.txt: black.txt format.txt
-	mamba activate test-snakemake-wrappers && \
 	snakemake -s ../workflow/Snakefile \
 		--lint 2>&1 | tee linter.txt
 
 
 black.txt:
-	mamba activate test-snakemake-wrappers && \
 	black $(python_scripts) 2>&1 | tee black.txt
 
 

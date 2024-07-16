@@ -5,84 +5,149 @@ import snakemake
 import snakemake.utils
 
 from collections import defaultdict
-from typing import Any, Dict, List, Optional, Union
-
-snakemake.utils.min_version("8.2.0")
+from typing import Any, NamedTuple
 
 
-container: "docker://snakemake/snakemake:v8.5.3"
+snakemake_min_version: str = "8.14.0"
+snakemake.utils.min_version(snakemake_min_version)
+
+snakemake_docker_image: str = "docker://snakemake/snakemake:v8.14.0"
+
+
+container: snakemake_docker_image
 
 
 # Load and check configuration file
-configfile: "config/config.yaml"
+default_config_file: str = "config/config.yaml"
+
+
+configfile: default_config_file
 
 
 snakemake.utils.validate(config, "../schemas/config.schema.yaml")
 
+
 # Load and check samples properties table
-sample_table_path: str = config.get("samples", "config/samples.csv")
-with open(sample_table_path, "r") as sample_table_stream:
-    dialect: csv.Dialect = csv.Sniffer().sniff(sample_table_stream.readline())
-    sample_table_stream.seek(0)
+def load_table(path: str) -> pandas.DataFrame:
+    """
+    Load a table in memory, automatically inferring column separators
 
-samples: pandas.DataFrame = pandas.read_csv(
-    filepath_or_buffer=sample_table_path,
-    sep=dialect.delimiter,
-    header=0,
-    index_col=None,
-    comment="#",
-    dtype=str,
-)
-samples = samples.where(samples.notnull(), None)
-snakemake.utils.validate(samples, "../schemas/samples.schema.yaml")
+    Parameters:
+    path (str): Path to the table to be loaded
 
-# This is here for compatibility with
-genome_table_path: str = config.get("genomes")
-if genome_table_path:
-    with open(genome_table_path, "r") as genome_table_stream:
-        dialect: csv.Dialect = csv.Sniffer().sniff(genome_table_stream.readline())
-        genome_table_stream.seek(0)
+    Return
+    (pandas.DataFrame): The loaded table
+    """
+    with open(path, "r") as table_stream:
+        dialect: csv.Dialect = csv.Sniffer().sniff(table_stream.readline())
+        table_stream.seek(0)
 
-    genomes: pandas.DataFrame = pandas.read_csv(
-        filepath_or_buffer=genome_table_path,
+    # Load table
+    table: pandas.DataFrame = pandas.read_csv(
+        path,
         sep=dialect.delimiter,
         header=0,
         index_col=None,
         comment="#",
         dtype=str,
     )
-    genomes = genomes.where(genomes.notnull(), None)
-else:
-    genomes: pandas.DataFrame = samples[
-        ["species", "build", "release"]
-    ].drop_duplicates(keep="first", ignore_index=True)
-    genomes.to_csv("genomes.csv", sep=",", index=False, header=True)
-    config["genomes"] = "genomes.csv"
+
+    # Remove empty lines
+    table = table.where(table.notnull(), None)
+
+    return table
+
+
+def load_genomes(
+    path: str | None = None, samples: pandas.DataFrame | None = None
+) -> pandas.DataFrame:
+    """
+    Load genome file, build it if genome file is missing and samples is not None.
+
+    Parameters:
+    path    (str)               : Path to genome file
+    samples (pandas.DataFrame)  : Loaded samples
+    """
+    if path is not None:
+        genomes: pandas.DataFrame = load_table(path)
+
+        if samples is not None:
+            genomes = used_genomes(genomes, samples)
+        return genomes
+
+    elif samples is not None:
+        return samples[["species", "build", "release"]].drop_duplicates(
+            ignore_index=True
+        )
+
+    raise ValueError(
+        "Provide either a path to a genome file, or a loaded samples table"
+    )
+
+
+def used_genomes(
+    genomes: pandas.DataFrame, samples: pandas.DataFrame | None = None
+) -> tuple[str]:
+    """
+    Reduce the number of genomes to download to the strict minimum
+    """
+    if samples is None:
+        return genomes
+
+    return genomes.loc[
+        genomes.species.isin(samples.species.tolist())
+        & genomes.build.isin(samples.build.tolist())
+        & genomes.release.isin(samples.release.tolist())
+    ]
+
+
+# Load and check samples properties tables
+try:
+    if (samples is None) or samples.empty():
+        sample_table_path: str = config.get("samples", "config/samples.csv")
+        samples: pandas.DataFrame = load_table(sample_table_path)
+except NameError:
+    sample_table_path: str = config.get("samples", "config/samples.csv")
+    samples: pandas.DataFrame = load_table(sample_table_path)
+
+snakemake.utils.validate(samples, "../schemas/samples.schema.yaml")
+
+
+# Load and check genomes properties table
+genomes_table_path: str = config.get("genomes", "config/genomes.csv")
+try:
+    if (genomes is None) or genomes.empty:
+        genomes: pandas.DataFrame = load_genomes(genomes_table_path, samples)
+except NameError:
+    genomes: pandas.DataFrame = load_genomes(genomes_table_path, samples)
 
 snakemake.utils.validate(genomes, "../schemas/genomes.schema.yaml")
-
-snakemake_wrappers_prefix: str = "v3.7.0"
 
 
 report: "../report/workflow.rst"
 
 
-release_list: list[str] = list(set(genomes.release.tolist()))
-build_list: list[str] = list(set(genomes.build.tolist()))
-species_list: list[str] = list(set(genomes.species.tolist()))
-datatypes: list[str] = ["dna", "cdna"]
-macs2_peak_types: list[str] = ["broadPeak", "narrowPeak"]
-stream_list: list[str] = ["1", "2"]
+snakemake_wrappers_prefix: str = "v3.12.0"
+release_tuple: tuple[str] = tuple(set(genomes.release.tolist()))
+build_tuple: tuple[str] = tuple(set(genomes.build.tolist()))
+species_tuple: tuple[str] = tuple(set(genomes.species.tolist()))
+datatype_tuple: tuple[str] = ("dna", "cdna", "all", "transcripts")
+gxf_tuple: tuple[str] = ("gtf", "gff3")
+id2name_tuple: tuple[str] = ("t2g", "id_to_gene")
 tmp: str = f"{os.getcwd()}/tmp"
+samples_id_tuple: tuple[str] = tuple(samples.sample_id)
+stream_tuple: tuple[str] = ("1", "2")
+macs2_peak_types: tuple[str] = ("broadPeak", "narrowPeak")
 
 
 wildcard_constraints:
-    sample=r"|".join(samples.sample_id),
-    release=r"|".join(release_list),
-    build=r"|".join(build_list),
-    species=r"|".join(species_list),
-    datatype=r"|".join(datatypes),
     macs2_peak_type=r"|".join(macs2_peak_types),
+    sample=r"|".join(samples_id_tuple),
+    release=r"|".join(release_tuple),
+    build=r"|".join(build_tuple),
+    species=r"|".join(species_tuple),
+    datatype=r"|".join(datatype_tuple),
+    stream=r"|".join(stream_tuple),
 
 
 def lookup_config(
@@ -108,7 +173,7 @@ def lookup_genomes(
     key: str,
     default: str | list[str] | None = None,
     genomes: pandas.DataFrame = genomes,
-) -> str | None:
+) -> str:
     """
     Run lookup function with default parameters in order to search user-provided sequence/annotation files
     """
@@ -117,7 +182,14 @@ def lookup_genomes(
             wildcards=wildcards
         )
     )
-    return getattr(lookup(query=query, within=genomes), key, default)
+
+    query_result: str | float = getattr(
+        lookup(query=query, within=genomes), key, default
+    )
+    if (query_result != query_result) or (query_result is None):
+        # Then the result of the query is nan
+        return default
+    return query_result
 
 
 def lookup_samples(
@@ -130,12 +202,18 @@ def lookup_samples(
     Run lookup function with default parameters in order to search
     user-proveded sample information
     """
-    query: str = (
+    query = str(
         "species == '{wildcards.species}' & build == '{wildcards.build}' & release == '{wildcards.release}' & sample_id == '{wildcards.sample}'".format(
             wildcards=wildcards
         )
     )
-    return getattr(lookup(query=query, within=samples), key, default)
+    query_result: str | float = getattr(
+        lookup(query=query, within=samples), key, default
+    )
+    if (query_result != query_result) or (query_result is None):
+        # Then the result of the query is nan
+        return default
+    return query_result
 
 
 def get_dna_fasta(
@@ -144,8 +222,8 @@ def get_dna_fasta(
     """
     Return path to the final DNA fasta sequences
     """
-    default: str = (
-        "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}.dna.fasta".format(
+    default = str(
+        "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}/{wildcards.species}.{wildcards.build}.{wildcards.release}.dna.fasta".format(
             wildcards=wildcards
         )
     )
@@ -158,8 +236,8 @@ def get_cdna_fasta(
     """
     Return path to the final cDNA fasta sequences
     """
-    default: str = (
-        "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}.cdna.fasta".format(
+    default = str(
+        "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}/{wildcards.species}.{wildcards.build}.{wildcards.release}.cdna.fasta".format(
             wildcards=wildcards
         )
     )
@@ -172,8 +250,8 @@ def get_transcripts_fasta(
     """
     Return path to the final cDNA transcripts fasta sequences
     """
-    default: str = (
-        "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}.transcripts.fasta".format(
+    default = str(
+        "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}/{wildcards.species}.{wildcards.build}.{wildcards.release}.transcripts.fasta".format(
             wildcards=wildcards
         )
     )
@@ -204,8 +282,8 @@ def get_dna_fai(
     """
     Return path to the final DNA fasta sequences index
     """
-    default: str = (
-        "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}.dna.fasta.fai".format(
+    default = str(
+        "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}/{wildcards.species}.{wildcards.build}.{wildcards.release}.dna.fasta.fai".format(
             wildcards=wildcards
         )
     )
@@ -218,8 +296,8 @@ def get_cdna_fai(
     """
     Return path to the final cDNA fasta sequences index
     """
-    default: str = (
-        "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}.cdna.fasta.fai".format(
+    default = str(
+        "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}/{wildcards.species}.{wildcards.build}.{wildcards.release}.cdna.fasta.fai".format(
             wildcards=wildcards
         )
     )
@@ -232,8 +310,8 @@ def get_transcripts_fai(
     """
     Return path to the final cDNA transcripts fasta sequences index
     """
-    default: str = (
-        "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}.transcripts.fasta.fai".format(
+    default = str(
+        "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}/{wildcards.species}.{wildcards.build}.{wildcards.release}.transcripts.fasta.fai".format(
             wildcards=wildcards
         )
     )
@@ -245,8 +323,8 @@ def get_transcripts_fai(
 def get_dna_dict(
     wildcards: snakemake.io.Wildcards, genomes: pandas.DataFrame = genomes
 ) -> str:
-    default: str = (
-        "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}.dna.dict".format(
+    default = str(
+        "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}/{wildcards.species}.{wildcards.build}.{wildcards.release}.dna.dict".format(
             wildcards=wildcards
         )
     )
@@ -256,8 +334,8 @@ def get_dna_dict(
 def get_cdna_dict(
     wildcards: snakemake.io.Wildcards, genomes: pandas.DataFrame = genomes
 ) -> str:
-    default: str = (
-        "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}.cdna.dict".format(
+    default = str(
+        "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}/{wildcards.species}.{wildcards.build}.{wildcards.release}.cdna.dict".format(
             wildcards=wildcards
         )
     )
@@ -267,8 +345,8 @@ def get_cdna_dict(
 def get_transcripts_dict(
     wildcards: snakemake.io.Wildcards, genomes: pandas.DataFrame = genomes
 ) -> str:
-    default: str = (
-        "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}.transcripts.dict".format(
+    default = str(
+        "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}/{wildcards.species}.{wildcards.build}.{wildcards.release}.transcripts.dict".format(
             wildcards=wildcards
         )
     )
@@ -315,8 +393,8 @@ def get_gtf(
     """
     Return path to the final genome annotation
     """
-    default: str = (
-        "reference/annotation/{wildcards.species}.{wildcards.build}.{wildcards.release}.gtf".format(
+    default = str(
+        "reference/annotation/{wildcards.species}.{wildcards.build}.{wildcards.release}/{wildcards.species}.{wildcards.build}.{wildcards.release}.gtf".format(
             wildcards=wildcards
         )
     )
@@ -388,11 +466,11 @@ def get_blacklist(
     Return: str | None
     If blacklist exists, then return it. Else, return None
     """
-    blacklist: str | None = lookup_genomes(wildcards, key="blacklist", default=None)
+    blacklist: str | None = lookup_genomes(wildcards, key="blacklist", default=[])
     if (not blacklist) and (
-        str(wildcards.species).lower in ["homo_sapiens", "mus_musculus"]
+        str(wildcards.species).lower in ("homo_sapiens", "mus_musculus")
     ):
-        return "reference/blacklist/{wildcards.species}.{wildcards.build}.{wildcards.release}.merged.bed"
+        return f"reference/blacklist/{wildcards.species}.{wildcards.build}.{wildcards.release}.merged.bed"
     return blacklist
 
 
@@ -405,40 +483,42 @@ def get_corresponding_input(
     return lookup_samples(wildcards, key="input_id", default=None)
 
 
-def get_deeptools_bamcoverage_input(
-    wildcards: snakemake.io.Wildcards, genomes: pandas.DataFrame = genomes
-) -> dict[str, str]:
+def get_aln(
+    wildcards: snakemake.io.Wildcards,
+    index: bool = False,
+    sample_id: str | None = None,
+    samples: pandas.DataFrame = samples,
+    config: dict[str, Any] = config,
+) -> str:
     """
-    Return expected input files for DeepTools bamCoverage, according to user-input,
-    and snakemake-wrapper requirements
-
-    Parameters:
-    wildcards (snakemake.io.Wildcards): Required for snakemake unpacking function
-    genomes   (pandas.DataFrame)      : Genome description and reference file paths
-
-    Return (dict[str, str]):
-    Dictionnary of all input files as required by DeepTools bamCoverage's snakemake-wrapper
+    Return the path to the correct bam file according to
+    user configuration
     """
-    species: str = str(wildcards.species)
-    build: str = str(wildcards.build)
-    release: str = str(wildcards.release)
-    sample_id: str = str(wildcards.sample)
-    datatype: str = "dna"
+    use_sieve: bool = lookup_config(
+        dpath="params/make_sieve", default=False, config=config
+    )
+    default: str = ""
+    ext: str = ".bam"
+    if index is True:
+        ext += ".bai"
 
-    results: dict[str, str] = {
-        "bam": f"results/{species}.{build}.{release}.{datatype}/Mapping/{sample_id}.bam",
-        "bai": f"results/{species}.{build}.{release}.{datatype}/Mapping/{sample_id}.bam.bai",
-    }
+    if sample_id is None:
+        sample_id = str(wildcards.sample)
 
-    blacklist: str | None = get_blacklist(wildcards, genomes=genomes)
-    if blacklist:
-        results["blacklist"] = blacklist
+    if use_sieve is True:
+        return "tmp/fair_bowtie2_mapping_deeptools_alignment_sieve/{wildcards.species}.{wildcards.build}.{wildcards.release}.dna/{sample_id}{ext}".format(
+            wildcards=wildcards, ext=ext, sample_id=sample_id
+        )
 
-    return results
+    return "results/{wildcards.species}.{wildcards.build}.{wildcards.release}.dna/Mapping/{sample_id}{ext}".format(
+        wildcards=wildcards, ext=ext, sample_id=sample_id
+    )
 
 
 def get_macs2_callpeak_input(
-    wildcards: snakemake.io.Wildcards, samples: pandas.DataFrame = samples
+    wildcards: snakemake.io.Wildcards,
+    samples: pandas.DataFrame = samples,
+    config: dict[str, Any] = config,
 ) -> dict[str, str]:
     """
     Return expected input files for Macs2 peak calling, according to user-input,
@@ -447,28 +527,25 @@ def get_macs2_callpeak_input(
     Parameters:
     wildcards (snakemake.io.Wildcards): Required for snakemake unpacking function
     samples   (pandas.DataFrame)      : Describe sample names and related paths/genome
+    config    (dict[str, Any])        : User configuration
 
     Return (dict[str, str]):
     Dictionnary of all input files as required by Macs2's snakemake-wrapper
     """
-    species: str = str(wildcards.species)
-    build: str = str(wildcards.build)
-    release: str = str(wildcards.release)
-    sample_id: str = str(wildcards.sample)
-    datatype: str = "dna"
-
     macs2_callpeak_input: dict[str, str] = {
-        "treatment": f"results/{species}.{build}.{release}.{datatype}/Mapping/{sample_id}.bam",
-        "treatment_index": f"results/{species}.{build}.{release}.{datatype}/Mapping/{sample_id}.bam.bai",
+        "treatment": get_aln(wildcards, samples=samples, config=config),
+        "treatment_index": get_aln(
+            wildcards, index=True, samples=samples, config=config
+        ),
     }
 
     input_id: str | None = get_corresponding_input(wildcards)
     if input_id:
-        macs2_callpeak_input["control"] = (
-            f"results/{species}.{build}.{release}.{datatype}/Mapping/{input_id}.bam"
+        macs2_callpeak_input["control"] = get_aln(
+            wildcards, sample_id=input_id, samples=samples, config=config
         )
-        macs2_callpeak_input["control_index"] = (
-            f"results/{species}.{build}.{release}.{datatype}/Mapping/{input_id}.bam.bai"
+        macs2_callpeak_input["control_index"] = get_aln(
+            wildcards, sample_id=input_id, index=True, samples=samples, config=config
         )
 
     return macs2_callpeak_input
@@ -493,7 +570,7 @@ def get_macs2_callpeak_params(
     Parameters as string, as required by Macs2's snakemake-wrapper
     """
     macs2_parameters: str = lookup_config(
-        dpath="params/fair_macs2_calling/macs2/callpeak", default=""
+        dpath=f"params/fair_macs2_calling_macs2_callpeak", default=""
     )
 
     sample_data: str | bool = lookup_samples(
@@ -523,39 +600,6 @@ def get_macs2_callpeak_params(
     return macs2_parameters
 
 
-def get_homer_annotate_peaks_input(
-    wildcards: snakemake.io.Wildcards,
-    genomes: pandas.DataFrame = genomes,
-    samples: pandas.DataFrame = samples,
-) -> dict[str, str]:
-    """
-    Return expected input files for Homer annotate peaks,
-    according to user-input, and snakemake-wrapper requirements
-
-    Parameters:
-    wildcards (snakemake.io.Wildcards): Required for snakemake unpacking function
-    samples   (pandas.DataFrame)      : Describe sample names and related paths/genome
-    genomes   (pandas.DataFrame)      : Describe sample names and related paths/genome
-
-    Return (dict[str, str]):
-    Input files dict, as required by homer annotatepeaks's snakemake-wrapper
-    """
-    datatype: str = "dna"
-    species: str = str(wildcards.species)
-    build: str = str(wildcards.build)
-    release: str = str(wildcards.release)
-    sample: str = str(wildcards.sample)
-    macs2_peak_type: str = str(wildcards.macs2_peak_type)
-
-    return {
-        "genome": get_dna_fasta(wildcards),
-        "fai": get_dna_fai(wildcards),
-        "gtf": get_gtf(wildcards),
-        "wig": f"results/{species}.{build}.{release}.{datatype}/Coverage/{sample}.bw",
-        "peaks": f"results/{species}.{build}.{release}.{datatype}/PeakCalling/{macs2_peak_type}/{sample}.{macs2_peak_type}.bed",
-    }
-
-
 def get_homer_annotate_peaks_params(
     wildcards: snakemake.io.Wildcards,
     samples: pandas.DataFrame = samples,
@@ -576,7 +620,7 @@ def get_homer_annotate_peaks_params(
     Parameters, as required by homer annotatepeaks's snakemake-wrapper
     """
     homer_params: str = lookup_config(
-        dpath="params/fair_macs2_calling/homer/annotatepeaks", default=""
+        dpath="params/fair_macs2_calling_homer_annotate_peaks", default=""
     )
 
     fragment_size: str | None = lookup_samples(wildcards, "fragment_size")
@@ -597,11 +641,12 @@ def get_homer_annotate_peaks_params(
     elif species == "mus_musculus":
         if release == "GRCm38":
             mode = "tss mm10"
-
-    return {
+    
+    parameters: dict[str, str] = {
         "extra": homer_params,
         "mode": mode,
     }
+    return parameters
 
 
 def get_deeptools_plotcoverage_input(
@@ -669,7 +714,7 @@ def get_deeptools_multibigwig_summary_input(
     macs2_peak_type: str = str(wildcards.macs2_peak_type)
 
     results: dict[str, list[str] | str] = {
-        "bed": f"tmp/fair_macs2_calling/bedtools/merge/{species}.{build}.{release}/{macs2_peak_type}.merged.bed",
+        "bed": f"tmp/fair_macs2_calling_bedtools_merge_macs2_sorted_peaks/{species}.{build}.{release}/{macs2_peak_type}.merged.bed",
         "bw": expand(
             "results/{sample.species}.{sample.build}.{sample.release}.dna/Coverage/{sample.sample_id}.bw",
             sample=lookup(
@@ -721,10 +766,36 @@ def get_merge_homer_summaries_input(
 
     for sample, species, build, release in sample_iterator:
         results["summaries"].append(
-            f"tmp/fair_macs2_calling/summarize_homer/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.json"
+            f"tmp/fair_macs2_calling_summarize_homer/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.json"
         )
 
     return results
+
+
+def get_single_ended_samples(samples: pandas.DataFrame = samples) -> NamedTuple:
+    """
+    Return the list of single ended samples, as a NameTuple usable
+    in expand/collect function
+
+    Parameters:
+    samples (pandas.DataFrame): Sample information
+
+    Return: NamedTuple of single ended samples
+    """
+    return lookup(query="downstream_file != downstream_file", within=samples)
+
+
+def get_pair_ended_samples(samples: pandas.DataFrame = samples) -> NamedTuple:
+    """
+    Return the list of pair ended samples, as a NameTuple usable
+    in expand/collect function
+
+    Parameters:
+    samples (pandas.DataFrame): Sample information
+
+    Return: NamedTuple of pair ended samples
+    """
+    return lookup(query="downstream_file == downstream_file", within=samples)
 
 
 def get_macs2_calling_pipeline_targets(

@@ -1,10 +1,14 @@
 rule fair_macs2_calling_homer_annotate_peaks:
     input:
-        unpack(get_homer_annotate_peaks_input),
+        genome=lambda wildcards: select_fasta(wildcards),
+        fai=lambda wildcards: select_fai(wildcards),
+        gtf=lambda wildcards: get_gtf(wildcards),
+        wig="results/{species}.{build}.{release}.{datatype}/Coverage/{sample}.bw",
+        peaks="results/{species}.{build}.{release}.{datatype}/PeakCalling/{macs2_peak_type}/{sample}.{macs2_peak_type}.bed",
     output:
         annotations=protected(
             ensure(
-                "results/{species}.{build}.{release}.dna/PeakCalling/{macs2_peak_type}/{sample}.{macs2_peak_type}.tsv",
+                "results/{species}.{build}.{release}.{datatype}/PeakCalling/{macs2_peak_type}/{sample}.{macs2_peak_type}.tsv",
                 non_empty=True,
             ),
         ),
@@ -15,9 +19,9 @@ rule fair_macs2_calling_homer_annotate_peaks:
     shadow:
         "minimal"
     log:
-        "logs/fair_macs2_calling/homer/annotatepeaks/{species}.{build}.{release}.dna/{sample}.{macs2_peak_type}.log",
+        "logs/fair_macs2_calling_homer_annotate_peaks/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.log",
     benchmark:
-        "benchmark/fair_macs2_calling/homer/annotatepeaks/{species}.{build}.{release}.dna/{sample}.{macs2_peak_type}.tsv"
+        "benchmark/fair_macs2_calling_homer_annotate_peaks/{species}.{build}.{release}.{datatype}/{sample}.{macs2_peak_type}.tsv"
     params:
         extra=lambda wildcards: get_homer_annotate_peaks_params(
             wildcards, samples, genomes, config

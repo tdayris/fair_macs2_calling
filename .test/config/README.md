@@ -15,6 +15,14 @@ samples: config/samples.csv
 
 # Optional parameters
 params:
+  # Optional parameters for FastQC
+  fastqc: ""
+  # Optional parameters for FastP
+  fastp:
+    # Optional command line adapters
+    adapters: ""
+    # Optional command line parameters
+    extra: ""
   bowtie2:
     # Optional parameters for bowtie2-build
     build: ""
@@ -24,10 +32,12 @@ params:
     # Optional parameters for sambamba view
     view: "--format 'bam' --filter 'mapping_quality >= 30 and not (unmapped or mate_is_unmapped)' "
     # Optional parameters for sambamba markdup
-    markdup: "--remove-duplicates"
+    markdup: "--remove-duplicates --overflow-size 500000"
   picard:
     # Mapping QC optional parameters
     metrics: ""
+  # Optional parameters for samtools stats
+  samtools: ""
   macs2:
     # Optional parameters for Macs2 Callpeaks
     callpeak: ""
@@ -38,12 +48,14 @@ params:
     # Optional parameters for DeepTools bamCoverage
     bamcoverage: ""
     # Optional parameters for DeepTools plotCoverage
-    plot_coverage: ""
+    plot_coverage: "--coverageThresholds 1"
     # Optional parameters for DeepTools plotFingerprint
     plot_fingerprint: ""
+  # Optional parameters for MultQC
+  multiqc: "--module deeptools --module macs2 --module picard --module fastqc --module fastp --module samtools --module bowtie2 --module sambamba --zip-data-dir --verbose --no-megaqc-upload --no-ansi --force"
 ```
 
-# `samples.csv`
+# `genomes.csv`
 
 A CSV-formatted text file containing the following mandatory columns:
 
