@@ -1,7 +1,6 @@
-genomes: /home/t_dayris/Documents/Devs/fair_macs2_calling/.test/config/genomes.csv
+genomes: ./config/genomes.csv
 params:
   fair_bowtie2_mapping_sambamba_view: "--format 'bam'"
-  fair_fastqc_multiqc_fastq_screen_config: /mnt/beegfs/database/bioinfo/Index_DB/Fastq_Screen/0.14.0/fastq_screen.conf
   fair_macs2_calling_deeptools_plot_coverage: "--coverageThresholds 1"
   fair_macs2_calling_homer_annotate_peaks: "-homer2"
   fair_macs2_calling_macs2_callpeak: "--keep-dup all --pvalue 1"
@@ -9,4 +8,4 @@ params:
 pipeline:
   name: fair_macs2_calling
   tag: 1.0.1
-samples: /home/t_dayris/Documents/Devs/fair_macs2_calling/.test/config/samples.csv
+samples: .test/config/samples.csv
