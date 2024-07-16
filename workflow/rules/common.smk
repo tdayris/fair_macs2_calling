@@ -641,7 +641,7 @@ def get_homer_annotate_peaks_params(
     elif species == "mus_musculus":
         if release == "GRCm38":
             mode = "tss mm10"
-    
+
     parameters: dict[str, str] = {
         "extra": homer_params,
         "mode": mode,
