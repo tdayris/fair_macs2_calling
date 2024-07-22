@@ -1,6 +1,6 @@
 module fair_bowtie2_mapping:
     snakefile:
-        github("tdayris/fair_bowtie2_mapping", path="workflow/Snakefile", tag="4.0.0")
+        github("tdayris/fair_bowtie2_mapping", path="workflow/Snakefile", tag="4.1.2")
     config:
         {
             **config,
