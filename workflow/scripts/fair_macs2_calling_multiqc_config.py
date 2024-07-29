@@ -8,8 +8,10 @@ __email__ = "thibault.dayris@gustaveroussy.fr"
 __license__ = "MIT"
 
 import yaml
+import pandas
 
 from typing import Any
+
 
 default_config: dict[str, Any] = {
     "title": "Macs2 Peak-Calling quality control report",
@@ -52,15 +54,16 @@ default_config: dict[str, Any] = {
             "goleft": "0.2.4",
         },
         "PeakCalling": {
+            "deeptools": "3.5.5",
             "macs2": "2.2.9.1",
             "homer": "4.11",
         },
         "Pipeline": {
-            "snakemake": "8.5.3",
-            "fair_macs2_calling": "2.1.0",
-            "fair_bowtie2_mapping": "3.3.2",
-            "fair_fastqc_multiqc": "2.2.6",
-            "fair_genome_indexer": "3.4.4",
+            "snakemake": "8.16.0",
+            "fair_macs2_calling": "3.0.2",
+            "fair_bowtie2_mapping": "4.2.0",
+            "fair_fastqc_multiqc": "2.3.5",
+            "fair_genome_indexer": "3.8.1",
         },
     },
     "disable_version_detection": True,
@@ -76,6 +79,8 @@ default_config: dict[str, Any] = {
         "goleft_indexcov",
         "macs2",
         "homer",
+        "deeptools",
+        "custom_content",
     ],
     "report_section_order": {
         "fastq_screen": {"order": 1000},
@@ -87,15 +92,47 @@ default_config: dict[str, Any] = {
         "samtools": {"order": 860},
         "rseqc": {"order": 850},
         "goleft_indexcov": {"order": 840},
-        "macs2": {"order": 830},
-        "homer": {"order": 820},
+        "deeptools": {"order": 830},
+        "macs2": {"order": 820},
         "software_versions": {"order": -1000},
     },
+   "custom_data": {
+       "BiGR": {
+           "id": "bigr_homer_annotation",
+           "section_anchor": "bigr_homer_annotation", 
+           "section_name": "Homer Annotation",
+           "section_href": "http://homer.ucsd.edu/homer/ngs/annotation.html",
+           "description": "This graphs describes where annotation falls over genome annotations.",
+           "plot_type": "bargraph",
+           "pconfig": {
+               "id": "barplot_config_only",
+               "title": "Number of peaks overlapping genomic annotations",
+               "ylab": "Number of peaks",
+           },
+           "data": {}
+       }
+   }
 }
 
 config: dict[str, Any] | None = snakemake.params.get("extra", None)
 if config is None:
     config = default_config.copy()
+
+homer_df = pandas.read_csv(
+   snakemake.input["homer_annotations"],
+   sep="\t",
+   header=0,
+   index_col=0,
+)
+homer_dict: dict[str, float] = {}
+for data in homer_df.itertuples():
+    if data.Sample_id in homer_dict.keys():
+        homer_dict[data.Sample_id][data.Index] = data.Peaks
+    else:
+        homer_dict[data.Sample_id] = {data.Index: data.Peaks}
+    
+config["custom_data"]["BiGR"]["data"] = homer_dict
+
 
 with open(str(snakemake.output[0]), "w") as out_yaml_stream:
     out_yaml_stream.write(yaml.dump(config, default_flow_style=False))

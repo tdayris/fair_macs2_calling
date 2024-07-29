@@ -1,8 +1,11 @@
 rule fair_macs2_calling_multiqc_config:
     input:
-        "tmp/fair_fastqc_multiqc_bigr_logo.png",
+        logo="tmp/fair_fastqc_multiqc_bigr_logo.png",
+        homer_annotations="tmp/fair_macs2_calling_merge_homer_summaries/{species}.{build}.{release}.{datatype}.{macs2_peak_type}/Annotations.tsv",
     output:
-        temp("tmp/fair_macs2_calling_multiqc_config.yaml"),
+        temp(
+            "tmp/fair_macs2_calling_multiqc__config/{species}.{build}.{release}.{datatype}.{macs2_peak_type}/multiqc_config.yaml"
+        ),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 512,
@@ -10,9 +13,9 @@ rule fair_macs2_calling_multiqc_config:
         tmpdir=tmp,
     localrule: True
     log:
-        "logs/fair_macs2_calling_multiqc_config.log",
+        "logs/fair_macs2_calling_multiqc_config/{species}.{build}.{release}.{datatype}.{macs2_peak_type}.log",
     benchmark:
-        "benchmark/fair_macs2_calling_multiqc_config.tsv"
+        "benchmark/fair_macs2_calling_multiqc_config/{species}.{build}.{release}.{datatype}.{macs2_peak_type}.tsv"
     params:
         extra=lookup_config(
             dpath="params/fair_macs2_calling_multiqc_config", default=None
@@ -25,7 +28,7 @@ rule fair_macs2_calling_multiqc_config:
 
 rule fair_macs2_calling_multiqc_report:
     input:
-        config="tmp/fair_macs2_calling_multiqc_config.yaml",
+        config="tmp/fair_macs2_calling_multiqc__config/{species}.{build}.{release}.{datatype}.{macs2_peak_type}/multiqc_config.yaml",
         picard_qc=collect(
             "tmp/fair_bowtie2_mapping_picard_create_multiple_metrics/{sample.species}.{sample.build}.{sample.release}.{datatype}/stats/{sample.sample_id}{ext}",
             sample=lookup(
@@ -196,15 +199,22 @@ rule fair_macs2_calling_multiqc_report:
                 query="species == '{species}' & release == '{release}' & build == '{build}'",
                 within=samples,
             ),
-            datatype="{datatype}",
-            macs2_peak_type=macs2_peak_types,
+            allow_missing=True,
         ),
         deeptools_coverage_raw="tmp/fair_macs2_calling_deeptools_plotcoverage/{species}.{build}.{release}.{datatype}/Coverage.raw",
         deeptools_coverage_metrics="tmp/fair_macs2_calling_deeptools_plotcoverage/{species}.{build}.{release}.{datatype}/Coverage.metrics",
         deeptools_fingerprint="tmp/fair_macs2_calling_deeptools_fingerprint/{species}.{build}.{release}.{datatype}/raw_counts.tab",
+        deeptools_pca=expand(
+            "tmp/fair_macs2_calling_deeptools_plot_pca/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tab",
+            allow_missing=True,
+        ),
+        deeptools_correlations=expand(
+            "tmp/fair_macs2_calling_deeptools_plot_correlation/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.tab",
+            allow_missing=True,
+        ),
     output:
         report(
-            "results/{species}.{build}.{release}.{datatype}/QC/MultiQC_PeakCalling.html",
+            "results/{species}.{build}.{release}.{datatype}/QC/MultiQC_PeakCalling_{macs2_peak_type}.html",
             caption="../report/multiqc.rst",
             category="Quality Controls",
             subcategory="General",
@@ -214,7 +224,7 @@ rule fair_macs2_calling_multiqc_report:
                 "organism": "{species}.{build}.{release}",
             },
         ),
-        "results/{species}.{build}.{release}.{datatype}/QC/MultiQC_Mapping_data.zip",
+        "results/{species}.{build}.{release}.{datatype}/QC/MultiQC_PeakCalling_{macs2_peak_type}_data.zip",
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: (2 * 1024) * attempt,
@@ -227,8 +237,8 @@ rule fair_macs2_calling_multiqc_report:
         ),
         use_input_files_only=True,
     log:
-        "logs/fair_macs2_calling/multiqc_report/{species}.{build}.{release}.{datatype}.log",
+        "logs/fair_macs2_calling/multiqc_report/{species}.{build}.{release}.{datatype}.{macs2_peak_type}.log",
     benchmark:
-        "benchmark/fair_macs2_calling/multiqc_report/{species}.{build}.{release}.{datatype}.tsv"
+        "benchmark/fair_macs2_calling/multiqc_report/{species}.{build}.{release}.{datatype}.{macs2_peak_type}.tsv"
     wrapper:
         f"{snakemake_wrappers_prefix}/bio/multiqc"

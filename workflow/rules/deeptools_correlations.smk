@@ -101,7 +101,45 @@ rule fair_macs2_calling_deeptools_plot_correlation:
 
 rule fair_macs2_calling_deeptools_plot_enrichment:
     input:
-        unpack(get_deeptools_plotcoverage_input),
+        bams=branch(
+            lookup_config(dpath="params/make_sieve", default=False, config=config),
+            then=expand(
+                "tmp/fair_bowtie2_mapping_sambamba_sort_sieve/{sample.species}.{sample.build}.{sample.release}.{datatype}/{sample.sample_id}.bam",
+                sample=lookup(
+                    query="species == '{species}' & release == '{release}' & build == '{build}'",
+                    within=samples,
+                ),
+                datatype="{datatype}",
+            ),
+            otherwise=expand(
+                "results/{sample.species}.{sample.build}.{sample.release}.{datatype}/Mapping/{sample.sample_id}.bam",
+                sample=lookup(
+                    query="species == '{species}' & release == '{release}' & build == '{build}'",
+                    within=samples,
+                ),
+                datatype="{datatype}",
+            ),
+        ),
+        bais=branch(
+            lookup_config(dpath="params/make_sieve", default=False, config=config),
+            then=expand(
+                "tmp/fair_bowtie2_mapping_sambamba_sort_sieve/{sample.species}.{sample.build}.{sample.release}.{datatype}/{sample.sample_id}.bam.bai",
+                sample=lookup(
+                    query="species == '{species}' & release == '{release}' & build == '{build}'",
+                    within=samples,
+                ),
+                datatype="{datatype}",
+            ),
+            otherwise=expand(
+                "results/{sample.species}.{sample.build}.{sample.release}.{datatype}/Mapping/{sample.sample_id}.bam.bai",
+                sample=lookup(
+                    query="species == '{species}' & release == '{release}' & build == '{build}'",
+                    within=samples,
+                ),
+                datatype="{datatype}",
+            ),
+        ),
+        bed="tmp/fair_macs2_calling_bedtools_merge_macs2_sorted_peaks/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.merged.bed",
     output:
         png=report(
             "results/{species}.{build}.{release}.{datatype}/Graphs/{macs2_peak_type}/Enrichment.png",

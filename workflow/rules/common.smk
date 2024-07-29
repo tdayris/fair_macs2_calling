@@ -576,12 +576,16 @@ def get_macs2_callpeak_params(
     sample_data: str | bool = lookup_samples(
         wildcards, key="downstream_file", default=False
     )
-    if sample_data:
+    ext_size: int | None = lookup_samples(wildcards, key="extsize", default=None)
+
+    if sample_data is not False:
         if " BAMPE " not in macs2_parameters:
             macs2_parameters += " --format BAMPE "
 
         if "--nomodel" not in macs2_parameters:
             macs2_parameters += " --nomodel "
+    elif ext_size is not None:
+        macs2_parameters += f" --extsize {ext_size} --nomodel "
     elif "--nolambda" not in macs2_parameters:
         macs2_parameters += " --nolambda "
 
@@ -714,7 +718,7 @@ def get_deeptools_multibigwig_summary_input(
     macs2_peak_type: str = str(wildcards.macs2_peak_type)
 
     results: dict[str, list[str] | str] = {
-        "bed": f"tmp/fair_macs2_calling_bedtools_merge_macs2_sorted_peaks/{species}.{build}.{release}/{macs2_peak_type}.merged.bed",
+        "bed": f"tmp/fair_macs2_calling_bedtools_merge_macs2_sorted_peaks/{species}.{build}.{release}.{datatype}/{macs2_peak_type}.merged.bed",
         "bw": expand(
             "results/{sample.species}.{sample.build}.{sample.release}.dna/Coverage/{sample.sample_id}.bw",
             sample=lookup(
@@ -861,9 +865,10 @@ def get_macs2_calling_pipeline_targets(
                     f"results/{species}.{build}.{release}.dna/Graphs/{macs2_peak_type}/{content}.catplot.png"
                 )
 
-        results["multiqc"].append(
-            f"results/{species}.{build}.{release}.dna/QC/MultiQC_PeakCalling.html",
-        )
+        for macs2_peak_type in macs2_peak_types:
+            results["multiqc"].append(
+                f"results/{species}.{build}.{release}.dna/QC/MultiQC_PeakCalling_{macs2_peak_type}.html",
+            )
 
     results["multiqc"] = list(set(results["multiqc"]))
 

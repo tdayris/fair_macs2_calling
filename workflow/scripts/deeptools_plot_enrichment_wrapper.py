@@ -32,8 +32,8 @@ if blacklist:
 
 shell(
     "plotEnrichment "
-    "--bamfiles {snakemakeinput.bams} "
-    "--BED {snakemakeinput.bed} "
+    "--bamfiles {snakemake.input.bams} "
+    "--BED {snakemake.input.bed} "
     "--plotFile {snakemake.output.png} "
     "--numberOfProcessors {snakemake.threads} "
     "{extra} {log} "
