@@ -506,7 +506,7 @@ def get_aln(
         sample_id = str(wildcards.sample)
 
     if use_sieve is True:
-        return "tmp/fair_bowtie2_mapping_deeptools_alignment_sieve/{wildcards.species}.{wildcards.build}.{wildcards.release}.dna/{sample_id}{ext}".format(
+        return "tmp/fair_bowtie2_mapping_sambamba_sort_sieve/{wildcards.species}.{wildcards.build}.{wildcards.release}.dna/{sample_id}{ext}".format(
             wildcards=wildcards, ext=ext, sample_id=sample_id
         )
 
