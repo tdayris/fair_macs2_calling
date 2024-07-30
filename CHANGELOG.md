@@ -1,3 +1,8 @@
+# 3.1.0
+
+* fair_bowtie2_mapping up to 4.2.0
+* testing alignment sieve
+
 # 3.0.1
 
 ## Features
