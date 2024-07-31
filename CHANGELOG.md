@@ -1,4 +1,12 @@
+# 3.1.1
+
+## Fix
+
+* Home summary when no TSS is found
+
 # 3.1.0
+
+## Features
 
 * fair_bowtie2_mapping up to 4.2.0
 * testing alignment sieve
