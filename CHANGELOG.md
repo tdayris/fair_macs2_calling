@@ -7,6 +7,12 @@
 * fair_bowtie2_mapping up to 4.4.1
 * fair_genome_indexer up to 3.9.4
 
+# 3.1.1
+
+## Fix
+
+* Home summary when no TSS is found
+
 # 3.1.0
 
 ## Features

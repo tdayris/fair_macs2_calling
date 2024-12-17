@@ -78,6 +78,9 @@ def read_homer_table(path: str) -> pandas.DataFrame:
         ]
     df.set_index("PeakID", inplace=True)
 
+    # Fix attribute error
+    df.dropna(subset=["DistanceTSS"], inplace=True)
+
     df["Annotations"] = [
         annotation.split(" (")[0].capitalize()
         for annotation in df["CompleteAnnotation"]
