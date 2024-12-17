@@ -25,7 +25,7 @@ rule fair_macs2_calling_macs2_callpeak_narrowPeak:
     params:
         lambda wildcards: get_macs2_callpeak_params(wildcards, samples, config),
     wrapper:
-        f"{snakemake_wrappers_prefix}/bio/macs2/callpeak"
+        "v5.5.0/bio/macs2/callpeak"
 
 
 use rule fair_macs2_calling_macs2_callpeak_narrowPeak as fair_macs2_calling_macs2_callpeak_broadPeak with:
@@ -76,7 +76,7 @@ rule fair_macs2_calling_macs2_peaks_to_csv:
             default="1-6 --delimiter $'\t'",
         ),
     wrapper:
-        f"{snakemake_wrappers_prefix}/utils/xsv"
+        "v5.5.0/utils/xsv"
 
 
 rule fair_macs2_calling_macs2_csv_to_bed:
@@ -103,7 +103,7 @@ rule fair_macs2_calling_macs2_csv_to_bed:
             default="--out-delimiter $'\t'",
         ),
     wrapper:
-        f"{snakemake_wrappers_prefix}/utils/xsv"
+        "v5.5.0/utils/xsv"
 
 
 rule fair_macs2_calling_sort_macs2_bed:
@@ -126,4 +126,4 @@ rule fair_macs2_calling_sort_macs2_bed:
             dpath="params/fair_macs2_calling_sort_macs2_bed", default=""
         ),
     wrapper:
-        f"{snakemake_wrappers_prefix}/bio/bedtools/sort"
+        "v5.5.0/bio/bedtools/sort"

@@ -96,22 +96,22 @@ default_config: dict[str, Any] = {
         "macs2": {"order": 820},
         "software_versions": {"order": -1000},
     },
-   "custom_data": {
-       "BiGR": {
-           "id": "bigr_homer_annotation",
-           "section_anchor": "bigr_homer_annotation", 
-           "section_name": "Homer Annotation",
-           "section_href": "http://homer.ucsd.edu/homer/ngs/annotation.html",
-           "description": "This graphs describes where annotation falls over genome annotations.",
-           "plot_type": "bargraph",
-           "pconfig": {
-               "id": "barplot_config_only",
-               "title": "Number of peaks overlapping genomic annotations",
-               "ylab": "Number of peaks",
-           },
-           "data": {}
-       }
-   }
+    "custom_data": {
+        "BiGR": {
+            "id": "bigr_homer_annotation",
+            "section_anchor": "bigr_homer_annotation",
+            "section_name": "Homer Annotation",
+            "section_href": "http://homer.ucsd.edu/homer/ngs/annotation.html",
+            "description": "This graphs describes where annotation falls over genome annotations.",
+            "plot_type": "bargraph",
+            "pconfig": {
+                "id": "barplot_config_only",
+                "title": "Number of peaks overlapping genomic annotations",
+                "ylab": "Number of peaks",
+            },
+            "data": {},
+        }
+    },
 }
 
 config: dict[str, Any] | None = snakemake.params.get("extra", None)
@@ -119,10 +119,10 @@ if config is None:
     config = default_config.copy()
 
 homer_df = pandas.read_csv(
-   snakemake.input["homer_annotations"],
-   sep="\t",
-   header=0,
-   index_col=0,
+    snakemake.input["homer_annotations"],
+    sep="\t",
+    header=0,
+    index_col=0,
 )
 homer_dict: dict[str, float] = {}
 for data in homer_df.itertuples():
@@ -130,7 +130,7 @@ for data in homer_df.itertuples():
         homer_dict[data.Sample_id][data.Index] = data.Peaks
     else:
         homer_dict[data.Sample_id] = {data.Index: data.Peaks}
-    
+
 config["custom_data"]["BiGR"]["data"] = homer_dict
 
 

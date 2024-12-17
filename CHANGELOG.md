@@ -1,4 +1,15 @@
+# 3.2.0
+
+## Features
+
+* Snakemake wrappers up to 5.5.0
+* fair_fastqc_multiqc up to 2.5.1
+* fair_bowtie2_mapping up to 4.4.1
+* fair_genome_indexer up to 3.9.4
+
 # 3.1.0
+
+## Features
 
 * fair_bowtie2_mapping up to 4.2.0
 * testing alignment sieve

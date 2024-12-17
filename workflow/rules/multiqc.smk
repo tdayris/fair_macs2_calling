@@ -193,6 +193,44 @@ rule fair_macs2_calling_multiqc_report:
             ),
             otherwise=[],
         ),
+        mosdepth_global=collect(
+            "tmp/fair_bowtie2_mapping_mosdepth/{sample.species}.{sample.build}.{sample.release}.{datatype}/{sample.sample_id}.mosdepth.global.dist.txt",
+            sample=lookup(
+                query="species == '{species}' & release == '{release}' & build == '{build}'",
+                within=samples,
+            ),
+            allow_missing=True,
+        ),
+        mosdepth_region=collect(
+            "tmp/fair_bowtie2_mapping_mosdepth/{sample.species}.{sample.build}.{sample.release}.{datatype}/{sample.sample_id}.mosdepth.region.dist.txt",
+            sample=lookup(
+                query="species == '{species}' & release == '{release}' & build == '{build}'",
+                within=samples,
+            ),
+            allow_missing=True,
+        ),
+        mosdepth_summary=collect(
+            "tmp/fair_bowtie2_mapping_mosdepth/{sample.species}.{sample.build}.{sample.release}.{datatype}/{sample.sample_id}.mosdepth.summary.txt",
+            sample=lookup(
+                query="species == '{species}' & release == '{release}' & build == '{build}'",
+                within=samples,
+            ),
+            allow_missing=True,
+        ),
+        sexdeterrmine=branch(
+            evaluate("{species} == 'homo_sapiens'")
+            or evaluate("{species} == 'mus_musculus'"),
+            then="tmp/fair_bowtie2_mapping_sexdeterrmine/{species}.{build}.{release}.{datatype}/sexdeterrmine.json",
+            otherwise=[],
+        ),
+        mtnucratiocalculator=collect(
+            "tmp/fair_bowtie2_mapping_mtnucratiocalculator/{sample.species}.{sample.build}.{sample.release}.{datatype}/{sample.sample_id}.mtnuc.json",
+            sample=lookup(
+                query="species == '{species}' & release == '{release}' & build == '{build}'",
+                within=samples,
+            ),
+            allow_missing=True,
+        ),
         macs2=collect(
             "tmp/fair_macs2_calling_macs2_callpeak_{macs2_peak_type}/{sample.species}.{sample.build}.{sample.release}.{datatype}/{macs2_peak_type}/{sample.sample_id}_peaks.xls",
             sample=lookup(
@@ -241,4 +279,4 @@ rule fair_macs2_calling_multiqc_report:
     benchmark:
         "benchmark/fair_macs2_calling/multiqc_report/{species}.{build}.{release}.{datatype}.{macs2_peak_type}.tsv"
     wrapper:
-        f"{snakemake_wrappers_prefix}/bio/multiqc"
+        "v5.5.0/bio/multiqc"
