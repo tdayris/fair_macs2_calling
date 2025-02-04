@@ -40,20 +40,20 @@ usage, and resutls can be found on the `Snakemake workflow`_ page.
 .. [#seabornpaper] Waskom, Michael L. "Seaborn: statistical data visualization." Journal of Open Source Software 6.60 (2021): 3021.
 .. [#snakemakepaper] Köster, Johannes, and Sven Rahmann. "Snakemake—a scalable bioinformatics workflow engine." Bioinformatics 28.19 (2012): 2520-2522.
 
-.. _Sambamba: https://snakemake-wrappers.readthedocs.io/en/v5.5.0/wrappers/sambamba.html
-.. _Bowtie2: https://snakemake-wrappers.readthedocs.io/en/v5.5.0/wrappers/bowtie2.html
-.. _Fastp: https://snakemake-wrappers.readthedocs.io/en/v5.5.0/wrappers/fastp.html
-.. _Picard: https://snakemake-wrappers.readthedocs.io/en/v5.5.0/wrappers/picard/collectmultiplemetrics.html
-.. _MultiQC: https://snakemake-wrappers.readthedocs.io/en/v5.5.0/wrappers/multiqc.html
+.. _Sambamba: https://snakemake-wrappers.readthedocs.io/en/v5.6.0/wrappers/sambamba.html
+.. _Bowtie2: https://snakemake-wrappers.readthedocs.io/en/v5.6.0/wrappers/bowtie2.html
+.. _Fastp: https://snakemake-wrappers.readthedocs.io/en/v5.6.0/wrappers/fastp.html
+.. _Picard: https://snakemake-wrappers.readthedocs.io/en/v5.6.0/wrappers/picard/collectmultiplemetrics.html
+.. _MultiQC: https://snakemake-wrappers.readthedocs.io/en/v5.6.0/wrappers/multiqc.html
 .. _Snakemake: https://snakemake.readthedocs.io
 .. _Github: https://github.com/tdayris/fair_bowtie2_mapping
 .. _`Snakemake workflow`: https://snakemake.github.io/snakemake-workflow-catalog?usage=tdayris/fair_bowtie2_mapping
 .. _Agat: https://agat.readthedocs.io/en/latest/index.html
-.. _Samtools: https://snakemake-wrappers.readthedocs.io/en/v5.5.0/wrappers/samtools/faidx.html
-.. _DeepTools: https://snakemake-wrappers.readthedocs.io/en/v5.5.0/wrappers/deeptools.html
-.. _Macs2: https://snakemake-wrappers.readthedocs.io/en/v5.5.0/wrappers/macs2/callpeak.html
-.. _Homer: https://snakemake-wrappers.readthedocs.io/en/v5.5.0/wrappers/homer/annotatePeaks.html
-.. _FastQC: https://snakemake-wrappers.readthedocs.io/en/v5.5.0/wrappers/fastqc.html
+.. _Samtools: https://snakemake-wrappers.readthedocs.io/en/v5.6.0/wrappers/samtools/faidx.html
+.. _DeepTools: https://snakemake-wrappers.readthedocs.io/en/v5.6.0/wrappers/deeptools.html
+.. _Macs2: https://snakemake-wrappers.readthedocs.io/en/v5.6.0/wrappers/macs2/callpeak.html
+.. _Homer: https://snakemake-wrappers.readthedocs.io/en/v5.6.0/wrappers/homer/annotatePeaks.html
+.. _FastQC: https://snakemake-wrappers.readthedocs.io/en/v5.6.0/wrappers/fastqc.html
 .. _Python: docs.python.org
 .. _Seaborn: https://seaborn.pydata.org/index.html
 .. _Pyfaidx: https://github.com/mdshw5/pyfaidx

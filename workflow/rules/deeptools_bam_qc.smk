@@ -27,7 +27,7 @@ rule fair_macs2_calling_deeptools_bamcoverage:
             default="--ignoreDuplicates --minMappingQuality 30 --samFlagExclude 4 --ignoreForNormalization X Y MT",
         ),
     wrapper:
-        "v5.5.0/bio/deeptools/bamcoverage"
+        "v5.6.0/bio/deeptools/bamcoverage"
 
 
 rule fair_macs2_calling_deeptools_plotcoverage:
@@ -65,7 +65,7 @@ rule fair_macs2_calling_deeptools_plotcoverage:
             default="--skipZeros --coverageThresholds 1 --ignoreDuplicates --minMappingQuality 30 --samFlagExclude 4",
         ),
     wrapper:
-        "v5.5.0/bio/deeptools/plotcoverage"
+        "v5.6.0/bio/deeptools/plotcoverage"
 
 
 rule fair_macs2_calling_deeptools_fingerprint:
@@ -118,4 +118,4 @@ rule fair_macs2_calling_deeptools_fingerprint:
             default="--skipZeros --ignoreDuplicates --minMappingQuality 30 --samFlagExclude 4",
         ),
     wrapper:
-        "v5.5.0/bio/deeptools/plotfingerprint"
+        "v5.6.0/bio/deeptools/plotfingerprint"
