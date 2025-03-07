@@ -52,4 +52,4 @@ rule fair_macs2_calling_datavzrd_homer_render:
             dpath="params/fair_macs2_calling_datavzrd_homer_render", default=""
         ),
     wrapper:
-        "v5.6.0/utils/datavzrd"
+        "v5.8.3/utils/datavzrd"

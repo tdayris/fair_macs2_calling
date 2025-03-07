@@ -38,8 +38,8 @@ See pipeline content at [`fair_bowtie2_mapping`](https://github.com/tdayris/fair
 | Step              | Wrapper                                                                                                          |
 | ----------------- | ---------------------------------------------------------------------------------------------------------------- |
 | Coverage analysis | [deeptools-bamcoverage](https://snakemake-wrappers.readthedocs.io/en/stable/wrappers/deeptools/bamcoverage.html) |
-| Peak-Calling      | [macs2-callpeak](https://snakemake-wrappers.readthedocs.io/en/v5.6.0/wrappers/macs2/callpeak.html)               |
-| Annotation        | [homer-annotatepeaks](https://snakemake-wrappers.readthedocs.io/en/v5.6.0/wrappers/homer/annotatePeaks.html)     |
+| Peak-Calling      | [macs2-callpeak](https://snakemake-wrappers.readthedocs.io/en/v5.8.3/wrappers/macs2/callpeak.html)               |
+| Annotation        | [homer-annotatepeaks](https://snakemake-wrappers.readthedocs.io/en/v5.8.3/wrappers/homer/annotatePeaks.html)     |
 
 
 ```
@@ -68,9 +68,9 @@ See pipeline content at [`fair_bowtie2_mapping`](https://github.com/tdayris/fair
 
 | Step            | Wrapper/Official documentation                                                                                           |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| MultiQC         | [multiqc-wrapper](https://snakemake-wrappers.readthedocs.io/en/v5.6.0/wrappers/multiqc.html)                             |
-| Finger prints   | [deeptools-plotfingerprint](https://snakemake-wrappers.readthedocs.io/en/v5.6.0/wrappers/deeptools/plotfingerprint.html) |
-| Plot Coverage   | [deeptools-plotcoverage](https://snakemake-wrappers.readthedocs.io/en/v5.6.0/wrappers/deeptools/plotcoverage.html)       |
+| MultiQC         | [multiqc-wrapper](https://snakemake-wrappers.readthedocs.io/en/v5.8.3/wrappers/multiqc.html)                             |
+| Finger prints   | [deeptools-plotfingerprint](https://snakemake-wrappers.readthedocs.io/en/v5.8.3/wrappers/deeptools/plotfingerprint.html) |
+| Plot Coverage   | [deeptools-plotcoverage](https://snakemake-wrappers.readthedocs.io/en/v5.8.3/wrappers/deeptools/plotcoverage.html)       |
 | Plot Enrichment | [deeptools-plotenrichment](https://deeptools.readthedocs.io/en/develop/content/tools/plotEnrichment.html)                |
 | Plot PCA        | [deeptools-plotpca](https://deeptools.readthedocs.io/en/develop/content/tools/plotPCA.html)                              |
 

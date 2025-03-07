@@ -26,7 +26,7 @@ rule fair_macs2_calling_xsv_cat_macs2_peaks:
             default="--no-headers --delimiter $'\t'",
         ),
     wrapper:
-        "v5.6.0/utils/xsv"
+        "v5.8.3/utils/xsv"
 
 
 rule fair_macs2_calling_xsv_sort_macs2_concat_peaks:
@@ -53,7 +53,7 @@ rule fair_macs2_calling_xsv_sort_macs2_concat_peaks:
             default="--no-headers --numeric --select 1-3",
         ),
     wrapper:
-        "v5.6.0/utils/xsv"
+        "v5.8.3/utils/xsv"
 
 
 rule fair_macs2_calling_xsv_fmt_macs2_sorted_peaks:
@@ -80,7 +80,7 @@ rule fair_macs2_calling_xsv_fmt_macs2_sorted_peaks:
             default="--out-delimiter $'\t'",
         ),
     wrapper:
-        "v5.6.0/utils/xsv"
+        "v5.8.3/utils/xsv"
 
 
 rule fair_macs2_calling_bedtools_sort_macs2_concat_beds:
@@ -104,7 +104,7 @@ rule fair_macs2_calling_bedtools_sort_macs2_concat_beds:
             default="",
         ),
     wrapper:
-        "v5.6.0/bio/bedtools/sort"
+        "v5.8.3/bio/bedtools/sort"
 
 
 rule fair_macs2_calling_bedtools_merge_macs2_sorted_peaks:
@@ -128,4 +128,4 @@ rule fair_macs2_calling_bedtools_merge_macs2_sorted_peaks:
             default="",
         ),
     wrapper:
-        "v5.6.0/bio/bedtools/merge"
+        "v5.8.3/bio/bedtools/merge"

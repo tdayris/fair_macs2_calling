@@ -7,5 +7,5 @@ considered in this graph.
 
 
 .. _PNG: https://en.wikipedia.org/wiki/PNG
-.. _Homer: https://snakemake-wrappers.readthedocs.io/en/v5.6.0/wrappers/homer/annotatePeaks.html
-.. _Macs2: https://snakemake-wrappers.readthedocs.io/en/v5.6.0/wrappers/macs2/callpeak.html
+.. _Homer: https://snakemake-wrappers.readthedocs.io/en/v5.8.3/wrappers/homer/annotatePeaks.html
+.. _Macs2: https://snakemake-wrappers.readthedocs.io/en/v5.8.3/wrappers/macs2/callpeak.html

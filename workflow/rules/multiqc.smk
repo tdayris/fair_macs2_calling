@@ -279,4 +279,4 @@ rule fair_macs2_calling_multiqc_report:
     benchmark:
         "benchmark/fair_macs2_calling/multiqc_report/{species}.{build}.{release}.{datatype}.{macs2_peak_type}.tsv"
     wrapper:
-        "v5.6.0/bio/multiqc"
+        "v5.8.3/bio/multiqc"
